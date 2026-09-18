@@ -24,6 +24,17 @@ export default function SplineRobot() {
     let isAnimating = false;
     let lastTime = 0;
     let isInView = true;
+    let isIdleMoving = false;
+    let idleTimer: ReturnType<typeof setTimeout> | null = null;
+    let idleStartTime = 0;
+    let idleBaseX = 0;
+    let idleBaseY = 0;
+
+    // Touch/coarse-pointer devices have no mouse cursor to wait for.
+    const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
+    const hasTouchInput =
+      window.matchMedia("(pointer: coarse)").matches ||
+      navigator.maxTouchPoints > 0;
 
     // Normalized mouse coordinates [-1, 1]
     let targetX = 0;
@@ -59,11 +70,33 @@ export default function SplineRobot() {
       const dt = Math.min((time - lastTime) / 1000, 0.1);
       lastTime = time;
 
+      // After about five seconds without pointer movement, gently animate
+      // the robot's head on its own with slow, natural-looking motion.
+      if (isIdleMoving) {
+        const elapsed = (time - idleStartTime) / 1000;
+
+        // Keep the autonomous motion centered around the exact direction
+        // the robot was already looking when the user stopped moving.
+        targetX =
+          idleBaseX +
+          Math.sin(elapsed * 0.45) * 0.24 +
+          Math.sin(elapsed * 0.18 + 1.2) * 0.07;
+        targetY =
+          idleBaseY +
+          Math.sin(elapsed * 0.32 + 0.8) * 0.12 +
+          Math.sin(elapsed * 0.14) * 0.04;
+
+        // Keep the generated gaze within the same normalized range as the
+        // pointer-controlled gaze.
+        targetX = Math.max(-1, Math.min(1, targetX));
+        targetY = Math.max(-1, Math.min(1, targetY));
+      }
+
       const dx = targetX - currentX;
       const dy = targetY - currentY;
 
       // Settle and drop GPU usage to 0% when idle
-      if (Math.abs(dx) < 0.0003 && Math.abs(dy) < 0.0003) {
+      if (!isIdleMoving && Math.abs(dx) < 0.0003 && Math.abs(dy) < 0.0003) {
         currentX = targetX;
         currentY = targetY;
 
@@ -160,15 +193,58 @@ export default function SplineRobot() {
       }
     };
 
-    const handlePointerMove = (e: PointerEvent) => {
-      targetX = (e.clientX / window.innerWidth) * 2 - 1;
-      targetY = (e.clientY / window.innerHeight) * 2 - 1;
+    const startIdleMovement = () => {
+      if (!isInView) return;
+
+      // Start from the robot's current gaze so there is no snap or jerk.
+      idleBaseX = currentX;
+      idleBaseY = currentY;
+      targetX = currentX;
+      targetY = currentY;
+      isIdleMoving = true;
+      idleStartTime = performance.now();
       startAnimation();
     };
 
-    const handlePointerLeave = () => {
+    const resetIdleTimer = () => {
+      if (idleTimer) {
+        clearTimeout(idleTimer);
+        idleTimer = null;
+      }
+
+      // On mobile/tablet or any screen without a fine pointer, start
+      // autonomous movement immediately instead of waiting 5 seconds.
+      if (!hasFinePointer || hasTouchInput) {
+        startIdleMovement();
+        return;
+      }
+
+      isIdleMoving = false;
+      idleStartTime = 0;
+
+      idleTimer = setTimeout(() => {
+        startIdleMovement();
+      }, 5000);
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      // Touch/stylus movement should not interrupt autonomous head movement.
+      // Only a real mouse/trackpad pointer controls the robot's gaze.
+      if (e.pointerType !== "mouse") return;
+
+      isIdleMoving = false;
+      targetX = (e.clientX / window.innerWidth) * 2 - 1;
+      targetY = (e.clientY / window.innerHeight) * 2 - 1;
+      resetIdleTimer();
+      startAnimation();
+    };
+
+    const handlePointerLeave = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") return;
+
       targetX = 0;
       targetY = 0;
+      resetIdleTimer();
       startAnimation();
     };
 
@@ -187,10 +263,13 @@ export default function SplineRobot() {
     window.addEventListener("pointerleave", handlePointerLeave);
     window.addEventListener("resize", handleResize);
 
+    resetIdleTimer();
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         isInView = entry.isIntersecting;
         if (isInView) {
+          resetIdleTimer();
           startAnimation();
         }
       },
@@ -322,6 +401,7 @@ export default function SplineRobot() {
     return () => {
       observer.disconnect();
       if (animId) cancelAnimationFrame(animId);
+      if (idleTimer) clearTimeout(idleTimer);
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerleave", handlePointerLeave);
       window.removeEventListener("resize", handleResize);

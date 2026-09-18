@@ -91,7 +91,7 @@ export default function Navbar() {
               isOutsideHero ? "text-black" : "text-white"
             }`}
           >
-            Code<span className={isOutsideHero ? "text-[#72b000]" : "text-[#AAFF00]"}>Ferm</span>
+            Code<span className={isOutsideHero ? "text-[#72b000]" : "text-[#AAFF00]"}>Frem</span>
           </span>
         </Link>
 

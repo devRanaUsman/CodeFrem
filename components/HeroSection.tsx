@@ -32,7 +32,7 @@ export default function HeroSection() {
       {/* Main Center Hero Area (Fits all in 1 Screen View) */}
       <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col justify-between my-auto relative z-10 py-2">
         {/* 1. Main Heading (Fixed in place) */}
-        <div className="text-center max-w-4xl mx-auto relative z-20">
+        <div className="text-center max-w-4xl mx-auto relative z-20 top-6">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-medium tracking-tight text-[#111111] leading-[1.12]">
             Empowering Brands <br />
             <span className="inline-flex items-center gap-2 sm:gap-3">
