@@ -63,21 +63,13 @@ export default function Navbar() {
         >
           <Link
             href="#about"
-            className={
-              isOutsideHero
-                ? "hover:text-black font-semibold transition-colors"
-                : "hover:text-[#AAFF00] transition-colors"
-            }
+            className={isOutsideHero ? "hover:text-black font-semibold transition-colors" : "hover:text-[#AAFF00] transition-colors"}
           >
             About Us
           </Link>
           <Link
             href="#services"
-            className={
-              isOutsideHero
-                ? "hover:text-black font-semibold transition-colors"
-                : "hover:text-[#AAFF00] transition-colors"
-            }
+            className={isOutsideHero ? "hover:text-black font-semibold transition-colors" : "hover:text-[#AAFF00] transition-colors"}
           >
             Services
           </Link>
@@ -99,12 +91,7 @@ export default function Navbar() {
               isOutsideHero ? "text-black" : "text-white"
             }`}
           >
-            Code
-            <span
-              className={isOutsideHero ? "text-[#72b000]" : "text-[#AAFF00]"}
-            >
-              Frem
-            </span>
+            Code<span className={isOutsideHero ? "text-[#72b000]" : "text-[#AAFF00]"}>Ferm</span>
           </span>
         </Link>
 
@@ -116,21 +103,13 @@ export default function Navbar() {
         >
           <Link
             href="#projects"
-            className={
-              isOutsideHero
-                ? "hover:text-black font-semibold transition-colors"
-                : "hover:text-[#AAFF00] transition-colors"
-            }
+            className={isOutsideHero ? "hover:text-black font-semibold transition-colors" : "hover:text-[#AAFF00] transition-colors"}
           >
             Projects
           </Link>
           <Link
             href="#reviews"
-            className={
-              isOutsideHero
-                ? "hover:text-black font-semibold transition-colors"
-                : "hover:text-[#AAFF00] transition-colors"
-            }
+            className={isOutsideHero ? "hover:text-black font-semibold transition-colors" : "hover:text-[#AAFF00] transition-colors"}
           >
             Reviews
           </Link>
@@ -141,9 +120,7 @@ export default function Navbar() {
           <button
             onClick={() => setIsOpen(!isOpen)}
             className={`p-1 transition-colors ${
-              isOutsideHero
-                ? "text-gray-800 hover:text-black"
-                : "text-gray-300 hover:text-white"
+              isOutsideHero ? "text-gray-800 hover:text-black" : "text-gray-300 hover:text-white"
             }`}
             aria-label="Toggle navigation"
           >

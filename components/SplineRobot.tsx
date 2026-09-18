@@ -82,9 +82,9 @@ export default function SplineRobot() {
           eyesObj.rotation.z = roll;
         }
         if (robotObj) {
-          robotObj.scale.set(1.6, 1.6, 1.6);
+          robotObj.scale.set(1.3, 1.3, 1.3);
           robotObj.position.x = 0;
-          robotObj.position.y = -85;
+          robotObj.position.y = -145;
           robotObj.position.z = -18.52;
           robotObj.rotation.x = 0;
           robotObj.rotation.y = 0;
@@ -129,9 +129,9 @@ export default function SplineRobot() {
       }
 
       if (robotObj) {
-        robotObj.scale.set(1.6, 1.6, 1.6);
+        robotObj.scale.set(1.3, 1.3, 1.3);
         robotObj.position.x = 0;
-        robotObj.position.y = -85;
+        robotObj.position.y = -145;
         robotObj.position.z = -18.52;
         robotObj.rotation.x = 0;
         robotObj.rotation.y = 0;
@@ -183,9 +183,7 @@ export default function SplineRobot() {
       }
     };
 
-    window.addEventListener("pointermove", handlePointerMove, {
-      passive: true,
-    });
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
     window.addEventListener("pointerleave", handlePointerLeave);
     window.addEventListener("resize", handleResize);
 
@@ -196,7 +194,7 @@ export default function SplineRobot() {
           startAnimation();
         }
       },
-      { threshold: 0.1 },
+      { threshold: 0.1 }
     );
 
     if (containerRef.current) {
@@ -209,9 +207,7 @@ export default function SplineRobot() {
     app
       .load(sceneUrl)
       .catch(() => {
-        return app?.load(
-          "https://prod.spline.design/n9L6SSO5OIaBztSc/scene.splinecode",
-        );
+        return app?.load("https://prod.spline.design/n9L6SSO5OIaBztSc/scene.splinecode");
       })
       .then(() => {
         if (!app) return;
@@ -258,9 +254,9 @@ export default function SplineRobot() {
 
         // Scale and position Robot to prominently fit the hero section
         if (robotObj) {
-          robotObj.scale.set(1.6, 1.6, 1.6);
+          robotObj.scale.set(1.3, 1.3, 1.3);
           robotObj.position.x = 0;
-          robotObj.position.y = -85;
+          robotObj.position.y = -145;
           robotObj.position.z = -18.52;
           robotObj.rotation.x = 0;
           robotObj.rotation.y = 0;
@@ -365,9 +361,7 @@ export default function SplineRobot() {
             </span>
           </div>
           <div>
-            <h4 className="font-bold text-gray-900 text-lg">
-              Codefrem 3D Intelligence
-            </h4>
+            <h4 className="font-bold text-gray-900 text-lg">Codefrem 3D Intelligence</h4>
             <p className="text-xs text-gray-500 max-w-xs mt-1">
               Optimized for high-speed mobile & battery efficiency.
             </p>
