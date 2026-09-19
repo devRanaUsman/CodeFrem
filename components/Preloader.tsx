@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TextPlugin } from "gsap/TextPlugin";
 import { getLenisInstance } from "@/lib/lenis";
-import { bootedThisSession, markSessionBooted, isRobotReady, onRobotReady } from "@/lib/boot";
+import { bootedThisSession, markSessionBooted, onRobotReady } from "@/lib/boot";
 
 gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
@@ -29,17 +29,23 @@ gsap.registerPlugin(ScrollTrigger, TextPlugin);
  *
  * Syncing with the 3D robot:
  * - The robot (components/SplineRobot.tsx) starts loading the moment it
- *   mounts, in parallel with this whole sequence — it no longer waits for
- *   the intro to finish.
- * - The terminal log + counter play out on their normal fixed schedule up to
- *   a near-100 checkpoint (INTRO_COUNTER_CAP), exactly as before. From there,
- *   instead of blindly finishing, we ask `lib/boot.ts` whether the robot is
- *   actually ready.
- * - Robot already loaded → the counter sprints straight to 100 and the
- *   curtain opens, same as before.
- * - Robot still loading → the counter keeps creeping forward on its own
- *   (slower, but never motionless) until the robot signals it's ready, then
- *   sprints to 100. A hard timeout guarantees it can never wait forever.
+ *   mounts, in parallel with this whole sequence.
+ * - The big counter is ONE continuous, always-moving value (see the counter
+ *   driver inside the effect). It never runs as separate tweens that hand off
+ *   to each other, so its speed never snaps or stalls:
+ *     • During the scripted intro it follows the terminal log up to
+ *       INTRO_COUNTER_CAP. (If the robot is already loaded it simply rides the
+ *       same curve all the way to 100 instead.)
+ *     • If the robot is still loading when the intro ends, the counter keeps
+ *       creeping forward at a slow-but-steady pace — it decelerates gently but
+ *       never freezes, and it has enough room left to keep moving for the
+ *       whole MAX_EXTRA_WAIT_MS safety window.
+ *     • The moment the robot signals ready, the counter glides (accelerates
+ *       and eases out — no jump) to exactly 100, then the curtain opens.
+ * - Every frame the shown value is *smoothed* toward a target (critically
+ *   damped follower), so any change of target — robot ready, intro end, even a
+ *   long main-thread stall while Spline initialises — is absorbed as a smooth
+ *   change of speed instead of a visible jump.
  */
 
 const BOOT_LINES = [
@@ -51,19 +57,40 @@ const BOOT_LINES = [
 const FULL_TIMESCALE = 1;
 const RELOAD_TIMESCALE = 1.75;
 
-// The counter never reaches 100 on its own during the scripted intro — it
-// caps just under so there's always a final stretch left to finish once we
-// actually know the robot is ready (see finishAndReveal below).
-const INTRO_COUNTER_CAP = 92;
-// While waiting on the robot, the counter creeps toward this ceiling. The
-// creep tween's duration is longer than MAX_EXTRA_WAIT, so within the wait
-// window it is always still moving — it just slows down, it never stops.
+// Where the scripted intro (terminal log) leaves the counter when the robot
+// is NOT ready yet. It is deliberately not too close to 100, so there is
+// plenty of room left to keep the number moving while we wait on the robot.
+const INTRO_COUNTER_CAP = 80;
+// While waiting on the robot, the counter creeps toward this ceiling.
 const CREEP_CEILING = 99;
-const CREEP_DURATION = 7;
 // Hard safety net: never hold the curtain closed more than this many extra
 // seconds waiting on the robot, even if something upstream went wrong.
 const MAX_EXTRA_WAIT_MS = 6000;
-const FINISH_DURATION = 0.3;
+const MAX_EXTRA_WAIT_S = MAX_EXTRA_WAIT_MS / 1000;
+// Creep pace (percent per second) at the start / end of the wait window. The
+// pace eases linearly from START to END and is solved so the creep uses up
+// exactly the room between INTRO_COUNTER_CAP and CREEP_CEILING over the whole
+// wait window — i.e. it is still visibly ticking right up to the timeout.
+const CREEP_END_SPEED = 1.5;
+const CREEP_START_SPEED =
+  (2 * (CREEP_CEILING - INTRO_COUNTER_CAP)) / MAX_EXTRA_WAIT_S - CREEP_END_SPEED;
+// How "soft" the counter's follower is (seconds). Lower = snappier.
+const COUNTER_SMOOTH_TIME = 0.22;
+// Clamp for a single frame's delta so a long main-thread stall (Spline
+// compiling shaders) can never make the counter leap.
+const MAX_FRAME_DT = 0.05;
+// Counter is considered "arrived" this close to 100 (it already reads 100
+// from 99.5 up), at which point it snaps to exactly 100 and the finale plays.
+const ARRIVE_EPSILON = 0.3;
+
+/** How far the creep has advanced after `waited` seconds of waiting. */
+function creepAdvance(waited: number): number {
+  const x = Math.min(Math.max(waited, 0), MAX_EXTRA_WAIT_S);
+  return (
+    CREEP_START_SPEED * x -
+    ((CREEP_START_SPEED - CREEP_END_SPEED) * x * x) / (2 * MAX_EXTRA_WAIT_S)
+  );
+}
 
 export default function Preloader() {
   const [finished, setFinished] = useState(false);
@@ -105,6 +132,7 @@ export default function Preloader() {
 
     const counterEl = q(".boot-num")[0] as HTMLElement | undefined;
     const barEl = q(".boot-bar-fill")[0] as HTMLElement | undefined;
+    // `progress.v` is the value actually shown on screen (0→100).
     const progress = { v: 0 };
     const writeProgress = () => {
       if (counterEl) counterEl.textContent = String(Math.round(progress.v));
@@ -112,20 +140,107 @@ export default function Preloader() {
     };
 
     let cancelled = false;
-    let creepTween: gsap.core.Tween | null = null;
-    let offRobotReady: (() => void) | null = null;
-    let maxWaitTimer: ReturnType<typeof setTimeout> | null = null;
 
-    const clearWait = () => {
-      creepTween?.kill();
-      creepTween = null;
-      offRobotReady?.();
-      offRobotReady = null;
-      if (maxWaitTimer) {
-        clearTimeout(maxWaitTimer);
-        maxWaitTimer = null;
+    /* ------------------------------------------------------------------ */
+    /* Counter driver                                                      */
+    /*                                                                     */
+    /* One continuous value, advanced every frame on the GSAP ticker. It   */
+    /* chases a *target* with a critically-damped follower, so the shown   */
+    /* number always changes speed smoothly — never a stall, never a jump. */
+    /*                                                                     */
+    /* Target:                                                             */
+    /*  - intro (terminal log still typing): follows the scripted curve    */
+    /*    `introTarget` — up to INTRO_COUNTER_CAP, or all the way to 100   */
+    /*    if the robot is already loaded.                                  */
+    /*  - intro done, robot NOT ready: slow steady creep (never freezes).  */
+    /*  - intro done, robot ready (or safety timeout): 100.                */
+    /* ------------------------------------------------------------------ */
+    const introTarget = { v: 0 }; // scripted 0→INTRO_COUNTER_CAP, tweened by the timeline
+    let introDone = false;
+    let waitStartedAt = 0;
+    let robotGo = false; // robot is ready (or we gave up waiting on it)
+    let velocity = 0;
+    let counterTick: (() => void) | null = null;
+    let offRobotReady: (() => void) | null = null;
+
+    const stopCounter = () => {
+      if (counterTick) {
+        gsap.ticker.remove(counterTick);
+        counterTick = null;
       }
     };
+
+    const markIntroDone = () => {
+      if (cancelled) return;
+      introDone = true;
+      waitStartedAt = performance.now();
+    };
+
+    const startCounter = (smoothTime: number, onArrive: () => void) => {
+      let lastNow = performance.now();
+
+      const tick = () => {
+        const now = performance.now();
+        const dt = Math.min((now - lastNow) / 1000, MAX_FRAME_DT);
+        lastNow = now;
+        if (dt <= 0) return;
+
+        // ---- where should the counter be heading right now? ----
+        let target: number;
+        if (!introDone) {
+          const p = introTarget.v / INTRO_COUNTER_CAP; // 0→1 scripted progress
+          target = p * (robotGo ? 100 : INTRO_COUNTER_CAP);
+        } else if (robotGo) {
+          target = 100;
+        } else {
+          const waited = (now - waitStartedAt) / 1000;
+          target = INTRO_COUNTER_CAP + creepAdvance(waited);
+          // Safety net: never wait on the robot forever.
+          if (waited >= MAX_EXTRA_WAIT_S) robotGo = true;
+        }
+
+        // ---- critically-damped follower (stable for any dt) ----
+        const current = progress.v;
+        const omega = 2 / smoothTime;
+        const x = omega * dt;
+        const decay = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x);
+        const change = current - target;
+        const temp = (velocity + omega * change) * dt;
+        velocity = (velocity - omega * temp) * decay;
+        let next = target + (change + temp) * decay;
+
+        // Never overshoot the target, never run backwards, never pass 100.
+        if (target - current > 0 === next > target) {
+          next = target;
+          velocity = 0;
+        }
+        if (next < current) {
+          next = current;
+          velocity = Math.max(velocity, 0);
+        }
+        progress.v = Math.min(next, 100);
+
+        // ---- arrived at 100? hand over to the finale ----
+        if (introDone && robotGo && 100 - progress.v <= ARRIVE_EPSILON) {
+          progress.v = 100;
+          writeProgress();
+          stopCounter();
+          onArrive();
+          return;
+        }
+
+        writeProgress();
+      };
+
+      counterTick = tick;
+      gsap.ticker.add(tick);
+    };
+
+    // Flip `robotGo` the moment the robot is ready (immediately, if it
+    // already is). The counter driver above reacts on its next frame.
+    offRobotReady = onRobotReady(() => {
+      robotGo = true;
+    });
 
     const complete = () => {
       release();
@@ -139,43 +254,24 @@ export default function Preloader() {
     if (reduced) {
       const finishReduced = () => {
         if (cancelled) return;
-        clearWait();
         const tl = gsap.timeline({ onComplete: complete });
-        tl.to(progress, { v: 100, duration: 0.2, ease: "power1.out", onUpdate: writeProgress }).to(
-          root,
-          { autoAlpha: 0, duration: 0.3, ease: "power1.out" },
-          "+=0.1"
-        );
+        tl.to(root, { autoAlpha: 0, duration: 0.3, ease: "power1.out" }, 0.1);
       };
 
-      const awaitRobotReduced = () => {
-        if (cancelled) return;
-        if (isRobotReady()) {
-          finishReduced();
-          return;
-        }
-        creepTween = gsap.to(progress, {
-          v: CREEP_CEILING,
-          duration: CREEP_DURATION,
-          ease: "power1.out",
-          onUpdate: writeProgress,
-        });
-        offRobotReady = onRobotReady(finishReduced);
-        maxWaitTimer = setTimeout(finishReduced, MAX_EXTRA_WAIT_MS);
-      };
+      startCounter(COUNTER_SMOOTH_TIME, finishReduced);
 
-      const tl = gsap.timeline({ onComplete: awaitRobotReduced });
-      tl.set(q(".boot-content"), { autoAlpha: 1 }).to(progress, {
+      const tl = gsap.timeline({ onComplete: markIntroDone });
+      tl.set(q(".boot-content"), { autoAlpha: 1 }).to(introTarget, {
         v: INTRO_COUNTER_CAP,
         duration: 0.35,
         ease: "power1.out",
-        onUpdate: writeProgress,
       });
 
       return () => {
         cancelled = true;
         tl.kill();
-        clearWait();
+        stopCounter();
+        offRobotReady?.();
         release();
       };
     }
@@ -184,48 +280,42 @@ export default function Preloader() {
     /* Full cinematic boot log   */
     /* ------------------------- */
 
-    // Finishes the counter to exactly 100 and plays the "ready" beat + curtain
-    // reveal — the same finale as before, just triggered once we actually know
-    // the robot is on screen instead of at a fixed point in time.
+    // Plays the "ready" beat + curtain reveal. Called by the counter driver
+    // once the counter has smoothly arrived at exactly 100 — which only
+    // happens after the robot is confirmed on screen.
     const finishAndReveal = () => {
       if (cancelled) return;
-      clearWait();
 
       const tl = gsap.timeline({ defaults: { ease: "power2.out" }, onComplete: complete });
       tl.timeScale(timeScale);
-
-      // Final stretch of the counter, picking up from wherever it currently
-      // sits (92 if the robot was already ready, or wherever the creep got
-      // to otherwise) up to exactly 100.
-      tl.to(progress, { v: 100, duration: FINISH_DURATION, ease: "power1.out", onUpdate: writeProgress }, 0);
 
       // Server "goes live", tagline for the finale.
       tl.to(
         q(".boot-status")[0],
         { text: { value: "ready — entering site" }, duration: 0.45, ease: "none" },
-        FINISH_DURATION
+        0
       );
       tl.fromTo(
         q(".boot-ok-live")[0],
         { autoAlpha: 0, scale: 0.6 },
         { autoAlpha: 1, scale: 1, duration: 0.25, ease: "back.out(2.5)" },
-        FINISH_DURATION + 0.5
+        0.5
       );
 
       // Content lifts away, then the shutter opens.
       tl.to(
         [q(".boot-content"), q(".boot-counter"), q(".boot-brand"), q(".boot-bar")],
         { y: -32, autoAlpha: 0, duration: 0.45, ease: "power3.in", stagger: 0.04 },
-        FINISH_DURATION + 0.85
+        0.85
       );
 
       // Arm the lime scanner edges the moment the curtain starts moving.
-      tl.set(q(".boot-edge"), { opacity: 1 }, FINISH_DURATION + 1.05);
+      tl.set(q(".boot-edge"), { opacity: 1 }, 1.05);
 
       // Make root container and solid backdrop transparent right as the
       // shutter curtains lift.
-      tl.to(root, { backgroundColor: "transparent", duration: 0.05 }, FINISH_DURATION + 1.1);
-      tl.to(q(".boot-backdrop"), { autoAlpha: 0, duration: 0.05 }, FINISH_DURATION + 1.1);
+      tl.to(root, { backgroundColor: "transparent", duration: 0.05 }, 1.1);
+      tl.to(q(".boot-backdrop"), { autoAlpha: 0, duration: 0.05 }, 1.1);
 
       // Columns shrink toward the top edge (curtains rising), center-out.
       tl.to(
@@ -237,33 +327,15 @@ export default function Preloader() {
           ease: "expo.inOut",
           stagger: { each: 0.055, from: "center" },
         },
-        FINISH_DURATION + 1.1
+        1.1
       );
     };
 
-    // Once the scripted intro reaches its checkpoint, either sprint straight
-    // to 100 (robot already loaded) or keep the counter creeping smoothly
-    // forward while we wait — it never stops moving, it just slows down.
-    const awaitRobotThenFinish = () => {
-      if (cancelled) return;
-      if (isRobotReady()) {
-        finishAndReveal();
-        return;
-      }
-      creepTween = gsap.to(progress, {
-        v: CREEP_CEILING,
-        duration: CREEP_DURATION,
-        ease: "power1.out",
-        onUpdate: writeProgress,
-      });
-      creepTween.timeScale(timeScale);
-      offRobotReady = onRobotReady(finishAndReveal);
-      maxWaitTimer = setTimeout(finishAndReveal, MAX_EXTRA_WAIT_MS);
-    };
+    startCounter(COUNTER_SMOOTH_TIME / timeScale, finishAndReveal);
 
     const tl = gsap.timeline({
       defaults: { ease: "power2.out" },
-      onComplete: awaitRobotThenFinish,
+      onComplete: markIntroDone,
     });
     tl.timeScale(timeScale);
 
@@ -300,12 +372,12 @@ export default function Preloader() {
       );
     });
 
-    // Phase 3 — giant counter synced to the scripted part of the boot
-    // (0→92%). The last stretch to 100 happens in finishAndReveal, once the
-    // robot is confirmed ready.
+    // Phase 3 — the scripted curve the visible counter follows during the
+    // intro. This only drives `introTarget`; the number on screen is the
+    // smoothed follower in the counter driver above.
     tl.to(
-      progress,
-      { v: INTRO_COUNTER_CAP, duration: 1.3, ease: "power2.inOut", onUpdate: writeProgress },
+      introTarget,
+      { v: INTRO_COUNTER_CAP, duration: 1.3, ease: "power2.inOut" },
       0.25
     );
 
@@ -313,7 +385,8 @@ export default function Preloader() {
       cancelled = true;
       clearTimeout(stopTick);
       tl.kill();
-      clearWait();
+      stopCounter();
+      offRobotReady?.();
       release();
     };
   }, []);
