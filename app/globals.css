@@ -28,6 +28,15 @@ body {
   animation: spinSlow 30s linear infinite;
 }
 
+/* Save battery/CPU when the tab is hidden: browsers throttle rAF, but CSS
+   animations keep compositing. The SmoothScrollProvider toggles a class on
+   <html> on visibilitychange; this freezes every CSS animation for free. */
+html.tab-hidden *,
+html.tab-hidden *::before,
+html.tab-hidden *::after {
+  animation-play-state: paused !important;
+}
+
 /* ------------------------------------------------------------------ */
 /* Preloader (components/Preloader.tsx)                                */
 /* ------------------------------------------------------------------ */

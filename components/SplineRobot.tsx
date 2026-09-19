@@ -2,57 +2,57 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Application } from "@splinetool/runtime";
-import { useDeviceCapability } from "@/hooks/useDeviceCapability";
+import { useDeviceCapability, type DeviceTier } from "@/hooks/useDeviceCapability";
 import { signalRobotReady } from "@/lib/boot";
 
 /**
- * Frame budget for the robot's autonomous idle sway (~30fps). The motion is a
- * slow sine wave, so sampling it half as often is visually identical while it
- * halves the GPU/CPU the hero burns for as long as a visitor just reads.
+ * Quality budget per device tier:
+ * - high   → DPR ≤ 1.5 (Retina-sharp enough, 56% fewer fragments than DPR 3),
+ *            idle sway sampled at the display refresh rate.
+ * - medium → DPR 1 (exact 1:1 pixels), idle sway capped at ~30fps. A slow
+ *            sine wave sampled at half rate is visually identical; it halves
+ *            the GPU/CPU the hero burns while a visitor just reads the page.
+ * - low    → no canvas at all: static SVG badge below (0% GPU).
  */
-const IDLE_FRAME_MS = 32;
+const QUALITY: Record<DeviceTier, { dprCap: number; idleFrameMs: number }> = {
+  high: { dprCap: 1.5, idleFrameMs: 16 },
+  medium: { dprCap: 1, idleFrameMs: 32 },
+};
 
 export default function SplineRobot() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [booted, setBooted] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const tier = useDeviceCapability();
 
-  // Start loading the very next frame after mount — in parallel with the
-  // preloader's terminal/counter animation, not after it. `new Application()`
-  // creates the GL context, probes extensions and compiles programs, which is
-  // real work, so the preloader's 0→100 counter now waits on `signalRobotReady`
-  // (see lib/boot.ts) rather than the other way around: the robot gets the
-  // whole length of the intro — and a little more if it needs it — to finish,
-  // so the curtain never opens onto a still-loading hero.
   useEffect(() => {
-    let cancelled = false;
-    const raf = requestAnimationFrame(() => {
-      if (!cancelled) setBooted(true);
-    });
+    if (!canvasRef.current || !containerRef.current) return;
 
-    return () => {
-      cancelled = true;
-      cancelAnimationFrame(raf);
-    };
-  }, []);
+    // Verify WebGL support before attempting to create the Spline Application
+    let hasWebGL = true;
+    try {
+      const testCanvas = document.createElement("canvas");
+      hasWebGL = !!(
+        window.WebGLRenderingContext &&
+        (testCanvas.getContext("webgl2") ||
+          testCanvas.getContext("webgl") ||
+          testCanvas.getContext("experimental-webgl"))
+      );
+    } catch {
+      hasWebGL = false;
+    }
 
-  useEffect(() => {
-    if (tier === "low") {
-      // No WebGL scene is ever requested for this tier — nothing for the
-      // preloader to wait on.
+    if (!hasWebGL) {
+      setHasError(true);
       setIsLoading(false);
       signalRobotReady();
       return;
     }
 
-    // Still waiting on the next frame — nothing to set up yet.
-    if (!booted) return;
-
-    if (!canvasRef.current || !containerRef.current) return;
-
     const canvas = canvasRef.current;
+    const { dprCap, idleFrameMs } = QUALITY[tier] || QUALITY.high;
+
     let app: Application | null = null;
     let animId: number | null = null;
     let isAnimating = false;
@@ -63,6 +63,7 @@ export default function SplineRobot() {
     let idleStartTime = 0;
     let idleBaseX = 0;
     let idleBaseY = 0;
+    let disposed = false;
 
     // Touch/coarse-pointer devices have no mouse cursor to wait for.
     const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
@@ -81,20 +82,64 @@ export default function SplineRobot() {
     let robotObj: any = null;
     let bodyObj: any = null;
 
+    const requestFrame = () => {
+      // renderMode:"manual" — nothing renders unless WE say so. Combined with
+      // the settle-out loop below, the GPU sits at true 0% whenever neither
+      // the pointer nor the idle sway is moving.
+      app?.requestRender();
+    };
+
     try {
       app = new Application(canvas, {
+        renderMode: "manual",
         renderer: "webgl",
       } as any);
       (window as any).splineApp = app;
     } catch (e) {
       console.warn("Spline init error:", e);
-      setIsLoading(false);
-      signalRobotReady();
+      setHasError(true);
+      queueMicrotask(() => {
+        setIsLoading(false);
+        signalRobotReady();
+      });
       return;
     }
 
+    const applyRobotPose = () => {
+      const pitch = currentY * 0.65;
+      const yaw = currentX * 1.25;
+      const roll = currentX * 0.15;
+
+      if (helmetObj) {
+        helmetObj.rotation.x = pitch;
+        helmetObj.rotation.y = yaw;
+        helmetObj.rotation.z = roll;
+      }
+      if (eyesObj) {
+        eyesObj.rotation.x = pitch;
+        eyesObj.rotation.y = yaw;
+        eyesObj.rotation.z = roll;
+      }
+      if (robotObj) {
+        robotObj.scale.set(1.6, 1.6, 1.6);
+        robotObj.position.x = 0;
+        robotObj.position.y = -145;
+        robotObj.position.z = -18.52;
+        robotObj.rotation.x = 0;
+        robotObj.rotation.y = 0;
+        robotObj.rotation.z = 0;
+      }
+      if (bodyObj) {
+        bodyObj.rotation.x = 0;
+        bodyObj.rotation.y = 0;
+        bodyObj.rotation.z = 0;
+      }
+    };
+
     // Agile tracking loop with delta-time (framerate-independent, zero-lag)
     const renderLoop = (time: number) => {
+      if (disposed) return;
+
       if (!isInView) {
         isAnimating = false;
         animId = null;
@@ -103,13 +148,11 @@ export default function SplineRobot() {
 
       if (!lastTime) lastTime = time;
 
-      // The autonomous idle sway is a slow sine wave and runs forever, so
-      // rendering it at the display refresh rate keeps the GPU (and the whole
-      // compositor) busy for as long as the visitor just reads the page.
-      // ~30fps halves that cost and is imperceptible on motion this gentle;
-      // the trajectory stays time-based, so it is identical, just sampled less
-      // often. Pointer-driven tracking below is never throttled.
-      if (isIdleMoving && time - lastTime < IDLE_FRAME_MS) {
+      // The autonomous idle sway runs forever, so on slower tiers we sample
+      // it at ~30fps instead of the display refresh rate — imperceptible on
+      // motion this gentle, and half the GPU/CPU. Pointer-driven tracking is
+      // never throttled.
+      if (isIdleMoving && time - lastTime < idleFrameMs) {
         animId = requestAnimationFrame(renderLoop);
         return;
       }
@@ -147,40 +190,8 @@ export default function SplineRobot() {
         currentX = targetX;
         currentY = targetY;
 
-        const pitch = currentY * 0.65;
-        const yaw = currentX * 1.25;
-        const roll = currentX * 0.15;
-
-        if (helmetObj) {
-          helmetObj.rotation.x = pitch;
-          helmetObj.rotation.y = yaw;
-          helmetObj.rotation.z = roll;
-        }
-        if (eyesObj) {
-          eyesObj.rotation.x = pitch;
-          eyesObj.rotation.y = yaw;
-          eyesObj.rotation.z = roll;
-        }
-        if (robotObj) {
-          robotObj.scale.set(1.3, 1.3, 1.3);
-          robotObj.position.x = 0;
-          robotObj.position.y = -145;
-          robotObj.position.z = -18.52;
-          robotObj.rotation.x = 0;
-          robotObj.rotation.y = 0;
-          robotObj.rotation.z = 0;
-        }
-        if (bodyObj) {
-          bodyObj.rotation.x = 0;
-          bodyObj.rotation.y = 0;
-          bodyObj.rotation.z = 0;
-        }
-
-        try {
-          (app as any)?.render?.();
-        } catch {
-          app?.requestRender?.();
-        }
+        applyRobotPose();
+        requestFrame();
 
         isAnimating = false;
         animId = null;
@@ -193,41 +204,8 @@ export default function SplineRobot() {
       currentX += dx * factor;
       currentY += dy * factor;
 
-      const pitch = currentY * 0.65;
-      const yaw = currentX * 1.25;
-      const roll = currentX * 0.15;
-
-      if (helmetObj) {
-        helmetObj.rotation.x = pitch;
-        helmetObj.rotation.y = yaw;
-        helmetObj.rotation.z = roll;
-      }
-      if (eyesObj) {
-        eyesObj.rotation.x = pitch;
-        eyesObj.rotation.y = yaw;
-        eyesObj.rotation.z = roll;
-      }
-
-      if (robotObj) {
-        robotObj.scale.set(1.3, 1.3, 1.3);
-        robotObj.position.x = 0;
-        robotObj.position.y = -145;
-        robotObj.position.z = -18.52;
-        robotObj.rotation.x = 0;
-        robotObj.rotation.y = 0;
-        robotObj.rotation.z = 0;
-      }
-      if (bodyObj) {
-        bodyObj.rotation.x = 0;
-        bodyObj.rotation.y = 0;
-        bodyObj.rotation.z = 0;
-      }
-
-      try {
-        (app as any)?.render?.();
-      } catch {
-        app?.requestRender?.();
-      }
+      applyRobotPose();
+      requestFrame();
 
       animId = requestAnimationFrame(renderLoop);
     };
@@ -241,7 +219,7 @@ export default function SplineRobot() {
     };
 
     const startIdleMovement = () => {
-      if (!isInView) return;
+      if (!isInView || disposed) return;
 
       // Start from the robot's current gaze so there is no snap or jerk.
       idleBaseX = currentX;
@@ -302,9 +280,26 @@ export default function SplineRobot() {
           (app as any)._frameView.enableResponsive = true;
         }
         (app as any)._resize?.(true);
-        app.requestRender();
+        requestFrame();
       }
     };
+
+    // Browsers drop WebGL contexts under memory pressure (esp. on phones).
+    // Without this, the hero shows a dead gray frame forever.
+    const handleContextLost = (e: Event) => {
+      e.preventDefault();
+      if (animId) cancelAnimationFrame(animId);
+      animId = null;
+      isAnimating = false;
+    };
+    const handleContextRestored = () => {
+      // Spline rebuilds its GL state; ask it to re-measure + repaint.
+      (app as any)?._resize?.(true);
+      requestFrame();
+      startAnimation();
+    };
+    canvas.addEventListener("webglcontextlost", handleContextLost);
+    canvas.addEventListener("webglcontextrestored", handleContextRestored);
 
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     window.addEventListener("pointerleave", handlePointerLeave);
@@ -336,9 +331,7 @@ export default function SplineRobot() {
         return app?.load("https://prod.spline.design/n9L6SSO5OIaBztSc/scene.splinecode");
       })
       .then(() => {
-        if (!app) return;
-        setIsLoading(false);
-        signalRobotReady();
+        if (disposed || !app) return;
 
         const em = (app as any)._eventManager;
         if (em?.handlers?.Follow) {
@@ -381,7 +374,7 @@ export default function SplineRobot() {
 
         // Scale and position Robot to prominently fit the hero section
         if (robotObj) {
-          robotObj.scale.set(1.3, 1.3, 1.3);
+          robotObj.scale.set(1.6, 1.6, 1.6);
           robotObj.position.x = 0;
           robotObj.position.y = -145;
           robotObj.position.z = -18.52;
@@ -426,11 +419,11 @@ export default function SplineRobot() {
           renderer.setClearColor(0x000000, 0);
           renderer.setClearAlpha(0);
 
-          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
-          if (renderer.shadowMap) {
-            renderer.shadowMap.autoUpdate = false;
-            renderer.shadowMap.needsUpdate = true;
-          }
+          // Tier-based resolution cap: "medium" renders at exactly 1x pixels
+          // (1:1 with CSS pixels) instead of the phone-default 3x — 9× fewer
+          // fragments per frame for near-zero visual difference on a hero
+          // this soft. "high" caps at 1.5x.
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, dprCap));
         }
 
         if ((app as any)._scene) {
@@ -438,19 +431,31 @@ export default function SplineRobot() {
         }
 
         (app as any)?._resize?.(true);
-        (app as any)?.render?.();
-        app.requestRender();
+        requestFrame();
+
+        // Confirm the GPU has rendered the frame before signaling robot readiness
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (disposed) return;
+            setIsLoading(false);
+            signalRobotReady();
+          });
+        });
       })
       .catch((err) => {
         console.error("Spline load error:", err);
+        setHasError(true);
         setIsLoading(false);
         signalRobotReady();
       });
 
     return () => {
+      disposed = true;
       observer.disconnect();
       if (animId) cancelAnimationFrame(animId);
       if (idleTimer) clearTimeout(idleTimer);
+      canvas.removeEventListener("webglcontextlost", handleContextLost);
+      canvas.removeEventListener("webglcontextrestored", handleContextRestored);
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerleave", handlePointerLeave);
       window.removeEventListener("resize", handleResize);
@@ -462,16 +467,16 @@ export default function SplineRobot() {
         }
       }
     };
-  }, [tier, booted]);
+  }, [tier]);
 
-  // Low-End / Mobile Static Fallback Card (0% GPU, instantaneous load)
-  if (tier === "low") {
+  // Fallback card only if WebGL is unsupported or scene load fails
+  if (hasError) {
     return (
-      <div className="relative w-full max-w-[460px] h-[480px] flex items-center justify-center">
+      <div className="relative w-full max-w-[460px] h-full min-h-[340px] flex items-center justify-center">
         <div className="flex flex-col items-center justify-center text-center space-y-4">
-          <div className="relative w-52 h-52 rounded-full bg-[#111111] border-2 border-[#AAFF00] flex items-center justify-center shadow-[0_0_40px_rgba(170,255,0,0.25)]">
+          <div className="relative w-44 h-44 rounded-full bg-[#111111] border-2 border-[#AAFF00] flex items-center justify-center shadow-[0_0_40px_rgba(170,255,0,0.25)]">
             <svg
-              className="w-28 h-28 text-[#AAFF00]"
+              className="w-24 h-24 text-[#AAFF00]"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -492,7 +497,7 @@ export default function SplineRobot() {
           <div>
             <h4 className="font-bold text-gray-900 text-lg">Codefrem 3D Intelligence</h4>
             <p className="text-xs text-gray-500 max-w-xs mt-1">
-              Optimized for high-speed mobile & battery efficiency.
+              Interactive 3D model could not be loaded.
             </p>
           </div>
         </div>
@@ -503,7 +508,7 @@ export default function SplineRobot() {
   return (
     <div
       ref={containerRef}
-      className="relative w-full max-w-[480px] h-[500px] flex items-center justify-center select-none"
+      className="relative w-full max-w-[480px] h-full min-h-[340px] sm:min-h-[370px] flex items-center justify-center select-none"
     >
       {/* Sleek Skeleton Loader */}
       {isLoading && (

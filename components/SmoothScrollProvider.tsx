@@ -1,36 +1,38 @@
 "use client";
 
 import { useEffect, type ReactNode } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import { setLenisInstance } from "@/lib/lenis";
-
-gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Global Lenis smooth-scroll provider.
  *
- * Drives Lenis from GSAP's ticker (instead of its own rAF) so the smooth
- * scroll and every ScrollTrigger — including the pinned horizontal
- * ProjectsSection — advance on the exact same frame. `lenis.css` is imported
- * globally from app/layout.tsx.
+ * Lenis is driven by a plain rAF loop from the very first frame. On desktop,
+ * once GSAP has been lazily loaded, the rAF loop hands over to GSAP's ticker
+ * so the smooth scroll and every ScrollTrigger — including the pinned
+ * horizontal ProjectsSection — advance on the exact same frame. GSAP itself
+ * is never downloaded on phones/tablets (below `lg` the Projects section is
+ * a plain vertical stack with no ScrollTriggers to sync).
+ *
+ * `lenis.css` is imported globally from app/layout.tsx.
  */
 export default function SmoothScrollProvider({
   children,
 }: {
   children: ReactNode;
-}) {  useEffect(() => {
+}) {
+  useEffect(() => {
     // Lenis's own `respectReducedMotion` (default: true) already forces
     // instant, native scrolling when the user opts out of motion — no extra
     // branch needed here.
 
     const lenis = new Lenis({
-      // Frame-synced with ScrollTrigger via gsap.ticker below, so Lenis must
-      // not run its own requestAnimationFrame loop.
+      // We drive Lenis ourselves (rAF loop below, GSAP ticker on desktop).
       autoRaf: false,
-      // Lower = smoother/floatier inertia. 0.09 is a gentle, "buttery" glide.
-      lerp: 0.09,
+      // Lower = smoother/floatier inertia. Coarse pointers (phones) get a
+      // higher lerp: touch already has native momentum, so a floatier curve
+      // both feels right and does fewer position updates per gesture.
+      lerp: window.matchMedia("(pointer: coarse)").matches ? 0.14 : 0.09,
       // Translate vertical wheel/touch gestures to the vertical scroll only.
       gestureOrientation: "vertical",
       // Smooth, animated anchor-link navigation (#projects, #contact, ...).
@@ -40,19 +42,51 @@ export default function SmoothScrollProvider({
       },
     });
 
-    // Route Lenis through GSAP's ticker and wake ScrollTrigger on every tick
-    // so pinned sections and scrubs never lag one frame behind the scroll.
-    // lagSmoothing(0) is the documented Lenis+GSAP pattern: without it, a
-    // single slow frame (tab switch, GC pause) makes GSAP "catch up" with a
-    // large delta that visibly jumps the pinned track.
-    gsap.ticker.lagSmoothing(0);
-    const raf = (time: number) => {
-      lenis.raf(time * 1000);
-    };
-    gsap.ticker.add(raf);
+    // 1. Own rAF loop: smooth scrolling works from frame one on every device,
+    //    with zero library dependency.
+    let gsapDriving = false;
+    let rafId = requestAnimationFrame(function loop(time) {
+      if (gsapDriving) return;
+      lenis.raf(time);
+      rafId = requestAnimationFrame(loop);
+    });
+
+    let st: typeof import("gsap/ScrollTrigger").ScrollTrigger | null = null;
+    let cancelled = false;
+
+    (async () => {
+      // Desktop-only dependency: pinned ScrollTrigger sections need their
+      // scroll source frame-locked to GSAP's ticker. On mobile nothing
+      // consumes ScrollTrigger, so this chunk is never requested.
+      try {
+        const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
+          import("gsap"),
+          import("gsap/ScrollTrigger"),
+        ]);
+        if (cancelled) return;
+        st = ScrollTrigger;
+        gsap.registerPlugin(ScrollTrigger);
+
+        // lagSmoothing(0) is the documented Lenis+GSAP pattern: without it, a
+        // single slow frame (tab switch, GC pause) makes GSAP "catch up" with
+        // a large delta that visibly jumps the pinned track.
+        gsap.ticker.lagSmoothing(0);
+
+        // Hand scroll driving over to GSAP's ticker (frame-locked with every
+        // ScrollTrigger) and retire the plain rAF loop.
+        gsapDriving = true;
+        cancelAnimationFrame(rafId);
+        gsap.ticker.add((time: number) => {
+          lenis.raf(time * 1000);
+        });
+      } catch {
+        // GSAP failed to load (offline, chunk error): the plain rAF loop
+        // above keeps smooth scrolling working.
+      }
+    })();
 
     const update = () => {
-      ScrollTrigger.update();
+      st?.update();
     };
     lenis.on("scroll", update);
 
@@ -62,7 +96,13 @@ export default function SmoothScrollProvider({
     // minimum: `load`, then the moment fonts/late layout are definitively
     // done, plus one safety net. The preloader also refreshes once when it
     // hands the page over.
-    const refresh = () => ScrollTrigger.refresh();
+    const refresh = () => {
+      try {
+        st?.refresh();
+      } catch {
+        /* noop */
+      }
+    };
     window.addEventListener("load", refresh);
 
     let fontTimer: ReturnType<typeof setTimeout> | null = null;
@@ -76,6 +116,14 @@ export default function SmoothScrollProvider({
 
     const refreshT = setTimeout(refresh, 1200);
 
+    // Freeze every CSS animation while the tab is hidden (see globals.css).
+    // Browsers throttle rAF when hidden, but CSS animations keep compositing;
+    // this pauses the decorative spins for free.
+    const handleVisibility = () => {
+      document.documentElement.classList.toggle("tab-hidden", document.hidden);
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+
     setLenisInstance(lenis);
 
     // Debug handle (also handy for `window.__lenis.scrollTo(0)` in DevTools).
@@ -84,12 +132,15 @@ export default function SmoothScrollProvider({
     }
 
     return () => {
+      cancelled = true;
+      gsapDriving = true; // stops the rAF loop at its next frame
+      cancelAnimationFrame(rafId);
       setLenisInstance(null);
       window.removeEventListener("load", refresh);
       if (fontTimer) clearTimeout(fontTimer);
       clearTimeout(refreshT);
       lenis.off("scroll", update);
-      gsap.ticker.remove(raf);
+      document.removeEventListener("visibilitychange", handleVisibility);
       lenis.destroy();
     };
   }, []);

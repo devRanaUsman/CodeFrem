@@ -136,7 +136,7 @@ export default function HeroSection() {
 
         {/* 3. Bottom CTAs Capsule (Fixed in place at bottom of Hero) */}
         <div className="relative z-20 flex justify-center pb-1">
-          <div className="inline-flex items-center gap-1.5 p-1 rounded-full bg-[#111111]/85 backdrop-blur-xl border border-white/20 shadow-2xl">
+          <div className="inline-flex items-center gap-1.5 p-1 rounded-full bg-[#111111]/95 lg:bg-[#111111]/85 lg:backdrop-blur-xl border border-white/20 shadow-2xl">
             <a
               href="#contact"
               className="px-6 sm:px-7 py-2.5 rounded-full bg-[#AAFF00] hover:bg-[#88CC00] text-black font-bold text-xs sm:text-sm transition-all shadow-[0_0_20px_rgba(170,255,0,0.3)] hover:scale-105"

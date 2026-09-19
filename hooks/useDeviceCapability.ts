@@ -2,47 +2,42 @@
 
 import { useEffect, useState } from "react";
 
-export type DeviceTier = "high" | "low";
+export type DeviceTier = "high" | "medium";
 
+/**
+ * Device capability tier for the Spline 3D robot:
+ * - "high"   → full experience (DPR ≤ 1.5, display refresh rate idle tracking)
+ * - "medium" → optimized (DPR 1, ~30fps idle sway for touch/mobile screens)
+ */
 export function useDeviceCapability(): DeviceTier {
   const [tier, setTier] = useState<DeviceTier>("high");
 
   useEffect(() => {
-    // 1. Reduced motion check
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) {
-      setTier("low");
+    // Debug override: /?perf=medium|high
+    const override = new URLSearchParams(window.location.search).get("perf");
+    if (override === "medium" || override === "high") {
+      setTier(override as DeviceTier);
       return;
     }
 
-    // Mobile devices can still use the 3D robot. Keep the same hardware,
-    // memory, and network safeguards below for genuinely limited devices.
+    const isTouch =
+      typeof window !== "undefined" &&
+      (window.matchMedia("(pointer: coarse)").matches ||
+        navigator.maxTouchPoints > 0);
+    const smallScreen =
+      typeof window !== "undefined" &&
+      Math.min(window.innerWidth, window.innerHeight) <= 820;
 
-    // 2. Hardware concurrency (CPU cores)
-    if (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4) {
-      setTier("low");
+    // Phones & small mobile touch screens: render the robot with a conservative DPR 1 budget
+    if (isTouch && smallScreen) {
+      setTier("medium");
       return;
     }
 
-    // 3. Device Memory (if available)
-    const nav = navigator as any;
-    if (nav.deviceMemory && nav.deviceMemory < 4) {
-      setTier("low");
-      return;
-    }
-
-    // 4. Network condition
-    if (
-      nav.connection &&
-      (nav.connection.effectiveType === "2g" ||
-        nav.connection.effectiveType === "slow-2g")
-    ) {
-      setTier("low");
-      return;
-    }
-
+    // Default to high tier for desktop and larger screens
     setTier("high");
   }, []);
 
   return tier;
 }
+

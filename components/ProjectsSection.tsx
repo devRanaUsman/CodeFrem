@@ -1,11 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowUpRight } from "lucide-react";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const projects = [
   {
@@ -102,77 +98,99 @@ export default function ProjectsSection() {
       };
     }
 
-    const ctx = gsap.context(() => {
-      const cards = gsap.utils.toArray<HTMLElement>(".project-card");
-      const distance = () => Math.max(track.scrollWidth - window.innerWidth, 0);
+    // Mobile/tablet guard: below `lg` (1024px) the cards render as a plain
+    // vertical stack (pure CSS below) and ZERO JS runs here — no GSAP, no
+    // ScrollTrigger, nothing fighting Lenis. That is what makes mobile scroll
+    // smooth. Moving between stack ⇄ horizontal needs a reload by design:
+    // tearing down a pinned ScrollTrigger mid-session shifts every section
+    // below it and visibly jumps the page, which is worse than a reload.
+    const isDesktopViewport = window.matchMedia("(min-width: 1024px)").matches;
+    if (!isDesktopViewport) {
+      return;
+    }
 
-      // SmoothScrollProvider (root layout) guarantees Lenis is the single
-      // scroll driver, and it already animates the scrollbar value smoothly.
-      // `scrub: true` frame-locks the track to that animated value; adding
-      // a second smoothing layer (`scrub: 1`) makes scrolling feel laggy.
-      const scrubValue = true as const;
+    // Desktop only from here. GSAP is dynamically imported so phones and
+    // tablets never download it at all (smaller mobile bundles, faster 4G).
+    let ctx: { revert: () => void } | null = null;
+    let cancelled = false;
 
-      // Master timeline: pins the section and scrubs the track horizontally.
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: "top top",
-          end: () => `+=${distance()}`,
-          pin: true,
-          pinSpacing: true,
-          // Frame-locked to Lenis's animated scroll value.
-          scrub: scrubValue,
-          invalidateOnRefresh: true,
-          anticipatePin: 1,
-        },
-      });
+    (async () => {
+      const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ]);
+      if (cancelled || !section || !track) return;
+      gsap.registerPlugin(ScrollTrigger);
 
-      tl.to(track, {
-        x: () => -distance(),
-        ease: "none",
-      });
+      ctx = gsap.context(() => {
+        const cards = gsap.utils.toArray<HTMLElement>(".project-card");
+        const distance = () => Math.max(track.scrollWidth - window.innerWidth, 0);
 
-      // Parallax drift on the inner visuals so cards feel layered and alive.
-      cards.forEach((card, index) => {
-        const visual = card.querySelector(".project-visual");
-        if (!visual) return;
+        // SmoothScrollProvider (root layout) guarantees Lenis is the single
+        // scroll driver, and it already animates the scrollbar value smoothly.
+        // `scrub: true` frame-locks the track to that animated value; adding
+        // a second smoothing layer (`scrub: 1`) makes scrolling feel laggy.
+        const scrubValue = true as const;
 
-        gsap.fromTo(
-          visual,
-          { xPercent: index % 2 === 0 ? -8 : 8 },
-          {
-            xPercent: index % 2 === 0 ? 8 : -8,
-            ease: "none",
-            scrollTrigger: {
-              trigger: section,
-              start: "top top",
-              end: () => `+=${distance()}`,
-              scrub: scrubValue,
-              invalidateOnRefresh: true,
-            },
-          }
-        );
-      });
-
-      // Active index tracking drives the progress dots (project cards only).
-      gsap.utils
-        .toArray<HTMLElement>(".project-card[data-project]")
-        .forEach((card, index) => {
-          ScrollTrigger.create({
-            trigger: card,
-            containerAnimation: tl,
-            start: "left center",
-            end: "right center",
-            onToggle: (self) => {
-              if (self.isActive) setActiveIndex(index);
-            },
-          });
+        // Master timeline: pins the section and scrubs the track horizontally.
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: () => `+=${distance()}`,
+            pin: true,
+            pinSpacing: true,
+            // Frame-locked to Lenis's animated scroll value.
+            scrub: scrubValue,
+            invalidateOnRefresh: true,
+            anticipatePin: 1,
+          },
         });
 
-      // Reveal-on-enter heading animation.
-      gsap.from(
-        ".projects-header > *",
-        {
+        tl.to(track, {
+          x: () => -distance(),
+          ease: "none",
+        });
+
+        // Parallax drift on the inner visuals so cards feel layered and alive.
+        cards.forEach((card, index) => {
+          const visual = card.querySelector(".project-visual");
+          if (!visual) return;
+
+          gsap.fromTo(
+            visual,
+            { xPercent: index % 2 === 0 ? -8 : 8 },
+            {
+              xPercent: index % 2 === 0 ? 8 : -8,
+              ease: "none",
+              scrollTrigger: {
+                trigger: section,
+                start: "top top",
+                end: () => `+=${distance()}`,
+                scrub: scrubValue,
+                invalidateOnRefresh: true,
+              },
+            }
+          );
+        });
+
+        // Active index tracking drives the progress dots (project cards only).
+        gsap.utils
+          .toArray<HTMLElement>(".project-card[data-project]")
+          .forEach((card, index) => {
+            ScrollTrigger.create({
+              trigger: card,
+              containerAnimation: tl,
+              start: "left center",
+              end: "right center",
+              onToggle: (self) => {
+                if (self.isActive) setActiveIndex(index);
+              },
+            });
+          });
+
+        // Reveal-on-enter heading animation.
+        gsap.from(".projects-header > *", {
           y: 40,
           opacity: 0,
           duration: 0.8,
@@ -182,12 +200,13 @@ export default function ProjectsSection() {
             trigger: section,
             start: "top 75%",
           },
-        }
-      );
-    }, section);
+        });
+      }, section);
+    })();
 
     return () => {
-      ctx.revert();
+      cancelled = true;
+      ctx?.revert();
     };
   }, []);
 
@@ -195,10 +214,9 @@ export default function ProjectsSection() {
     <section
       id="projects"
       ref={sectionRef}
-      className="w-full h-screen overflow-hidden bg-[#0A0A0A] text-white relative z-10 flex flex-col justify-center"
+      className="w-full bg-[#0A0A0A] text-white relative z-10 flex flex-col justify-center lg:h-screen lg:overflow-hidden"
     >
-
-      <div className="w-full lg:pl-12 px-2 sm:px-6 lg:px-12">
+      <div className="w-full lg:pl-12 px-2 sm:px-6 lg:px-12 py-16 lg:py-0">
         {/* Header */}
         <div className="projects-header mb-10 lg:mb-14 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <h2 className="text-3xl sm:text-5xl font-serif tracking-tight flex items-center gap-3">
@@ -209,11 +227,14 @@ export default function ProjectsSection() {
           </h2>
         </div>
 
-        {/* Horizontal Track */}
-        <div className="overflow-visible">
-          <div ref={trackRef} className="flex gap-6 w-max will-change-transform pr-12">
+        {/* ≥lg: horizontal GSAP track. Below lg: plain vertical stack (CSS only). */}
+        <div className="lg:overflow-visible">
+          <div
+            ref={trackRef}
+            className="flex flex-col lg:flex-row gap-6 w-full lg:w-max will-change-transform lg:pr-12"
+          >
             {/* Intro panel */}
-            <div className="project-card shrink-0 w-[78vw] sm:w-[420px] flex flex-col justify-between rounded-3xl border border-[#222222] bg-[#111111] p-8 min-h-[420px] sm:min-h-[460px]">
+            <div className="project-card shrink-0 w-full lg:w-[420px] flex flex-col justify-between rounded-3xl border border-[#222222] bg-[#111111] p-8 min-h-[300px] lg:min-h-[460px]">
               <div>
                 <span className="text-xs uppercase tracking-widest text-[#AAFF00] font-bold">
                   Selected Work
@@ -241,7 +262,7 @@ export default function ProjectsSection() {
               <article
                 key={project.id}
                 data-project={project.id}
-                className={`project-card group shrink-0 w-[82vw] sm:w-[440px] rounded-3xl border border-[#222222] bg-gradient-to-b ${project.gradient} overflow-hidden flex flex-col min-h-[420px] sm:min-h-[460px]`}
+                className={`project-card group shrink-0 w-full lg:w-[440px] rounded-3xl border border-[#222222] bg-gradient-to-b ${project.gradient} overflow-hidden flex flex-col min-h-[420px] lg:min-h-[460px]`}
               >
                 {/* Visual area */}
                 <div className="project-visual relative h-[52%] min-h-[190px] overflow-hidden bg-[#0F0F0F]">
@@ -305,7 +326,7 @@ export default function ProjectsSection() {
             ))}
 
             {/* Outro panel */}
-            <div className="project-card shrink-0 w-[70vw] sm:w-[380px] flex flex-col items-start justify-center rounded-3xl bg-[#AAFF00] text-black p-8 min-h-[420px] sm:min-h-[460px] shadow-[0_0_45px_rgba(170,255,0,0.2)]">
+            <div className="project-card shrink-0 w-full lg:w-[380px] flex flex-col items-start justify-center rounded-3xl bg-[#AAFF00] text-black p-8 min-h-[420px] lg:min-h-[460px] shadow-[0_0_45px_rgba(170,255,0,0.2)]">
               <span className="text-xs font-extrabold uppercase tracking-widest text-black/60">
                 Like what you see?
               </span>
@@ -323,8 +344,8 @@ export default function ProjectsSection() {
           </div>
         </div>
 
-        {/* Progress indicator */}
-        <div className="mt-8 flex items-center gap-2.5">
+        {/* Progress indicator — desktop horizontal scrub only */}
+        <div className="mt-8 hidden lg:flex items-center gap-2.5">
           {projects.map((project, index) => (
             <div
               key={project.id}

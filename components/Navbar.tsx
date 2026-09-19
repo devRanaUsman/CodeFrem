@@ -3,10 +3,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,49 +14,66 @@ export default function Navbar() {
   // doesn't change either flag costs nothing at all.
   const visibleRef = useRef(true);
   const outsideHeroRef = useRef(false);
+  const heroBottomRef = useRef(0);
+  const lastYRef = useRef(0);
+  const tickingRef = useRef(false);
 
   useEffect(() => {
-    // Both behaviours are driven by ScrollTrigger rather than a raw `scroll`
-    // listener. The old handler ran getBoundingClientRect() on every scroll
-    // event — a forced layout read on the same thread that is scrubbing the
-    // pinned Projects section — plus a React render per frame. ScrollTrigger
-    // already measures the page (and re-measures on refresh), so it can hand
-    // us the scroll position and direction with no layout work whatsoever.
-    const ctx = gsap.context(() => {
-      // 1. Hide on scroll DOWN, show on scroll UP (or near the top).
-      ScrollTrigger.create({
-        start: 0,
-        end: "max",
-        onUpdate: (self) => {
-          const next = self.direction === -1 || self.scroll() < 100;
-          if (next !== visibleRef.current) {
-            visibleRef.current = next;
-            setIsVisible(next);
-          }
-        },
-      });
-
-      // 2. Colour switch the moment the white hero card scrolls out of view.
-      //    `end: "max"` is load-bearing: this is a "scrolled past a line" test,
-      //    not a bounded range, and ScrollTrigger treats a missing `end` as a
-      //    zero-length range that never reports itself as active.
+    // Both behaviours used to run on ScrollTrigger; they only need the scroll
+    // position and direction, which a passive listener + one rAF token gives
+    // us with zero library weight (GSAP stays out of the phone bundle) and no
+    // layout reads while scrolling — the hero's document-relative bottom is
+    // measured once up front and re-measured only on resize/font-settle.
+    const measureHero = () => {
       const hero = document.getElementById("hero-section");
       if (hero) {
-        ScrollTrigger.create({
-          trigger: hero,
-          start: "bottom 70px",
-          end: "max",
-          onToggle: (self) => {
-            if (self.isActive !== outsideHeroRef.current) {
-              outsideHeroRef.current = self.isActive;
-              setIsOutsideHero(self.isActive);
-            }
-          },
-        });
+        heroBottomRef.current = hero.offsetTop + hero.offsetHeight;
       }
-    });
+    };
 
-    return () => ctx.revert();
+    const update = () => {
+      tickingRef.current = false;
+      const y = window.scrollY;
+      const goingDown = y > lastYRef.current;
+      lastYRef.current = y;
+
+      // 1. Hide on scroll DOWN, show on scroll UP (or near the top).
+      const nextVisible = !goingDown || y < 100;
+      if (nextVisible !== visibleRef.current) {
+        visibleRef.current = nextVisible;
+        setIsVisible(nextVisible);
+      }
+
+      // 2. Colour switch the moment the white hero card scrolls out of view.
+      const nextOutside = y > heroBottomRef.current - 70;
+      if (nextOutside !== outsideHeroRef.current) {
+        outsideHeroRef.current = nextOutside;
+        setIsOutsideHero(nextOutside);
+      }
+    };
+
+    const onScroll = () => {
+      // Max one update per frame, and only while scrolling actually happens.
+      if (!tickingRef.current) {
+        tickingRef.current = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    measureHero();
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", measureHero);
+    // Late layout shifts (webfonts, preloader handoff) change the hero's
+    // height — re-measure once fonts settle, plus one safety net.
+    document.fonts?.ready.then(measureHero).catch(() => {});
+    const remeasureT = setTimeout(measureHero, 1500);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", measureHero);
+      clearTimeout(remeasureT);
+    };
   }, []);
 
   return (
@@ -72,10 +85,10 @@ export default function Navbar() {
       }`}
     >
       <nav
-        className={`max-w-2xl mx-auto rounded-full px-6 sm:px-8 py-3 flex items-center justify-between transition-all duration-300 ${
+        className={`max-w-2xl mx-auto rounded-full px-6 sm:px-8 py-3 flex items-center justify-between transition-all duration-300 lg:backdrop-blur-xl ${
           isOutsideHero
-            ? "bg-white/95 backdrop-blur-xl border border-black/10 text-black shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
-            : "bg-[#111111]/90 backdrop-blur-xl border border-white/15 text-white shadow-2xl"
+            ? "bg-white/95 lg:bg-white/85 border border-black/10 text-black shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
+            : "bg-[#111111]/95 lg:bg-[#111111]/90 border border-white/15 text-white shadow-2xl"
         }`}
       >
         {/* Left Links */}
@@ -155,10 +168,10 @@ export default function Navbar() {
       {/* Mobile Drawer */}
       {isOpen && (
         <div
-          className={`md:hidden mt-3 max-w-xs mx-auto backdrop-blur-xl rounded-2xl p-4 shadow-2xl flex flex-col space-y-3 text-center transition-all ${
+          className={`md:hidden mt-3 max-w-xs mx-auto rounded-2xl p-4 shadow-2xl flex flex-col space-y-3 text-center transition-all ${
             isOutsideHero
-              ? "bg-white/95 border border-black/10 text-black"
-              : "bg-[#111111]/95 border border-white/10 text-white"
+              ? "bg-white/98 border border-black/10 text-black"
+              : "bg-[#111111]/98 border border-white/10 text-white"
           }`}
         >
           <Link
