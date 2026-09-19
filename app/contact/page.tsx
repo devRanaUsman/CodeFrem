@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PageHero from "@/components/ui/PageHero";
 import ContactSection from "@/components/ContactSection";
 import Marquee from "@/components/ui/Marquee";
-
+import Footer from "@/components/ui/Footer";
 export const metadata: Metadata = {
   title: "Contact — Codefrem",
   description:
@@ -20,6 +20,7 @@ export default function ContactPage() {
       />
       <ContactSection />
       <Marquee words={["Reply", "within", "24 hours"]} className="mt-4" />
+      <Footer />
     </main>
   );
 }

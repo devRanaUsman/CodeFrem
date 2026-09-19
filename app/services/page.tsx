@@ -5,6 +5,7 @@ import PageHero from "@/components/ui/PageHero";
 import SectionHeading from "@/components/ui/SectionHeading";
 import GlowCard from "@/components/ui/GlowCard";
 import TagPill from "@/components/ui/TagPill";
+import Footer from "@/components/ui/Footer";
 import CtaFooter from "@/components/ui/CtaFooter";
 
 export const metadata: Metadata = {
@@ -205,8 +206,8 @@ export default function ServicesPage() {
           </Reveal>
         </div>
       </section>
-
-      <CtaFooter title="Have a project in one of these lanes?" label="Get a Quote" />
+      <Footer />
+      {/* <CtaFooter title="Have a project in one of these lanes?" label="Get a Quote" /> */}
     </main>
   );
 }

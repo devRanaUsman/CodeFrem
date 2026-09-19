@@ -4,7 +4,7 @@ import ProjectCard from "@/components/ui/ProjectCard";
 import CtaFooter from "@/components/ui/CtaFooter";
 import Reveal from "@/components/ui/Reveal";
 import { projects } from "@/lib/projects";
-
+import Footer from "@/components/ui/Footer";
 export const metadata: Metadata = {
   title: "Projects — Codefrem",
   description:
@@ -44,7 +44,8 @@ export default function ProjectsPage() {
         </div>
       </section>
 
-      <CtaFooter title="Want your project in this grid?" />
+      {/* <CtaFooter title="Want your project in this grid?" /> */}
+      <Footer />
     </main>
   );
 }

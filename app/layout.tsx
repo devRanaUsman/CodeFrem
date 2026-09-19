@@ -52,6 +52,7 @@ export default function RootLayout({
           <Navbar />
           {children}
         </SmoothScrollProvider>
+        
       </body>
     </html>
   );
