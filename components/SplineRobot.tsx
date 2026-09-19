@@ -44,9 +44,13 @@ export default function SplineRobot() {
     }
 
     if (!hasWebGL) {
-      setHasError(true);
-      setIsLoading(false);
-      signalRobotReady();
+      // Microtask deferral keeps the effect body free of synchronous
+      // setState (same pattern as the low-tier branch above).
+      queueMicrotask(() => {
+        setHasError(true);
+        setIsLoading(false);
+        signalRobotReady();
+      });
       return;
     }
 
@@ -97,8 +101,8 @@ export default function SplineRobot() {
       (window as any).splineApp = app;
     } catch (e) {
       console.warn("Spline init error:", e);
-      setHasError(true);
       queueMicrotask(() => {
+        setHasError(true);
         setIsLoading(false);
         signalRobotReady();
       });

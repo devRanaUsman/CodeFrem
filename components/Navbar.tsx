@@ -2,32 +2,35 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [isOutsideHero, setIsOutsideHero] = useState(false);
 
-  // Mirrors of the state above. Reading the current value from a ref lets the
-  // scroll handler bail out *before* calling setState, so a scroll frame that
-  // doesn't change either flag costs nothing at all.
   const visibleRef = useRef(true);
   const outsideHeroRef = useRef(false);
   const heroBottomRef = useRef(0);
   const lastYRef = useRef(0);
   const tickingRef = useRef(false);
 
+  // Close mobile drawer whenever route changes
   useEffect(() => {
-    // Both behaviours used to run on ScrollTrigger; they only need the scroll
-    // position and direction, which a passive listener + one rAF token gives
-    // us with zero library weight (GSAP stays out of the phone bundle) and no
-    // layout reads while scrolling — the hero's document-relative bottom is
-    // measured once up front and re-measured only on resize/font-settle.
+    setIsOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const isHome = pathname === "/";
+
     const measureHero = () => {
-      const hero = document.getElementById("hero-section");
-      if (hero) {
-        heroBottomRef.current = hero.offsetTop + hero.offsetHeight;
+      if (isHome) {
+        const hero = document.getElementById("hero-section");
+        heroBottomRef.current = hero ? hero.offsetTop + hero.offsetHeight : 0;
+      } else {
+        heroBottomRef.current = 0;
       }
     };
 
@@ -44,8 +47,13 @@ export default function Navbar() {
         setIsVisible(nextVisible);
       }
 
-      // 2. Colour switch the moment the white hero card scrolls out of view.
-      const nextOutside = y > heroBottomRef.current - 70;
+      // 2. Colour switch:
+      // On homepage: switches to white pill once scrolled past the white hero section.
+      // On subpages: remains the dark glass pill near top, switches to white pill on scroll for contrast.
+      const nextOutside = isHome
+        ? (heroBottomRef.current > 0 && y > heroBottomRef.current - 70)
+        : (y > 80);
+
       if (nextOutside !== outsideHeroRef.current) {
         outsideHeroRef.current = nextOutside;
         setIsOutsideHero(nextOutside);
@@ -53,7 +61,6 @@ export default function Navbar() {
     };
 
     const onScroll = () => {
-      // Max one update per frame, and only while scrolling actually happens.
       if (!tickingRef.current) {
         tickingRef.current = true;
         requestAnimationFrame(update);
@@ -64,8 +71,6 @@ export default function Navbar() {
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", measureHero);
-    // Late layout shifts (webfonts, preloader handoff) change the hero's
-    // height — re-measure once fonts settle, plus one safety net.
     document.fonts?.ready.then(measureHero).catch(() => {});
     const remeasureT = setTimeout(measureHero, 1500);
 
@@ -74,7 +79,7 @@ export default function Navbar() {
       window.removeEventListener("resize", measureHero);
       clearTimeout(remeasureT);
     };
-  }, []);
+  }, [pathname]);
 
   return (
     <header
@@ -98,14 +103,30 @@ export default function Navbar() {
           }`}
         >
           <Link
-            href="#about"
-            className={isOutsideHero ? "hover:text-black font-semibold transition-colors" : "hover:text-[#AAFF00] transition-colors"}
+            href="/about"
+            className={`transition-colors ${
+              pathname === "/about"
+                ? isOutsideHero
+                  ? "text-black font-bold"
+                  : "text-[#AAFF00] font-bold"
+                : isOutsideHero
+                ? "hover:text-black"
+                : "hover:text-[#AAFF00]"
+            }`}
           >
             About Us
           </Link>
           <Link
-            href="#services"
-            className={isOutsideHero ? "hover:text-black font-semibold transition-colors" : "hover:text-[#AAFF00] transition-colors"}
+            href="/services"
+            className={`transition-colors ${
+              pathname === "/services"
+                ? isOutsideHero
+                  ? "text-black font-bold"
+                  : "text-[#AAFF00] font-bold"
+                : isOutsideHero
+                ? "hover:text-black"
+                : "hover:text-[#AAFF00]"
+            }`}
           >
             Services
           </Link>
@@ -138,16 +159,32 @@ export default function Navbar() {
           }`}
         >
           <Link
-            href="#projects"
-            className={isOutsideHero ? "hover:text-black font-semibold transition-colors" : "hover:text-[#AAFF00] transition-colors"}
+            href="/projects"
+            className={`transition-colors ${
+              pathname === "/projects"
+                ? isOutsideHero
+                  ? "text-black font-bold"
+                  : "text-[#AAFF00] font-bold"
+                : isOutsideHero
+                ? "hover:text-black"
+                : "hover:text-[#AAFF00]"
+            }`}
           >
             Projects
           </Link>
           <Link
-            href="#contact"
-            className={isOutsideHero ? "hover:text-black font-semibold transition-colors" : "hover:text-[#AAFF00] transition-colors"}
+            href="/contact"
+            className={`transition-colors ${
+              pathname === "/contact"
+                ? isOutsideHero
+                  ? "text-black font-bold"
+                  : "text-[#AAFF00] font-bold"
+                : isOutsideHero
+                ? "hover:text-black"
+                : "hover:text-[#AAFF00]"
+            }`}
           >
-            Reviews
+            Contact
           </Link>
         </div>
 
@@ -175,32 +212,48 @@ export default function Navbar() {
           }`}
         >
           <Link
-            href="#about"
+            href="/about"
             onClick={() => setIsOpen(false)}
-            className="text-sm py-1 font-medium hover:text-[#AAFF00]"
+            className={`text-sm py-1 font-medium transition-colors ${
+              pathname === "/about"
+                ? isOutsideHero ? "text-black font-bold" : "text-[#AAFF00] font-bold"
+                : "hover:text-[#AAFF00]"
+            }`}
           >
             About Us
           </Link>
           <Link
-            href="#services"
+            href="/services"
             onClick={() => setIsOpen(false)}
-            className="text-sm py-1 font-medium hover:text-[#AAFF00]"
+            className={`text-sm py-1 font-medium transition-colors ${
+              pathname === "/services"
+                ? isOutsideHero ? "text-black font-bold" : "text-[#AAFF00] font-bold"
+                : "hover:text-[#AAFF00]"
+            }`}
           >
             Services
           </Link>
           <Link
-            href="#projects"
+            href="/projects"
             onClick={() => setIsOpen(false)}
-            className="text-sm py-1 font-medium hover:text-[#AAFF00]"
+            className={`text-sm py-1 font-medium transition-colors ${
+              pathname === "/projects"
+                ? isOutsideHero ? "text-black font-bold" : "text-[#AAFF00] font-bold"
+                : "hover:text-[#AAFF00]"
+            }`}
           >
             Projects
           </Link>
           <Link
-            href="#contact"
+            href="/contact"
             onClick={() => setIsOpen(false)}
-            className="text-sm py-1 font-medium hover:text-[#AAFF00]"
+            className={`text-sm py-1 font-medium transition-colors ${
+              pathname === "/contact"
+                ? isOutsideHero ? "text-black font-bold" : "text-[#AAFF00] font-bold"
+                : "hover:text-[#AAFF00]"
+            }`}
           >
-            Reviews
+            Contact
           </Link>
         </div>
       )}

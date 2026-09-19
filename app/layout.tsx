@@ -3,6 +3,7 @@ import "./globals.css";
 import "lenis/dist/lenis.css";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import Preloader from "@/components/Preloader";
+import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
   title: "Codefrem — Empowering Brands Through Creative Solutions",
@@ -47,7 +48,10 @@ export default function RootLayout({
             sequence, then a staggered column reveal. It self-unmounts and
             refreshes ScrollTrigger when done. */}
         <Preloader />
-        <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        <SmoothScrollProvider>
+          <Navbar />
+          {children}
+        </SmoothScrollProvider>
       </body>
     </html>
   );

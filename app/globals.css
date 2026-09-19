@@ -101,4 +101,61 @@ html.preloader-lock body {
   display: none;
 }
 
+/* ------------------------------------------------------------------ */
+/* Shared scroll-reveal (components/ui/Reveal.tsx)                     */
+/* ------------------------------------------------------------------ */
+
+/* Elements start shifted + faded; Reveal adds .reveal-visible when they
+   enter the viewport. transform+opacity only → compositor-friendly. */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Reduced motion: never hide content behind an animation. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+html.no-js .reveal {
+  opacity: 1;
+  transform: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Infinite text marquee (components/ui/Marquee.tsx)                   */
+/* ------------------------------------------------------------------ */
+
+@keyframes marqueeScroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.marquee-track {
+  animation: marqueeScroll 28s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
 

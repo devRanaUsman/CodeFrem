@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 
 const servicesList = [
@@ -98,13 +99,13 @@ export default function ServicesSection() {
                 </h4>
               </div>
               <div>
-                <a
-                  href="#contact"
+                <Link
+                  href="/services"
                   className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#AAFF00] hover:underline"
                 >
                   <span>Explore Process</span>
                   <ArrowUpRight className="w-4 h-4" />
-                </a>
+                </Link>
               </div>
             </div>
 

@@ -2,54 +2,9 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
-
-const projects = [
-  {
-    id: "01",
-    title: "Nebula Finance",
-    category: "UI/UX Design",
-    description: "A full rebrand and dashboard redesign for a next-gen fintech startup.",
-    year: "2025",
-    tags: ["Fintech", "Design System"],
-    gradient: "from-[#AAFF00]/25 via-[#0A0A0A] to-[#0A0A0A]",
-  },
-  {
-    id: "02",
-    title: "Orbit Commerce",
-    category: "Web Development",
-    description: "Headless storefront with sub-second page loads and 3D product previews.",
-    year: "2025",
-    tags: ["E-commerce", "Next.js"],
-    gradient: "from-white/15 via-[#0A0A0A] to-[#0A0A0A]",
-  },
-  {
-    id: "03",
-    title: "Aether Motors",
-    category: "3D & Motion",
-    description: "Interactive WebGL configurator for an electric hypercar launch site.",
-    year: "2024",
-    tags: ["WebGL", "Spline 3D"],
-    gradient: "from-[#AAFF00]/25 via-[#0A0A0A] to-[#0A0A0A]",
-  },
-  {
-    id: "04",
-    title: "Lumen Health",
-    category: "Brand Identity",
-    description: "Patient-first platform design for a telehealth provider across 12 markets.",
-    year: "2024",
-    tags: ["Healthcare", "Product Design"],
-    gradient: "from-white/15 via-[#0A0A0A] to-[#0A0A0A]",
-  },
-  {
-    id: "05",
-    title: "Vertex Studio",
-    category: "Full-Stack Build",
-    description: "Portfolio platform for a VFX studio with cinematic scroll storytelling.",
-    year: "2023",
-    tags: ["Creative Dev", "GSAP"],
-    gradient: "from-[#AAFF00]/25 via-[#0A0A0A] to-[#0A0A0A]",
-  },
-];
+// Single source of truth (lib/projects.ts) — the same data powers the
+// /projects grid and every /projects/[slug] case study.
+import { projects } from "@/lib/projects";
 
 export default function ProjectsSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -314,7 +269,7 @@ export default function ProjectsSection() {
                       ))}
                     </div>
                     <a
-                      href="#contact"
+                      href={`/projects/${project.slug}`}
                       aria-label={`View ${project.title} case study`}
                       className="w-9 h-9 shrink-0 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 group-hover:bg-[#AAFF00] group-hover:text-black group-hover:border-[#AAFF00] transition-all"
                     >

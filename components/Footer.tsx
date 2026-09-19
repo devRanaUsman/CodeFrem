@@ -42,9 +42,9 @@ export default function Footer() {
                 Company
               </span>
               <ul className="space-y-2">
-                <li><Link href="#about" className="hover:underline">About Us</Link></li>
-                <li><Link href="#about" className="hover:underline">Our Team</Link></li>
-                <li><Link href="#contact" className="hover:underline">Careers</Link></li>
+                <li><Link href="/about" className="hover:underline">About Us</Link></li>
+                <li><Link href="/about" className="hover:underline">Our Team</Link></li>
+                <li><Link href="/contact" className="hover:underline">Careers</Link></li>
               </ul>
             </div>
 
@@ -53,9 +53,9 @@ export default function Footer() {
                 Services
               </span>
               <ul className="space-y-2">
-                <li><Link href="#services" className="hover:underline">UI/UX Design</Link></li>
-                <li><Link href="#services" className="hover:underline">Web Development</Link></li>
-                <li><Link href="#services" className="hover:underline">3D Spline</Link></li>
+                <li><Link href="/services" className="hover:underline">UI/UX Design</Link></li>
+                <li><Link href="/services" className="hover:underline">Web Development</Link></li>
+                <li><Link href="/services" className="hover:underline">3D Spline</Link></li>
               </ul>
             </div>
 

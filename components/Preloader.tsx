@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { getLenisInstance } from "@/lib/lenis";
 import { bootedThisSession, markSessionBooted, isRobotReady, onRobotReady } from "@/lib/boot";
 
@@ -42,10 +43,12 @@ const BOOT_LINES = [
 ];
 
 export default function Preloader() {
+  const pathname = usePathname();
   const [finished, setFinished] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (pathname !== "/") return;
     const root = rootRef.current;
     if (!root) return;
 
@@ -336,7 +339,13 @@ export default function Preloader() {
         },
       });
 
-      // Handshake with Spline 3D Robot readiness
+      // Handshake with Spline 3D Robot readiness — homepage only. The robot
+      // (and its ready signal) exists on "/", so on every other route we
+      // finish as soon as the intro completes instead of stalling for the
+      // safety timeout waiting on a signal that will never fire.
+      const robotLivesHere =
+        window.location.pathname === "/" || window.location.pathname === "";
+
       const onReadyHandler = () => {
         // Let terminal lines type out comfortably (reach at least 75%)
         const checkReady = () => {
@@ -350,13 +359,13 @@ export default function Preloader() {
         requestAnimationFrame(checkReady);
       };
 
-      if (isRobotReady()) {
+      if (!robotLivesHere || isRobotReady()) {
         onReadyHandler();
       } else {
         offRobotReady = onRobotReady(onReadyHandler);
       }
 
-      // Safety timeout: never trap user permanently
+      // Safety timeout: never trap user permanently (homepage robot wait)
       maxWaitTimer = setTimeout(triggerFinish, 7500);
     })();
 
@@ -369,7 +378,7 @@ export default function Preloader() {
     };
   }, []);
 
-  if (finished) return null;
+  if (pathname !== "/" || finished) return null;
 
   return (
     <div

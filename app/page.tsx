@@ -1,4 +1,3 @@
-import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import StatsBar from "@/components/StatsBar";
 import MasterpiecesSection from "@/components/MasterpiecesSection";
@@ -10,9 +9,6 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#0A0A0A] text-white relative">
-      {/* Smart Fixed Navbar with scroll-direction reveal & Hero Black/White Theme Toggle */}
-      <Navbar />
-
       {/* Hero Section (White card with centered 3D Robot) */}
       <HeroSection />
 
