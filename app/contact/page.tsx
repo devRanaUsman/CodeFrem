@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PageHero from "@/components/ui/PageHero";
 import ContactSection from "@/components/ContactSection";
 import Marquee from "@/components/ui/Marquee";
-import Footer from "@/components/ui/Footer";
+import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "Contact — Codefrem",
   description:

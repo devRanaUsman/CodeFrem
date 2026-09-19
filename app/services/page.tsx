@@ -5,7 +5,7 @@ import PageHero from "@/components/ui/PageHero";
 import SectionHeading from "@/components/ui/SectionHeading";
 import GlowCard from "@/components/ui/GlowCard";
 import TagPill from "@/components/ui/TagPill";
-import Footer from "@/components/ui/Footer";
+import Footer from "@/components/Footer";
 import CtaFooter from "@/components/ui/CtaFooter";
 
 export const metadata: Metadata = {

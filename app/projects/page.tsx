@@ -4,7 +4,7 @@ import ProjectCard from "@/components/ui/ProjectCard";
 import CtaFooter from "@/components/ui/CtaFooter";
 import Reveal from "@/components/ui/Reveal";
 import { projects } from "@/lib/projects";
-import Footer from "@/components/ui/Footer";
+import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "Projects — Codefrem",
   description:

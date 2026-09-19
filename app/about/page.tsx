@@ -7,7 +7,7 @@ import StatBlock, { type Stat } from "@/components/ui/StatBlock";
 import Marquee from "@/components/ui/Marquee";
 import TeamCard from "@/components/ui/TeamCard";
 import CtaFooter from "@/components/ui/CtaFooter";
-import Footer from "@/components/ui/Footer";
+import Footer from "@/components/Footer";
 import { team } from "@/lib/team";
 
 export const metadata: Metadata = {
