@@ -3,18 +3,83 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Application } from "@splinetool/runtime";
 import { useDeviceCapability } from "@/hooks/useDeviceCapability";
+import { isBootPending, onBootComplete } from "@/lib/boot";
+
+/**
+ * Frame budget for the robot's autonomous idle sway (~30fps). The motion is a
+ * slow sine wave, so sampling it half as often is visually identical while it
+ * halves the GPU/CPU the hero burns for as long as a visitor just reads.
+ */
+const IDLE_FRAME_MS = 32;
 
 export default function SplineRobot() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [booted, setBooted] = useState(false);
   const tier = useDeviceCapability();
+
+  // Wait for the intro overlay to leave before touching WebGL at all.
+  // `new Application()` creates the GL context, probes extensions and compiles
+  // programs — hundreds of milliseconds of main thread that used to land in
+  // the middle of the preloader animation and make it stutter. We then yield
+  // one more time so the init can never compete with the frame that draws the
+  // end of the reveal.
+  useEffect(() => {
+    let cancelled = false;
+    let idleId: number | null = null;
+    let timerId: ReturnType<typeof setTimeout> | null = null;
+    let guardId: ReturnType<typeof setTimeout> | null = null;
+
+    const begin = () => {
+      if (!cancelled) setBooted(true);
+    };
+
+    const start = () => {
+      if (cancelled) return;
+      const ric = (
+        window as unknown as {
+          requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+        }
+      ).requestIdleCallback;
+      if (typeof ric === "function") {
+        idleId = ric(begin, { timeout: 300 });
+      } else {
+        timerId = setTimeout(begin, 0);
+      }
+    };
+
+    let off: (() => void) | null = null;
+    if (isBootPending()) {
+      off = onBootComplete(start);
+      // Safety net: never leave the hero without its robot if the boot signal
+      // is somehow lost.
+      guardId = setTimeout(begin, 4000);
+    } else {
+      start();
+    }
+
+    return () => {
+      cancelled = true;
+      off?.();
+      if (idleId !== null) {
+        (
+          window as unknown as { cancelIdleCallback?: (id: number) => void }
+        ).cancelIdleCallback?.(idleId);
+      }
+      if (timerId !== null) clearTimeout(timerId);
+      if (guardId !== null) clearTimeout(guardId);
+    };
+  }, []);
 
   useEffect(() => {
     if (tier === "low") {
       setIsLoading(false);
       return;
     }
+
+    // Still waiting on the intro — nothing to set up yet.
+    if (!booted) return;
 
     if (!canvasRef.current || !containerRef.current) return;
 
@@ -67,6 +132,18 @@ export default function SplineRobot() {
       }
 
       if (!lastTime) lastTime = time;
+
+      // The autonomous idle sway is a slow sine wave and runs forever, so
+      // rendering it at the display refresh rate keeps the GPU (and the whole
+      // compositor) busy for as long as the visitor just reads the page.
+      // ~30fps halves that cost and is imperceptible on motion this gentle;
+      // the trajectory stays time-based, so it is identical, just sampled less
+      // often. Pointer-driven tracking below is never throttled.
+      if (isIdleMoving && time - lastTime < IDLE_FRAME_MS) {
+        animId = requestAnimationFrame(renderLoop);
+        return;
+      }
+
       const dt = Math.min((time - lastTime) / 1000, 0.1);
       lastTime = time;
 
@@ -413,7 +490,7 @@ export default function SplineRobot() {
         }
       }
     };
-  }, [tier]);
+  }, [tier, booted]);
 
   // Low-End / Mobile Static Fallback Card (0% GPU, instantaneous load)
   if (tier === "low") {

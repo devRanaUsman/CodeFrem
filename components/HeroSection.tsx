@@ -24,7 +24,11 @@ export default function HeroSection() {
     >
       {/* Decorative Lime Starburst Flower on Left */}
       <div className="absolute top-20 left-6 sm:left-10 lg:left-16 text-[#AAFF00] pointer-events-none select-none">
-        <svg className="w-12 h-12 sm:w-16 sm:h-16 animate-spin-slow" viewBox="0 0 100 100" fill="currentColor">
+        <svg
+          className="w-12 h-12 sm:w-16 sm:h-16 animate-spin-slow"
+          viewBox="0 0 100 100"
+          fill="currentColor"
+        >
           <path d="M50 0 L55 35 L90 15 L65 45 L100 50 L65 55 L90 85 L55 65 L50 100 L45 65 L10 85 L35 55 L0 50 L35 45 L10 15 L45 35 Z" />
         </svg>
       </div>
@@ -37,7 +41,15 @@ export default function HeroSection() {
             Empowering Brands <br />
             <span className="inline-flex items-center gap-2 sm:gap-3">
               Through Creative Solutions
-              <svg className="w-7 h-7 sm:w-8 sm:h-8 text-[#88CC00] inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                className="w-7 h-7 sm:w-8 sm:h-8 text-[#88CC00] inline-block"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
                 <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
               </svg>
@@ -50,12 +62,20 @@ export default function HeroSection() {
           {/* Left Column */}
           <div className="lg:col-span-3 flex flex-col items-center lg:items-start text-center lg:text-left space-y-3 order-2 lg:order-1 z-20">
             <div className="text-[#88CC00] hidden lg:block">
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg
+                className="w-6 h-6"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
                 <path d="M7 17L17 7M17 7H7M17 7V17" />
               </svg>
             </div>
             <p className="text-xs sm:text-[13px] text-gray-500 leading-relaxed max-w-[260px]">
-              From web development to branding, we deliver innovative strategies that elevate your brand and drive growth. Let&apos;s create something exceptional together.
+              From web development to branding, we deliver innovative strategies
+              that elevate your brand and drive growth. Let&apos;s create
+              something exceptional together.
             </p>
             <a
               href="#services"
@@ -72,8 +92,17 @@ export default function HeroSection() {
 
             {/* Curly Doodle Arrow pointing to Robot */}
             <div className="absolute -left-2 sm:left-2 top-1/2 -translate-y-1/2 hidden md:block text-gray-400 pointer-events-none">
-              <svg className="w-12 h-12" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M25,20 C10,45 10,65 25,80 C35,90 55,85 45,70 C40,60 25,65 30,75" strokeDasharray="3 3" />
+              <svg
+                className="w-12 h-12"
+                viewBox="0 0 100 100"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  d="M25,20 C10,45 10,65 25,80 C35,90 55,85 45,70 C40,60 25,65 30,75"
+                  strokeDasharray="3 3"
+                />
                 <path d="M28,68 L32,77 L22,78" />
               </svg>
             </div>
@@ -96,7 +125,7 @@ export default function HeroSection() {
             </div>
             <div>
               <div className="text-3xl sm:text-4xl font-serif font-bold text-[#111111]">
-                10 Years
+                3+Years
               </div>
               <div className="text-[11px] uppercase tracking-widest text-gray-400 font-semibold mt-0.5">
                 Experience

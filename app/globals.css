@@ -10,27 +10,8 @@ body {
   color: #ffffff;
   overflow-x: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  scroll-behavior: smooth;
-}
-
-/* Custom marquee continuous smooth animation */
-@keyframes marquee {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-marquee {
-  display: flex;
-  width: max-content;
-  animation: marquee 30s linear infinite;
-}
-
-.animate-marquee:hover {
-  animation-play-state: paused;
+  /* NOTE: no CSS `scroll-behavior: smooth` — it conflicts with Lenis, which
+     drives scroll position programmatically every frame (SmoothScrollProvider). */
 }
 
 /* Slow spin animation for decorative starbursts */
@@ -47,11 +28,44 @@ body {
   animation: spinSlow 30s linear infinite;
 }
 
-/* Hide scrollbars for clean tag rows */
-.no-scrollbar::-webkit-scrollbar {
+/* ------------------------------------------------------------------ */
+/* Preloader (components/Preloader.tsx)                                */
+/* ------------------------------------------------------------------ */
+
+/* Scroll lock while the boot intro plays. Applied to <html> by the
+   Preloader effect so native scrolling is frozen before the page content
+   is ever visible; Lenis is paused separately via its own API. */
+html.preloader-lock,
+html.preloader-lock body {
+  overflow: hidden !important;
+  height: 100% !important;
+  touch-action: none;
+}
+
+/* Blinking caret on the preloader terminal prompt. A 1px translate
+   nudge keeps Safari compositing this layer without shimmering. */
+@keyframes caretBlink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.boot-cursor {
+  animation: caretBlink 0.9s steps(1) infinite;
+}
+
+/* No-JS / before-hydration fallback: never trap the user behind an
+   invisible overlay if client JS fails to run. */
+.no-js .boot-content,
+.no-js .boot-counter,
+.no-js .boot-brand,
+.no-js .boot-bar {
   display: none;
 }
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+
+

@@ -3,10 +3,16 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowUp } from "lucide-react";
+import { getLenisInstance } from "@/lib/lenis";
 
 export default function Footer() {
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const lenis = getLenisInstance();
+    if (lenis) {
+      lenis.scrollTo(0, { lerp: 0.08 });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   return (
@@ -37,7 +43,7 @@ export default function Footer() {
               </span>
               <ul className="space-y-2">
                 <li><Link href="#about" className="hover:underline">About Us</Link></li>
-                <li><Link href="#reviews" className="hover:underline">Our Team</Link></li>
+                <li><Link href="#about" className="hover:underline">Our Team</Link></li>
                 <li><Link href="#contact" className="hover:underline">Careers</Link></li>
               </ul>
             </div>
