@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Application } from "@splinetool/runtime";
 import { useDeviceCapability } from "@/hooks/useDeviceCapability";
-import { isBootPending, onBootComplete } from "@/lib/boot";
+import { signalRobotReady } from "@/lib/boot";
 
 /**
  * Frame budget for the robot's autonomous idle sway (~30fps). The motion is a
@@ -19,66 +19,35 @@ export default function SplineRobot() {
   const [booted, setBooted] = useState(false);
   const tier = useDeviceCapability();
 
-  // Wait for the intro overlay to leave before touching WebGL at all.
-  // `new Application()` creates the GL context, probes extensions and compiles
-  // programs — hundreds of milliseconds of main thread that used to land in
-  // the middle of the preloader animation and make it stutter. We then yield
-  // one more time so the init can never compete with the frame that draws the
-  // end of the reveal.
+  // Start loading the very next frame after mount — in parallel with the
+  // preloader's terminal/counter animation, not after it. `new Application()`
+  // creates the GL context, probes extensions and compiles programs, which is
+  // real work, so the preloader's 0→100 counter now waits on `signalRobotReady`
+  // (see lib/boot.ts) rather than the other way around: the robot gets the
+  // whole length of the intro — and a little more if it needs it — to finish,
+  // so the curtain never opens onto a still-loading hero.
   useEffect(() => {
     let cancelled = false;
-    let idleId: number | null = null;
-    let timerId: ReturnType<typeof setTimeout> | null = null;
-    let guardId: ReturnType<typeof setTimeout> | null = null;
-
-    const begin = () => {
+    const raf = requestAnimationFrame(() => {
       if (!cancelled) setBooted(true);
-    };
-
-    const start = () => {
-      if (cancelled) return;
-      const ric = (
-        window as unknown as {
-          requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
-        }
-      ).requestIdleCallback;
-      if (typeof ric === "function") {
-        idleId = ric(begin, { timeout: 300 });
-      } else {
-        timerId = setTimeout(begin, 0);
-      }
-    };
-
-    let off: (() => void) | null = null;
-    if (isBootPending()) {
-      off = onBootComplete(start);
-      // Safety net: never leave the hero without its robot if the boot signal
-      // is somehow lost.
-      guardId = setTimeout(begin, 4000);
-    } else {
-      start();
-    }
+    });
 
     return () => {
       cancelled = true;
-      off?.();
-      if (idleId !== null) {
-        (
-          window as unknown as { cancelIdleCallback?: (id: number) => void }
-        ).cancelIdleCallback?.(idleId);
-      }
-      if (timerId !== null) clearTimeout(timerId);
-      if (guardId !== null) clearTimeout(guardId);
+      cancelAnimationFrame(raf);
     };
   }, []);
 
   useEffect(() => {
     if (tier === "low") {
+      // No WebGL scene is ever requested for this tier — nothing for the
+      // preloader to wait on.
       setIsLoading(false);
+      signalRobotReady();
       return;
     }
 
-    // Still waiting on the intro — nothing to set up yet.
+    // Still waiting on the next frame — nothing to set up yet.
     if (!booted) return;
 
     if (!canvasRef.current || !containerRef.current) return;
@@ -120,6 +89,7 @@ export default function SplineRobot() {
     } catch (e) {
       console.warn("Spline init error:", e);
       setIsLoading(false);
+      signalRobotReady();
       return;
     }
 
@@ -368,6 +338,7 @@ export default function SplineRobot() {
       .then(() => {
         if (!app) return;
         setIsLoading(false);
+        signalRobotReady();
 
         const em = (app as any)._eventManager;
         if (em?.handlers?.Follow) {
@@ -473,6 +444,7 @@ export default function SplineRobot() {
       .catch((err) => {
         console.error("Spline load error:", err);
         setIsLoading(false);
+        signalRobotReady();
       });
 
     return () => {

@@ -44,6 +44,7 @@ export default function ContactSection() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
+                    suppressHydrationWarning
                     className="w-full bg-[#1e1e1e] border border-[#333333] focus:border-[#AAFF00] rounded-full px-6 py-3.5 text-sm text-white placeholder-gray-500 outline-none transition-all"
                   />
                 </div>
