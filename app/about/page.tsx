@@ -7,7 +7,6 @@ import StatBlock, { type Stat } from "@/components/ui/StatBlock";
 import Marquee from "@/components/ui/Marquee";
 import TeamCard from "@/components/ui/TeamCard";
 import CtaFooter from "@/components/ui/CtaFooter";
-import Footer from "@/components/Footer";
 import { team } from "@/lib/team";
 
 export const metadata: Metadata = {
@@ -68,18 +67,19 @@ export default function AboutPage() {
             <div className="space-y-4 text-gray-400 text-sm leading-relaxed -mt-4">
               <p>
                 Codefrem started the way most good things do: two friends, one
-                too-ambitious side project, and a stubborn belief that a website
-                could feel alive without feeling heavy.
+                too-ambitious side project, and a stubborn belief that a
+                website could feel alive without feeling heavy.
               </p>
               <p>
                 Three years and thirty-something projects later, we&apos;re
                 still deliberately small. Every client works directly with the
-                founders — the person who designs your product is the person who
-                answers your messages.
+                founders — the person who designs your product is the person
+                who answers your messages.
               </p>
               <p>
-                We take on few projects, go unreasonably deep on each, and treat
-                performance budgets with the same respect as brand guidelines.
+                We take on few projects, go unreasonably deep on each, and
+                treat performance budgets with the same respect as brand
+                guidelines.
               </p>
             </div>
           </Reveal>
@@ -87,9 +87,7 @@ export default function AboutPage() {
           <Reveal delay={150} className="lg:col-span-7">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <GlowCard className="min-h-[220px] flex flex-col justify-between">
-                <span className="text-4xl font-serif italic text-[#AAFF00]">
-                  “
-                </span>
+                <span className="text-4xl font-serif italic text-[#AAFF00]">“</span>
                 <div>
                   <p className="text-sm text-gray-300 leading-relaxed">
                     If it doesn&apos;t feel effortless to use, it doesn&apos;t
@@ -101,13 +99,11 @@ export default function AboutPage() {
                 </div>
               </GlowCard>
               <GlowCard className="min-h-[220px] flex flex-col justify-between">
-                <span className="text-4xl font-serif italic text-[#AAFF00]">
-                  “
-                </span>
+                <span className="text-4xl font-serif italic text-[#AAFF00]">“</span>
                 <div>
                   <p className="text-sm text-gray-300 leading-relaxed">
-                    Nobody notices a fast website. Everybody notices a slow one.
-                    We build for the silence.
+                    Nobody notices a fast website. Everybody notices a slow
+                    one. We build for the silence.
                   </p>
                   <p className="mt-4 text-xs uppercase tracking-widest text-gray-500 font-bold">
                     — The one who ships
@@ -173,8 +169,8 @@ export default function AboutPage() {
       </section>
 
       <Marquee />
-      <Footer />
-      {/* <CtaFooter title="Let's build your next flagship project" /> */}
+
+      <CtaFooter title="Let's build your next flagship project" />
     </main>
   );
 }

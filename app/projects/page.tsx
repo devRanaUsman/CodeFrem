@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import PageHero from "@/components/ui/PageHero";
-import ProjectCard from "@/components/ui/ProjectCard";
-import CtaFooter from "@/components/ui/CtaFooter";
-import Reveal from "@/components/ui/Reveal";
-import { projects } from "@/lib/projects";
-import Footer from "@/components/Footer";
+import ProjectGallery from "@/components/projects/ProjectGallery";
+import CtaStrip from "@/components/ui/CtaStrip";
+
 export const metadata: Metadata = {
   title: "Projects — Codefrem",
   description:
@@ -21,31 +19,34 @@ export default function ProjectsPage() {
         lead="A selection of what we've shipped end-to-end — strategy through design through production code. Every card opens a full case study."
       />
 
-      <section className="w-full pb-20 lg:pb-28 px-4 sm:px-6 lg:px-12">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project, index) => (
-            <Reveal key={project.slug} delay={(index % 3) * 100}>
-              <ProjectCard project={project} />
-            </Reveal>
-          ))}
+      <section className="w-full px-4 sm:px-6 lg:px-12 pb-16 lg:pb-24">
+        <div className="max-w-6xl mx-auto">
+          {/* Stat strip — same glow-border pill language as the cards */}
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {["5 Projects", "4 Disciplines", "End-to-End Delivery"].map(
+              (stat) => (
+                <span
+                  key={stat}
+                  className="rounded-full border border-[#AAFF00]/25 bg-[#111111] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-300 shadow-[0_0_18px_rgba(170,255,0,0.07)]"
+                >
+                  {stat}
+                </span>
+              )
+            )}
+          </div>
 
-          {/* Placeholder card for future work — keeps the grid balanced and
-              signals availability. Delete when a 6th project lands. */}
-          <Reveal delay={200}>
-            <div className="rounded-3xl border border-dashed border-[#2A2A2A] min-h-[400px] flex flex-col items-center justify-center text-center p-8">
-              <span className="text-3xl font-serif italic text-white/20">
-                Your project here
-              </span>
-              <span className="mt-3 text-xs uppercase tracking-widest text-gray-600 font-bold">
-                Next slot open
-              </span>
-            </div>
-          </Reveal>
+          {/* Filter tabs + grid + your-project-here + confidentiality note */}
+          <div className="mt-10 lg:mt-14">
+            <ProjectGallery />
+          </div>
         </div>
       </section>
 
-      {/* <CtaFooter title="Want your project in this grid?" /> */}
-      <Footer />
+      <CtaStrip
+        title="Want your project in this grid?"
+        subtext="We take on 2–3 new projects per quarter. Tell us what you're building."
+        label="Start a Conversation"
+      />
     </main>
   );
 }

@@ -135,6 +135,34 @@ html.no-js .reveal {
 }
 
 /* ------------------------------------------------------------------ */
+/* Projects grid (components/projects/ProjectGallery.tsx)              */
+/* ------------------------------------------------------------------ */
+
+/* Cards fade-slide in when the filter changes. The grid container is
+   keyed by the active filter, so React remounts items and the animation
+   re-triggers. transform+opacity only → compositor-friendly. */
+@keyframes projectFadeIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.project-grid-item {
+  animation: projectFadeIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-grid-item {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
 /* Infinite text marquee (components/ui/Marquee.tsx)                   */
 /* ------------------------------------------------------------------ */
 

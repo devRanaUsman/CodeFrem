@@ -19,45 +19,324 @@ const QUALITY: Record<DeviceTier, { dprCap: number; idleFrameMs: number }> = {
   medium: { dprCap: 1, idleFrameMs: 32 },
 };
 
+/* -------------------------------------------------------------------------- */
+/* Persistent robot engine                                                    */
+/* -------------------------------------------------------------------------- */
+/*
+ * The Spline Application (runtime + scene + WebGL context) lives at MODULE
+ * level, not inside the React component. This fixes two reload problems:
+ *
+ * 1. Navigation: <HeroSection/> only exists on "/", so going to another page
+ *    and back used to unmount the robot, dispose the whole Application and
+ *    build + load a new one from scratch (spinner, GPU init, everything).
+ *    Now the component only "parks" the canvas on unmount and re-attaches the
+ *    same, already-loaded canvas on the next mount — so the robot is there
+ *    instantly.
+ *
+ * 2. Device tier: on phones the tier flips "high" → "medium" right after the
+ *    first render. The old effect depended on `tier`, so it tore the robot
+ *    down and loaded the scene a SECOND time on every phone visit. The engine
+ *    is now created once and the tier only adjusts the pixel ratio in place.
+ */
+type RobotStatus = "loading" | "ready" | "error";
+
+interface RobotEngine {
+  canvas: HTMLCanvasElement;
+  app: Application | null;
+  status: RobotStatus;
+  listeners: Set<() => void>;
+  robotObj: any;
+  helmetObj: any;
+  eyesObj: any;
+  bodyObj: any;
+  /** Last gaze so a re-mounted robot resumes where it was looking. */
+  gazeX: number;
+  gazeY: number;
+  /** Pixel ratio currently applied to the renderer (0 = not applied yet). */
+  dpr: number;
+}
+
+let engine: RobotEngine | null = null;
+let currentTier: DeviceTier = "high";
+
+function robotIsReady(): boolean {
+  return engine?.status === "ready";
+}
+
+function setEngineTier(tier: DeviceTier) {
+  currentTier = tier;
+}
+
+function getIdleFrameMs(): number {
+  return (QUALITY[currentTier] || QUALITY.high).idleFrameMs;
+}
+
+function applyPixelRatio(eng: RobotEngine) {
+  const renderer = (eng.app as any)?._renderer;
+  if (!renderer) return;
+  // Tier-based resolution cap: "medium" renders at exactly 1x pixels
+  // (1:1 with CSS pixels) instead of the phone-default 3x — 9× fewer
+  // fragments per frame for near-zero visual difference on a hero
+  // this soft. "high" caps at 1.5x.
+  const dpr = Math.min(
+    window.devicePixelRatio || 1,
+    (QUALITY[currentTier] || QUALITY.high).dprCap
+  );
+  if (eng.dpr === dpr) return;
+  eng.dpr = dpr;
+  renderer.setPixelRatio(dpr);
+}
+
+function settle(eng: RobotEngine, status: RobotStatus) {
+  if (eng.status !== "loading") return;
+  eng.status = status;
+  signalRobotReady();
+  eng.listeners.forEach((cb) => cb());
+}
+
+/** One-time scene tweaks, run once right after the scene finishes loading. */
+function setupScene(eng: RobotEngine, app: Application) {
+  const em = (app as any)._eventManager;
+  if (em?.handlers?.Follow) {
+    em.handlers.Follow.disconnect?.();
+    em.handlers.Follow.events = [];
+  }
+  if (em?.handlers?.LookAt) {
+    em.handlers.LookAt.disconnect?.();
+    em.handlers.LookAt.events = [];
+  }
+  if (em?.handlers?.VariableChange) {
+    em.handlers.VariableChange.disconnect?.();
+    em.handlers.VariableChange.propertiesToWatch = [];
+    em.handlers.VariableChange.events = [];
+  }
+
+  // Hide clutter elements & the 3D Floor plane that was causing the gray square!
+  const clutter = [
+    "Board",
+    "Cursor Target",
+    "Message",
+    "Message 2",
+    "Message 3",
+    "Rectangle 3",
+    "Text",
+    "Text 2",
+    "Shape 0",
+    "Floor",
+  ];
+  clutter.forEach((name) => {
+    const obj = app.findObjectByName(name);
+    if (obj) obj.visible = false;
+  });
+
+  // Cache objects
+  eng.robotObj = app.findObjectByName("Robot");
+  eng.helmetObj = app.findObjectByName("Helmet");
+  eng.eyesObj = app.findObjectByName("Eyes");
+  eng.bodyObj = app.findObjectByName("Body");
+
+  const { robotObj, helmetObj, eyesObj, bodyObj } = eng;
+
+  // Scale and position Robot to prominently fit the hero section
+  if (robotObj) {
+    robotObj.scale.set(1.6, 1.6, 1.6);
+    robotObj.position.x = 0;
+    robotObj.position.y = -145;
+    robotObj.position.z = -18.52;
+    robotObj.rotation.x = 0;
+    robotObj.rotation.y = 0;
+    robotObj.rotation.z = 0;
+  }
+
+  if (bodyObj) {
+    bodyObj.rotation.x = 0;
+    bodyObj.rotation.y = 0;
+    bodyObj.rotation.z = 0;
+  }
+
+  if (helmetObj) {
+    helmetObj.position.x = 1.18;
+    helmetObj.position.y = 113.63;
+    helmetObj.position.z = 0.08;
+    helmetObj.rotation.x = 0;
+    helmetObj.rotation.y = 0;
+    helmetObj.rotation.z = 0;
+  }
+
+  if (eyesObj) {
+    eyesObj.rotation.x = 0;
+    eyesObj.rotation.y = 0;
+    eyesObj.rotation.z = 0;
+  }
+
+  (app as any)._viewportMode = 0;
+  if ((app as any)._frameView) {
+    (app as any)._frameView.enableResponsive = true;
+  }
+
+  const renderer = (app as any)._renderer;
+  if (renderer) {
+    // Force 100% transparent background - eliminates the gray square box completely!
+    const origSetClearColor = renderer.setClearColor.bind(renderer);
+    renderer.setClearColor = () => {
+      origSetClearColor(0x000000, 0);
+    };
+    renderer.setClearColor(0x000000, 0);
+    renderer.setClearAlpha(0);
+
+    applyPixelRatio(eng);
+  }
+
+  if ((app as any)._scene) {
+    (app as any)._scene.background = null;
+  }
+
+  (app as any)?._resize?.(true);
+  app.requestRender();
+}
+
+/** Builds the canvas + Spline Application and starts loading the scene. */
+function createEngine(): RobotEngine {
+  const canvas = document.createElement("canvas");
+  canvas.className = "w-full h-full object-contain outline-none block";
+  canvas.style.width = "100%";
+  canvas.style.height = "100%";
+  canvas.style.backgroundColor = "transparent";
+  canvas.style.pointerEvents = "auto";
+
+  const eng: RobotEngine = {
+    canvas,
+    app: null,
+    status: "loading",
+    listeners: new Set(),
+    robotObj: null,
+    helmetObj: null,
+    eyesObj: null,
+    bodyObj: null,
+    gazeX: 0,
+    gazeY: 0,
+    dpr: 0,
+  };
+
+  // Browsers drop WebGL contexts under memory pressure (esp. on phones).
+  // preventDefault is what allows the context to be restored — and the canvas
+  // now outlives the component, so this has to stay attached permanently.
+  canvas.addEventListener("webglcontextlost", (e) => e.preventDefault());
+
+  // Verify WebGL support before attempting to create the Spline Application
+  let hasWebGL = true;
+  try {
+    const testCanvas = document.createElement("canvas");
+    hasWebGL = !!(
+      window.WebGLRenderingContext &&
+      (testCanvas.getContext("webgl2") ||
+        testCanvas.getContext("webgl") ||
+        testCanvas.getContext("experimental-webgl"))
+    );
+  } catch {
+    hasWebGL = false;
+  }
+
+  if (!hasWebGL) {
+    // Microtask deferral keeps subscribers free of synchronous setState.
+    queueMicrotask(() => settle(eng, "error"));
+    return eng;
+  }
+
+  let app: Application;
+  try {
+    // renderMode:"manual" — nothing renders unless WE say so. Combined with
+    // the settle-out loop in the component, the GPU sits at true 0% whenever
+    // neither the pointer nor the idle sway is moving.
+    app = new Application(canvas, {
+      renderMode: "manual",
+      renderer: "webgl",
+    } as any);
+    (window as any).splineApp = app;
+  } catch (e) {
+    console.warn("Spline init error:", e);
+    queueMicrotask(() => settle(eng, "error"));
+    return eng;
+  }
+  eng.app = app;
+
+  // Load locally from /scene.splinecode with fallback
+  const sceneUrl = "/scene.splinecode";
+
+  app
+    .load(sceneUrl)
+    .catch(() => {
+      return app.load("https://prod.spline.design/n9L6SSO5OIaBztSc/scene.splinecode");
+    })
+    .then(() => {
+      setupScene(eng, app);
+
+      // Confirm the GPU has rendered the frame before signaling robot readiness
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          settle(eng, "ready");
+        });
+      });
+    })
+    .catch((err) => {
+      console.error("Spline load error:", err);
+      settle(eng, "error");
+    });
+
+  return eng;
+}
+
+/**
+ * Returns the live robot engine, creating it on first use. A failed engine is
+ * discarded so the next mount gets a fresh retry (same as the old behaviour).
+ */
+function acquireEngine(): RobotEngine {
+  if (engine && engine.status !== "error") return engine;
+
+  if (engine) {
+    try {
+      engine.app?.dispose();
+    } catch {
+      /* noop */
+    }
+  }
+  engine = createEngine();
+  return engine;
+}
+
 export default function SplineRobot() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // If the robot already finished loading (e.g. coming back to the home page),
+  // start with no spinner at all.
+  const [isLoading, setIsLoading] = useState(() => !robotIsReady());
   const [hasError, setHasError] = useState(false);
   const tier = useDeviceCapability();
 
+  // Tier changes (e.g. phone detected after first render) only adjust the pixel
+  // ratio of the existing robot — they must never restart it.
   useEffect(() => {
-    if (!canvasRef.current || !containerRef.current) return;
-
-    // Verify WebGL support before attempting to create the Spline Application
-    let hasWebGL = true;
-    try {
-      const testCanvas = document.createElement("canvas");
-      hasWebGL = !!(
-        window.WebGLRenderingContext &&
-        (testCanvas.getContext("webgl2") ||
-          testCanvas.getContext("webgl") ||
-          testCanvas.getContext("experimental-webgl"))
-      );
-    } catch {
-      hasWebGL = false;
+    setEngineTier(tier);
+    const eng = engine;
+    if (eng && eng.status === "ready" && eng.app) {
+      const before = eng.dpr;
+      applyPixelRatio(eng);
+      if (eng.dpr !== before) {
+        (eng.app as any)._resize?.(true);
+        eng.app.requestRender();
+      }
     }
+  }, [tier]);
 
-    if (!hasWebGL) {
-      // Microtask deferral keeps the effect body free of synchronous
-      // setState (same pattern as the low-tier branch above).
-      queueMicrotask(() => {
-        setHasError(true);
-        setIsLoading(false);
-        signalRobotReady();
-      });
-      return;
-    }
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
 
-    const canvas = canvasRef.current;
-    const { dprCap, idleFrameMs } = QUALITY[tier] || QUALITY.high;
+    const eng = acquireEngine();
+    const canvas = eng.canvas;
 
-    let app: Application | null = null;
+    // Re-attach the (possibly already loaded) canvas to this mount.
+    container.appendChild(canvas);
+
     let animId: number | null = null;
     let isAnimating = false;
     let lastTime = 0;
@@ -68,6 +347,8 @@ export default function SplineRobot() {
     let idleBaseX = 0;
     let idleBaseY = 0;
     let disposed = false;
+    let lastW = 0;
+    let lastH = 0;
 
     // Touch/coarse-pointer devices have no mouse cursor to wait for.
     const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
@@ -75,41 +356,19 @@ export default function SplineRobot() {
       window.matchMedia("(pointer: coarse)").matches ||
       navigator.maxTouchPoints > 0;
 
-    // Normalized mouse coordinates [-1, 1]
-    let targetX = 0;
-    let targetY = 0;
-    let currentX = 0;
-    let currentY = 0;
-
-    let helmetObj: any = null;
-    let eyesObj: any = null;
-    let robotObj: any = null;
-    let bodyObj: any = null;
+    // Normalized mouse coordinates [-1, 1] — resume from the last known gaze.
+    let targetX = eng.gazeX;
+    let targetY = eng.gazeY;
+    let currentX = eng.gazeX;
+    let currentY = eng.gazeY;
 
     const requestFrame = () => {
-      // renderMode:"manual" — nothing renders unless WE say so. Combined with
-      // the settle-out loop below, the GPU sits at true 0% whenever neither
-      // the pointer nor the idle sway is moving.
-      app?.requestRender();
+      // Nothing to render until the scene has loaded.
+      if (eng.status === "ready") eng.app?.requestRender();
     };
 
-    try {
-      app = new Application(canvas, {
-        renderMode: "manual",
-        renderer: "webgl",
-      } as any);
-      (window as any).splineApp = app;
-    } catch (e) {
-      console.warn("Spline init error:", e);
-      queueMicrotask(() => {
-        setHasError(true);
-        setIsLoading(false);
-        signalRobotReady();
-      });
-      return;
-    }
-
     const applyRobotPose = () => {
+      const { robotObj, helmetObj, eyesObj, bodyObj } = eng;
       const pitch = currentY * 0.65;
       const yaw = currentX * 1.25;
       const roll = currentX * 0.15;
@@ -156,7 +415,7 @@ export default function SplineRobot() {
       // it at ~30fps instead of the display refresh rate — imperceptible on
       // motion this gentle, and half the GPU/CPU. Pointer-driven tracking is
       // never throttled.
-      if (isIdleMoving && time - lastTime < idleFrameMs) {
+      if (isIdleMoving && time - lastTime < getIdleFrameMs()) {
         animId = requestAnimationFrame(renderLoop);
         return;
       }
@@ -277,19 +536,33 @@ export default function SplineRobot() {
       startAnimation();
     };
 
-    const handleResize = () => {
-      if (app) {
-        (app as any)._viewportMode = 0;
-        if ((app as any)._frameView) {
-          (app as any)._frameView.enableResponsive = true;
-        }
-        (app as any)._resize?.(true);
-        requestFrame();
+    // Re-measure the canvas and repaint. Spline's own ResizeObserver stays
+    // bound to the container the canvas was FIRST created in, so after the
+    // canvas is re-attached to a new container we have to feed it the new
+    // size ourselves.
+    const handleResize = (force = true) => {
+      const app = eng.app as any;
+      if (!app || eng.status !== "ready") return;
+
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      if (!w || !h) return;
+      if (!force && w === lastW && h === lastH) return;
+      lastW = w;
+      lastH = h;
+
+      app._viewportWidth = w;
+      app._viewportHeight = h;
+      app._viewportMode = 0;
+      if (app._frameView) {
+        app._frameView.enableResponsive = true;
       }
+      app._resize?.(true);
+      requestFrame();
     };
 
-    // Browsers drop WebGL contexts under memory pressure (esp. on phones).
-    // Without this, the hero shows a dead gray frame forever.
+    const onWindowResize = () => handleResize(true);
+
     const handleContextLost = (e: Event) => {
       e.preventDefault();
       if (animId) cancelAnimationFrame(animId);
@@ -298,8 +571,7 @@ export default function SplineRobot() {
     };
     const handleContextRestored = () => {
       // Spline rebuilds its GL state; ask it to re-measure + repaint.
-      (app as any)?._resize?.(true);
-      requestFrame();
+      handleResize(true);
       startAnimation();
     };
     canvas.addEventListener("webglcontextlost", handleContextLost);
@@ -307,7 +579,13 @@ export default function SplineRobot() {
 
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     window.addEventListener("pointerleave", handlePointerLeave);
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", onWindowResize);
+
+    // Keeps the canvas correctly sized inside THIS container (covers the
+    // re-attach case where Spline's original observer is watching a node that
+    // no longer exists).
+    const resizeObserver = new ResizeObserver(() => handleResize(false));
+    resizeObserver.observe(container);
 
     resetIdleTimer();
 
@@ -321,157 +599,46 @@ export default function SplineRobot() {
       },
       { threshold: 0.1 }
     );
+    observer.observe(container);
 
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    // Load locally from /scene.splinecode with fallback
-    const sceneUrl = "/scene.splinecode";
-
-    app
-      .load(sceneUrl)
-      .catch(() => {
-        return app?.load("https://prod.spline.design/n9L6SSO5OIaBztSc/scene.splinecode");
-      })
-      .then(() => {
-        if (disposed || !app) return;
-
-        const em = (app as any)._eventManager;
-        if (em?.handlers?.Follow) {
-          em.handlers.Follow.disconnect?.();
-          em.handlers.Follow.events = [];
-        }
-        if (em?.handlers?.LookAt) {
-          em.handlers.LookAt.disconnect?.();
-          em.handlers.LookAt.events = [];
-        }
-        if (em?.handlers?.VariableChange) {
-          em.handlers.VariableChange.disconnect?.();
-          em.handlers.VariableChange.propertiesToWatch = [];
-          em.handlers.VariableChange.events = [];
-        }
-
-        // Hide clutter elements & the 3D Floor plane that was causing the gray square!
-        const clutter = [
-          "Board",
-          "Cursor Target",
-          "Message",
-          "Message 2",
-          "Message 3",
-          "Rectangle 3",
-          "Text",
-          "Text 2",
-          "Shape 0",
-          "Floor",
-        ];
-        clutter.forEach((name) => {
-          const obj = app?.findObjectByName(name);
-          if (obj) obj.visible = false;
-        });
-
-        // Cache objects
-        robotObj = app.findObjectByName("Robot");
-        helmetObj = app.findObjectByName("Helmet");
-        eyesObj = app.findObjectByName("Eyes");
-        bodyObj = app.findObjectByName("Body");
-
-        // Scale and position Robot to prominently fit the hero section
-        if (robotObj) {
-          robotObj.scale.set(1.6, 1.6, 1.6);
-          robotObj.position.x = 0;
-          robotObj.position.y = -145;
-          robotObj.position.z = -18.52;
-          robotObj.rotation.x = 0;
-          robotObj.rotation.y = 0;
-          robotObj.rotation.z = 0;
-        }
-
-        if (bodyObj) {
-          bodyObj.rotation.x = 0;
-          bodyObj.rotation.y = 0;
-          bodyObj.rotation.z = 0;
-        }
-
-        if (helmetObj) {
-          helmetObj.position.x = 1.18;
-          helmetObj.position.y = 113.63;
-          helmetObj.position.z = 0.08;
-          helmetObj.rotation.x = 0;
-          helmetObj.rotation.y = 0;
-          helmetObj.rotation.z = 0;
-        }
-
-        if (eyesObj) {
-          eyesObj.rotation.x = 0;
-          eyesObj.rotation.y = 0;
-          eyesObj.rotation.z = 0;
-        }
-
-        (app as any)._viewportMode = 0;
-        if ((app as any)._frameView) {
-          (app as any)._frameView.enableResponsive = true;
-        }
-
-        const renderer = (app as any)._renderer;
-        if (renderer) {
-          // Force 100% transparent background - eliminates the gray square box completely!
-          const origSetClearColor = renderer.setClearColor.bind(renderer);
-          renderer.setClearColor = () => {
-            origSetClearColor(0x000000, 0);
-          };
-          renderer.setClearColor(0x000000, 0);
-          renderer.setClearAlpha(0);
-
-          // Tier-based resolution cap: "medium" renders at exactly 1x pixels
-          // (1:1 with CSS pixels) instead of the phone-default 3x — 9× fewer
-          // fragments per frame for near-zero visual difference on a hero
-          // this soft. "high" caps at 1.5x.
-          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, dprCap));
-        }
-
-        if ((app as any)._scene) {
-          (app as any)._scene.background = null;
-        }
-
-        (app as any)?._resize?.(true);
+    // Mirror the engine status into React state. Fires when the scene finishes
+    // loading (or fails) — and once right after mount to catch a status that
+    // changed between render and effect (or a robot that is already loaded).
+    const sync = () => {
+      if (disposed) return;
+      setHasError(eng.status === "error");
+      setIsLoading(eng.status === "loading");
+      if (eng.status === "ready") {
+        handleResize(true);
+        applyRobotPose();
         requestFrame();
-
-        // Confirm the GPU has rendered the frame before signaling robot readiness
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            if (disposed) return;
-            setIsLoading(false);
-            signalRobotReady();
-          });
-        });
-      })
-      .catch((err) => {
-        console.error("Spline load error:", err);
-        setHasError(true);
-        setIsLoading(false);
-        signalRobotReady();
-      });
+      }
+    };
+    eng.listeners.add(sync);
+    queueMicrotask(sync);
 
     return () => {
       disposed = true;
+      eng.gazeX = currentX;
+      eng.gazeY = currentY;
+      eng.listeners.delete(sync);
       observer.disconnect();
+      resizeObserver.disconnect();
       if (animId) cancelAnimationFrame(animId);
       if (idleTimer) clearTimeout(idleTimer);
       canvas.removeEventListener("webglcontextlost", handleContextLost);
       canvas.removeEventListener("webglcontextrestored", handleContextRestored);
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerleave", handlePointerLeave);
-      window.removeEventListener("resize", handleResize);
-      if (app) {
-        try {
-          app.dispose();
-        } catch (e) {
-          console.warn("Spline cleanup:", e);
-        }
+      window.removeEventListener("resize", onWindowResize);
+
+      // Park the canvas — do NOT dispose the Spline app. It stays loaded so
+      // the robot is instantly available the next time the hero mounts.
+      if (canvas.parentNode === container) {
+        container.removeChild(canvas);
       }
     };
-  }, [tier]);
+  }, []);
 
   // Fallback card only if WebGL is unsupported or scene load fails
   if (hasError) {
@@ -525,17 +692,7 @@ export default function SplineRobot() {
           </span>
         </div>
       )}
-
-      <canvas
-        ref={canvasRef}
-        className="w-full h-full object-contain outline-none block"
-        style={{
-          width: "100%",
-          height: "100%",
-          backgroundColor: "transparent",
-          pointerEvents: "auto",
-        }}
-      />
+      {/* The persistent <canvas> is appended here by the effect above. */}
     </div>
   );
 }

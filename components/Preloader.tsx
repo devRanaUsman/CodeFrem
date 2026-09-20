@@ -8,32 +8,12 @@ import { bootedThisSession, markSessionBooted, isRobotReady, onRobotReady } from
 type GsapTimeline = ReturnType<typeof import("gsap").gsap.timeline>;
 
 /**
- * Cinematic first-paint preloader — a fake "terminal boot" for a dev studio.
+ * Cinematic first-paint preloader — a developer studio terminal boot.
  *
- * Flow: black shutter → terminal types a compile log while a giant 0→100%
- * counter tracks real progress → shutter columns lift like a curtain with
- * lime scanner edges, revealing the site.
- *
- * Performance notes ("smooth as butter"):
- * - Every animated property is a transform / opacity / textContent write —
- *   no layout thrash, no React re-renders during the sequence (state flips
- *   exactly once, at the end, to unmount the overlay).
- * - GSAP (+ ScrollTrigger + TextPlugin) is loaded via dynamic import, so it
- *   never blocks first paint / hydration and stays out of the critical
- *   bundle on phones. The shutter is server-rendered solid black, so the
- *   few ms the chunk needs are invisible.
- * - `sessionStorage` downgrades repeat visits (page reloads) to a ~1.8s
- *   cut via `timeScale` — first visit gets the full cinematic ~3.2s cut.
- * - `prefers-reduced-motion` skips the choreography entirely (simple count +
- *   fade), and a <noscript> rule in layout hides the overlay without JS.
- *
- * Syncing with the 3D robot:
- * - The robot (components/SplineRobot.tsx) starts loading the moment it
- *   mounts, in parallel with this whole sequence.
- * - The terminal log + counter play out on their normal fixed schedule up to
- *   a near-100 checkpoint (INTRO_COUNTER_CAP). From there we ask lib/boot.ts
- *   whether the robot is actually ready; if not, the counter keeps creeping
- *   forward until it is. A hard timeout guarantees it never waits forever.
+ * Requirements:
+ * 1. Flow from 0 to 100 is consistent, smooth, and not laggy (no sudden speed jumps, no freezing).
+ * 2. Preloader NEVER opens until the 3D robot is fully loaded.
+ * 3. Only runs once per session; route navigations (e.g. /services -> /) skip preloader.
  */
 
 const BOOT_LINES = [
@@ -42,13 +22,28 @@ const BOOT_LINES = [
   "warming gpu shaders",
 ];
 
+let hasBootedSession = false;
+
 export default function Preloader() {
   const pathname = usePathname();
-  const [finished, setFinished] = useState(false);
+  const [shouldRun] = useState(() => {
+    if (typeof window !== "undefined") {
+      if (hasBootedSession || pathname !== "/") {
+        hasBootedSession = true;
+        return false;
+      }
+      return true;
+    }
+    return pathname === "/";
+  });
+  const [finished, setFinished] = useState(() => !shouldRun);
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (pathname !== "/") return;
+    if (!shouldRun || finished) {
+      hasBootedSession = true;
+      return;
+    }
     const root = rootRef.current;
     if (!root) return;
 
@@ -77,7 +72,6 @@ export default function Preloader() {
       document.documentElement.classList.remove("preloader-lock");
       const mainEl = document.querySelector("main");
       if (mainEl) {
-        // Ensure no leftover inline styles
         try {
           mainEl.style.opacity = "";
           mainEl.style.transform = "";
@@ -96,13 +90,13 @@ export default function Preloader() {
 
     let cancelled = false;
     let mainTl: GsapTimeline | null = null;
-    let progressTween: ReturnType<typeof import("gsap").gsap.to> | null = null;
+    let activeTween: ReturnType<typeof import("gsap").gsap.to> | null = null;
     let offRobotReady: (() => void) | null = null;
     let maxWaitTimer: ReturnType<typeof setTimeout> | null = null;
 
     const clearWait = () => {
-      progressTween?.kill();
-      progressTween = null;
+      activeTween?.kill();
+      activeTween = null;
       offRobotReady?.();
       offRobotReady = null;
       if (maxWaitTimer) {
@@ -113,8 +107,9 @@ export default function Preloader() {
 
     const complete = () => {
       release();
+      hasBootedSession = true;
       markSessionBooted();
-      setFinished(true); // unmount overlay
+      setFinished(true);
     };
 
     (async () => {
@@ -134,11 +129,18 @@ export default function Preloader() {
       const counterEl = q(".boot-num")[0] as HTMLElement | undefined;
       const barEl = q(".boot-bar-fill")[0] as HTMLElement | undefined;
       const progress = { v: 0 };
+      let lastReported = -1;
 
+      // High-performance progress updater: avoids redundant DOM writes
       const writeProgress = () => {
-        const rounded = Math.min(100, Math.round(progress.v));
-        if (counterEl) counterEl.textContent = String(rounded);
-        if (barEl) gsap.set(barEl, { scaleX: rounded / 100 });
+        const rounded = Math.min(100, Math.floor(progress.v));
+        if (rounded !== lastReported) {
+          lastReported = rounded;
+          if (counterEl) counterEl.textContent = String(rounded);
+        }
+        if (barEl) {
+          barEl.style.transform = `scaleX(${progress.v / 100})`;
+        }
       };
 
       const mainEl = document.querySelector("main");
@@ -147,8 +149,9 @@ export default function Preloader() {
       }
 
       /* ---------------------------------------------------- */
-      /* Finish & Reveal: Seamlessly complete to 100% & open  */
+      /* Exit Animation: Reveals website once 100% & ready    */
       /* ---------------------------------------------------- */
+      const isRepeat = bootedThisSession();
       let finishTriggered = false;
 
       const triggerFinish = () => {
@@ -156,40 +159,36 @@ export default function Preloader() {
         finishTriggered = true;
         clearWait();
 
+        // Ensure 100% is displayed
+        progress.v = 100;
+        writeProgress();
+
         const tl = gsap.timeline({
           defaults: { ease: "power2.out" },
           onComplete: complete,
         });
+        if (isRepeat) {
+          tl.timeScale(1.4);
+        }
         mainTl = tl;
 
-        // 1. Smoothly glide to 100% from current number
-        const remainingTo100 = Math.max(0, 100 - progress.v);
-        const to100Duration = Math.max(0.28, Math.min(0.48, (remainingTo100 / 100) * 0.85));
-
-        tl.to(progress, {
-          v: 100,
-          duration: to100Duration,
-          ease: "power1.out",
-          onUpdate: writeProgress,
-        }, 0);
-
-        // 2. Terminal shows ready tagline and [LIVE] badge pops
+        // 1. Status indicates ready & [LIVE] badge pops
         tl.to(
           q(".boot-status")[0],
-          { text: { value: "ready — entering site" }, duration: 0.3, ease: "none" },
-          to100Duration * 0.25
+          { text: { value: "ready — entering site" }, duration: 0.25, ease: "none" },
+          0
         );
         tl.fromTo(
           q(".boot-ok-live")[0],
           { autoAlpha: 0, scale: 0.5 },
           { autoAlpha: 1, scale: 1, duration: 0.22, ease: "back.out(2)" },
-          to100Duration * 0.6
+          0.05
         );
 
-        // 3. Short satisfying pause at 100%
-        const exitStart = to100Duration + 0.18;
+        // 2. Pause briefly at 100% for satisfying feedback
+        const exitStart = 0.22;
 
-        // 4. Preloader content smoothly lifts and fades
+        // 3. Preloader cards smoothly lift and fade
         tl.to(
           [q(".boot-content"), q(".boot-counter"), q(".boot-brand"), q(".boot-bar")],
           {
@@ -202,10 +201,10 @@ export default function Preloader() {
           exitStart
         );
 
-        // 5. Lime scanner edge illuminates as shutter curtains rise
+        // 4. Lime scanner edge illuminates as shutter curtains rise
         tl.set(q(".boot-edge"), { opacity: 1 }, exitStart + 0.08);
 
-        // 6. Shutter columns lift center-out like a luxury curtain opening
+        // 5. Shutter columns lift center-out
         tl.to(
           q(".boot-col"),
           {
@@ -218,7 +217,7 @@ export default function Preloader() {
           exitStart + 0.08
         );
 
-        // 7. Backdrop fade
+        // 6. Backdrop fade
         tl.to(
           q(".boot-backdrop"),
           { autoAlpha: 0, duration: 0.45, ease: "power2.out" },
@@ -230,7 +229,7 @@ export default function Preloader() {
           exitStart + 0.35
         );
 
-        // 8. Coordinated entrance of the website (smooth scale-in & fade-in)
+        // 7. Smooth entrance of website
         if (mainEl) {
           tl.to(
             mainEl,
@@ -254,13 +253,10 @@ export default function Preloader() {
         const finishReduced = () => {
           if (cancelled) return;
           clearWait();
+          progress.v = 100;
+          writeProgress();
           const tl = gsap.timeline({ onComplete: complete });
-          tl.to(progress, {
-            v: 100,
-            duration: 0.3,
-            ease: "power1.out",
-            onUpdate: writeProgress,
-          }).to(root, { autoAlpha: 0, duration: 0.35, ease: "power1.out" }, "+=0.08");
+          tl.to(root, { autoAlpha: 0, duration: 0.35, ease: "power1.out" });
           if (mainEl) {
             tl.to(mainEl, { opacity: 1, duration: 0.35, clearProps: "all" }, "<");
           }
@@ -279,8 +275,8 @@ export default function Preloader() {
         const tl = gsap.timeline({ onComplete: awaitRobotReduced });
         mainTl = tl;
         tl.set(q(".boot-content"), { autoAlpha: 1 }).to(progress, {
-          v: 92,
-          duration: 1.1,
+          v: 100,
+          duration: 1.2,
           ease: "power1.out",
           onUpdate: writeProgress,
         });
@@ -288,97 +284,141 @@ export default function Preloader() {
       }
 
       /* ---------------------------------------------------- */
-      /* Standard Full Cinematic Boot Sequence                */
+      /* Standard Consistent Boot Flow                        */
       /* ---------------------------------------------------- */
       const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+      if (isRepeat) {
+        tl.timeScale(1.5);
+      }
       mainTl = tl;
 
-      // Phase 0: Reveal preloader content container
+      // Reveal preloader content container
       tl.set(q(".boot-content"), { autoAlpha: 1 }, 0);
 
-      // Phase 1: Terminal card & elements slide in smoothly
+      // Terminal card slide in
       tl.from(
         q(".boot-rise"),
         { y: 20, autoAlpha: 0, duration: 0.5, stagger: 0.07, ease: "expo.out" },
         0.05
       );
 
-      // Phase 2: Terminal typing effect
+      // Terminal typing
       tl.to(
         q(".boot-cmd")[0],
         { text: { value: "npm run codefrem" }, duration: 0.35, ease: "none" },
-        0.2
+        0.18
       );
 
-      const lineStarts = [0.5, 0.85, 1.2];
+      const lineStarts = [0.45, 0.85, 1.25];
       lineStarts.forEach((at, i) => {
         tl.to(
           q(".boot-line-text")[i],
-          { text: { value: BOOT_LINES[i] }, duration: 0.38, ease: "none" },
+          { text: { value: BOOT_LINES[i] }, duration: 0.35, ease: "none" },
           at
         );
         tl.fromTo(
           q(".boot-ok")[i],
           { autoAlpha: 0, scale: 0.6 },
-          { autoAlpha: 1, scale: 1, duration: 0.22, ease: "back.out(2)" },
-          at + 0.38
+          { autoAlpha: 1, scale: 1, duration: 0.2, ease: "back.out(2)" },
+          at + 0.35
         );
       });
 
-      // Phase 3: Single continuous, uninterrupted progress tween toward 98%
-      // Ensures the numbers constantly advance with buttery smoothness
-      progressTween = gsap.to(progress, {
-        v: 98,
-        duration: 2.7,
+      // Terminal status line
+      tl.to(
+        q(".boot-status")[0],
+        { text: { value: "calibrating 3d viewport..." }, duration: 0.35, ease: "none" },
+        1.65
+      );
+
+      // Homepage has the 3D robot; other routes treat robot as ready
+      const robotLivesHere =
+        window.location.pathname === "/" || window.location.pathname === "";
+
+      let robotIsReady = !robotLivesHere || isRobotReady();
+
+      if (!robotIsReady) {
+        offRobotReady = onRobotReady(() => {
+          robotIsReady = true;
+          // If we are currently holding/creeping near ~92-99%, glide to 100 now!
+          if (progress.v >= 90 && !finishTriggered) {
+            completeTo100();
+          }
+        });
+      }
+
+      // Smooth completion to 100% and finish
+      const completeTo100 = () => {
+        if (finishTriggered || cancelled) return;
+        activeTween?.kill();
+        const remaining = Math.max(1, 100 - progress.v);
+        // Consistent speed for the final stretch
+        const duration = Math.max(0.24, (remaining / 10) * 0.38);
+
+        activeTween = gsap.to(progress, {
+          v: 100,
+          duration,
+          ease: "power1.out",
+          onUpdate: writeProgress,
+          onComplete: () => {
+            if (robotIsReady) {
+              triggerFinish();
+            } else {
+              // Safety fallback: wait for robot
+              offRobotReady = onRobotReady(triggerFinish);
+            }
+          },
+        });
+      };
+
+      // Primary smooth progression: 0 to 92% at a steady, consistent, non-laggy rate
+      const primaryDuration = isRepeat ? 1.1 : 1.85;
+
+      activeTween = gsap.to(progress, {
+        v: 92,
+        duration: primaryDuration,
         ease: "power1.inOut",
         onUpdate: writeProgress,
         onComplete: () => {
-          if (isRobotReady()) {
-            triggerFinish();
+          if (cancelled) return;
+          if (robotIsReady) {
+            // Robot is ready: smoothly glide straight from 92 to 100
+            completeTo100();
+          } else {
+            // Robot is still loading: gently creep forward (92 -> 99) so it NEVER freezes or feels stuck
+            gsap.to(q(".boot-status")[0], {
+              text: { value: "finalizing 3d scene..." },
+              duration: 0.3,
+              ease: "none",
+            });
+            activeTween = gsap.to(progress, {
+              v: 99,
+              duration: 3.5,
+              ease: "sine.out",
+              onUpdate: writeProgress,
+            });
           }
         },
       });
 
-      // Handshake with Spline 3D Robot readiness — homepage only. The robot
-      // (and its ready signal) exists on "/", so on every other route we
-      // finish as soon as the intro completes instead of stalling for the
-      // safety timeout waiting on a signal that will never fire.
-      const robotLivesHere =
-        window.location.pathname === "/" || window.location.pathname === "";
-
-      const onReadyHandler = () => {
-        // Let terminal lines type out comfortably (reach at least 75%)
-        const checkReady = () => {
-          if (cancelled) return;
-          if (progress.v >= 75) {
-            triggerFinish();
-          } else {
-            requestAnimationFrame(checkReady);
-          }
-        };
-        requestAnimationFrame(checkReady);
-      };
-
-      if (!robotLivesHere || isRobotReady()) {
-        onReadyHandler();
-      } else {
-        offRobotReady = onRobotReady(onReadyHandler);
-      }
-
-      // Safety timeout: never trap user permanently (homepage robot wait)
-      maxWaitTimer = setTimeout(triggerFinish, 7500);
+      // Safety timeout so user is never trapped even on network drops
+      maxWaitTimer = setTimeout(() => {
+        robotIsReady = true;
+        completeTo100();
+      }, isRepeat ? 4000 : 7500);
     })();
 
     return () => {
       cancelled = true;
+      hasBootedSession = true;
       clearTimeout(stopTick);
       mainTl?.kill();
       clearWait();
       release();
     };
-  }, []);
+  }, [shouldRun, finished]);
 
-  if (pathname !== "/" || finished) return null;
+  if (!shouldRun || finished || pathname !== "/") return null;
 
   return (
     <div

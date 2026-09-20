@@ -119,7 +119,7 @@ export default function Navbar() {
           <Link
             href="/services"
             className={`transition-colors ${
-              pathname === "/services"
+              pathname.startsWith("/services")
                 ? isOutsideHero
                   ? "text-black font-bold"
                   : "text-[#AAFF00] font-bold"

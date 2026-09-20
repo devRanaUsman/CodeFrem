@@ -4,7 +4,7 @@ import "lenis/dist/lenis.css";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import Preloader from "@/components/Preloader";
 import Navbar from "@/components/Navbar";
-
+import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "Codefrem — Empowering Brands Through Creative Solutions",
   description:
@@ -52,7 +52,7 @@ export default function RootLayout({
           <Navbar />
           {children}
         </SmoothScrollProvider>
-        
+        <Footer />
       </body>
     </html>
   );
