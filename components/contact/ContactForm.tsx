@@ -17,10 +17,10 @@ import {
 const initialState: ContactFormState = { status: "idle", fieldErrors: {} };
 
 const inputClasses = (hasError: boolean) =>
-  `w-full rounded-xl border bg-[#161616] px-4 py-3.5 text-sm text-white placeholder-gray-500 outline-none transition-all ${
+  `w-full rounded-xl border bg-surface px-4 py-3.5 text-sm text-ink placeholder-gray-500 outline-none transition-all ${
     hasError
       ? "border-red-500/70"
-      : "border-[#2A2A2A] hover:border-[#3A3A3A] focus:border-[#AAFF00] focus:shadow-[0_0_18px_rgba(170,255,0,0.15)]"
+      : "border-line hover:border-line focus:border-[#AFF45D] shadow-sm"
   }`;
 
 function FieldError({ message }: { message?: string }) {
@@ -73,16 +73,16 @@ export default function ContactForm() {
   if (state.status === "success" && !successDismissed) {
     return (
       <div
-        className="flex h-full min-h-[420px] flex-col items-center justify-center rounded-3xl border border-[#AAFF00]/30 bg-[#111111] p-8 text-center shadow-[0_0_45px_rgba(170,255,0,0.08)]"
+        className="flex h-full min-h-[420px] flex-col items-center justify-center rounded-xl border border-[#AFF45D]/30 bg-surface p-8 text-center shadow-sm"
         role="status"
       >
-        <span className="grid h-16 w-16 place-items-center rounded-full border border-[#AAFF00]/40 bg-[#AAFF00]/10 text-[#AAFF00]">
+        <span className="grid h-16 w-16 place-items-center rounded-full border border-[#AFF45D]/40 bg-[#AFF45D]/10 text-accent-ink">
           <Send className="h-7 w-7" aria-hidden="true" />
         </span>
-        <h2 className="mt-6 text-3xl font-serif text-white">
+        <h2 className="mt-6 text-3xl font-sans text-ink">
           Message received!
         </h2>
-        <p className="mt-3 max-w-sm text-sm leading-relaxed text-gray-400">
+        <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">
           We&apos;ll get back to you within 24 hours on weekdays. Check your
           inbox — we&apos;ll reach out from hello@codefrem.com
         </p>
@@ -95,7 +95,7 @@ export default function ContactForm() {
             setShowErrors(false);
             setSuccessDismissed(true);
           }}
-          className="mt-8 text-xs font-bold uppercase tracking-wider text-[#AAFF00] hover:underline"
+          className="mt-8 text-xs font-bold uppercase tracking-wider text-accent-ink hover:underline"
         >
           Send another message →
         </button>
@@ -113,16 +113,16 @@ export default function ContactForm() {
         if (!form.checkValidity()) setShowErrors(true);
         setSuccessDismissed(false);
       }}
-      className="rounded-3xl border border-[#222222] bg-[#111111] p-6 sm:p-8 lg:p-10"
+      className="rounded-xl border border-line bg-surface p-6 sm:p-8 lg:p-10"
     >
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         {/* Row 1 */}
         <div>
           <label
             htmlFor="name"
-            className="mb-2 block text-xs font-semibold uppercase tracking-widest text-gray-400"
+            className="mb-2 block text-xs font-semibold uppercase tracking-widest text-muted"
           >
-            Name <span className="text-[#AAFF00]">*</span>
+            Name <span className="text-accent-ink">*</span>
           </label>
           <input
             id="name"
@@ -140,9 +140,9 @@ export default function ContactForm() {
         <div>
           <label
             htmlFor="email"
-            className="mb-2 block text-xs font-semibold uppercase tracking-widest text-gray-400"
+            className="mb-2 block text-xs font-semibold uppercase tracking-widest text-muted"
           >
-            Email <span className="text-[#AAFF00]">*</span>
+            Email <span className="text-accent-ink">*</span>
           </label>
           <input
             id="email"
@@ -164,9 +164,9 @@ export default function ContactForm() {
         <div>
           <label
             htmlFor="company"
-            className="mb-2 block text-xs font-semibold uppercase tracking-widest text-gray-400"
+            className="mb-2 block text-xs font-semibold uppercase tracking-widest text-muted"
           >
-            Company <span className="text-gray-600">(optional)</span>
+            Company <span className="text-muted">(optional)</span>
           </label>
           <input
             id="company"
@@ -182,8 +182,8 @@ export default function ContactForm() {
           />
         </div>
         <div>
-          <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-gray-400">
-            Service Needed <span className="text-[#AAFF00]">*</span>
+          <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-muted">
+            Service Needed <span className="text-accent-ink">*</span>
           </span>
           <ContactSelect
             name="service"
@@ -197,8 +197,8 @@ export default function ContactForm() {
 
         {/* Row 3 */}
         <div>
-          <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-gray-400">
-            Budget Range <span className="text-[#AAFF00]">*</span>
+          <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-muted">
+            Budget Range <span className="text-accent-ink">*</span>
           </span>
           <ContactSelect
             name="budget"
@@ -210,9 +210,9 @@ export default function ContactForm() {
           />
         </div>
         <div>
-          <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-gray-400">
+          <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-muted">
             How did you hear about us?
-            <span className="text-gray-600"> (optional)</span>
+            <span className="text-muted"> (optional)</span>
           </span>
           <ContactSelect
             name="source"
@@ -226,9 +226,9 @@ export default function ContactForm() {
         <div className="sm:col-span-2">
           <label
             htmlFor="description"
-            className="mb-2 block text-xs font-semibold uppercase tracking-widest text-gray-400"
+            className="mb-2 block text-xs font-semibold uppercase tracking-widest text-muted"
           >
-            Project Description <span className="text-[#AAFF00]">*</span>
+            Project Description <span className="text-accent-ink">*</span>
           </label>
           <textarea
             id="description"
@@ -250,7 +250,7 @@ export default function ContactForm() {
           <button
             type="submit"
             disabled={isPending}
-            className="group flex w-full items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-[#AAFF00] to-[#7ACC00] px-8 py-4 text-sm font-bold uppercase tracking-wider text-black shadow-[0_0_25px_rgba(170,255,0,0.3)] transition-all duration-300 hover:shadow-[0_0_35px_rgba(170,255,0,0.45)] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+            className="group flex w-full items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-[#AFF45D] to-[#B9ED7A] px-8 py-4 text-sm font-bold uppercase tracking-wider text-black shadow-sm transition-all duration-300 shadow-sm hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
           >
             {isPending ? (
               <>
@@ -272,3 +272,5 @@ export default function ContactForm() {
     </form>
   );
 }
+
+

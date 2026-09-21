@@ -40,8 +40,8 @@ export default function ProjectGallery() {
               className={clsx(
                 "rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-wider transition-all duration-300",
                 isActive
-                  ? "bg-gradient-to-r from-[#AAFF00] to-[#7ACC00] text-black shadow-[0_0_20px_rgba(170,255,0,0.3)]"
-                  : "border border-white/15 text-gray-400 hover:border-[#AAFF00]/60 hover:text-[#AAFF00]"
+                  ? "bg-gradient-to-r from-[#AFF45D] to-[#B9ED7A] text-black shadow-sm"
+                  : "border border-line text-muted hover:border-[#AFF45D]/60 hover:text-accent-ink"
               )}
             >
               {tab}
@@ -70,25 +70,25 @@ export default function ProjectGallery() {
           className="project-grid-item flex"
           style={{ animationDelay: `${visible.length * 70}ms` }}
         >
-          <div className="relative flex w-full flex-col items-center justify-center rounded-3xl border-2 border-dashed border-[#AAFF00]/30 bg-[#AAFF00]/[0.02] p-8 text-center min-h-[420px] transition-colors duration-300 hover:border-[#AAFF00]/60 hover:bg-[#AAFF00]/[0.05]">
-            <span className="absolute top-6 right-7 font-mono text-xs font-bold text-white/30">
+          <div className="relative flex w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#AFF45D]/30 bg-[#AFF45D]/[0.02] p-8 text-center min-h-[420px] transition-colors duration-300 hover:border-[#AFF45D]/60 hover:bg-[#AFF45D]/[0.05]">
+            <span className="absolute top-6 right-7 font-mono text-xs font-bold text-ink/30">
               {String(projects.length + 1).padStart(2, "0")}
             </span>
-            <span className="grid h-14 w-14 place-items-center rounded-full border border-[#AAFF00]/40 bg-[#AAFF00]/10 text-[#AAFF00]">
+            <span className="grid h-14 w-14 place-items-center rounded-full border border-[#AFF45D]/40 bg-[#AFF45D]/10 text-accent-ink">
               <Plus className="h-6 w-6" aria-hidden="true" />
             </span>
-            <h3 className="mt-5 text-2xl font-serif italic text-white/80">
+            <h3 className="mt-5 text-2xl font-sans text-ink/80">
               Your project here
             </h3>
-            <span className="mt-2 text-[10px] font-bold uppercase tracking-widest text-[#AAFF00]">
+            <span className="mt-2 text-[10px] font-bold uppercase tracking-widest text-accent-ink">
               Next slot open
             </span>
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-muted">
               We take on 2–3 new projects per quarter.
             </p>
             <a
               href="/contact"
-              className="mt-7 inline-flex items-center gap-2 rounded-full border border-[#AAFF00]/50 px-6 py-3 text-xs font-bold uppercase tracking-wider text-[#AAFF00] transition-all duration-300 hover:bg-[#AAFF00] hover:text-black hover:shadow-[0_0_25px_rgba(170,255,0,0.35)]"
+              className="mt-7 inline-flex items-center gap-2 rounded-full border border-[#AFF45D]/50 px-6 py-3 text-xs font-bold uppercase tracking-wider text-accent-ink transition-all duration-300 hover:bg-[#AFF45D] hover:text-black shadow-sm"
             >
               Start a Conversation
               <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
@@ -98,9 +98,11 @@ export default function ProjectGallery() {
       </div>
 
       {/* Confidentiality note */}
-      <p className="mt-12 text-center text-xs italic text-gray-600">
+      <p className="mt-12 text-center text-xs italic text-muted">
         Some client names and details have been changed for confidentiality.
       </p>
     </div>
   );
 }
+
+

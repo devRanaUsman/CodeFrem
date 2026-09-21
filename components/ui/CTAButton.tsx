@@ -16,13 +16,13 @@ const base =
 
 const variants = {
   primary:
-    "bg-[#AAFF00] text-black text-xs sm:text-sm px-7 py-3.5 shadow-[0_0_20px_rgba(170,255,0,0.3)] hover:bg-[#88CC00] hover:shadow-[0_0_30px_rgba(170,255,0,0.45)]",
+    "bg-[#AFF45D] text-black text-xs sm:text-sm px-7 py-3.5 shadow-sm hover:bg-[#9BDC49] shadow-sm",
   secondary:
-    "border border-white/20 text-white text-xs sm:text-sm px-6 py-3.5 hover:border-[#AAFF00] hover:text-[#AAFF00]",
+    "border border-line text-ink text-xs sm:text-sm px-6 py-3.5 hover:border-[#AFF45D] hover:text-accent-ink",
   ghost:
-    "inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#AAFF00] hover:underline",
+    "inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-accent-ink hover:underline",
   dark:
-    "bg-black text-white text-xs sm:text-sm px-7 py-3.5 shadow-md hover:scale-105",
+    "bg-ink text-white text-xs sm:text-sm px-7 py-3.5 shadow-md hover:scale-105",
 } as const;
 
 export default function CTAButton({
@@ -63,3 +63,5 @@ export default function CTAButton({
     </button>
   );
 }
+
+

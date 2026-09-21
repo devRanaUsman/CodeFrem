@@ -56,11 +56,11 @@ const faqs = [
 
 export default function ContactPage() {
   return (
-    <main className="bg-[#0A0A0A] text-white">
+    <main className="bg-canvas text-ink">
       <PageHero
         eyebrow="Get In Touch"
-        line1="Let's make something"
-        highlight="exceptional"
+        line1="Tell us about"
+        highlight="your website"
         lead="Tell us about your project — we'll reply within 24 hours on weekdays with honest thoughts on how to get there."
       />
 
@@ -73,9 +73,9 @@ export default function ContactPage() {
           ].map((badge) => (
             <span
               key={badge}
-              className="inline-flex items-center gap-2 rounded-full border border-[#AAFF00]/25 bg-[#111111] px-4 py-2 text-[11px] font-semibold text-gray-300 shadow-[0_0_16px_rgba(170,255,0,0.06)]"
+              className="inline-flex items-center gap-2 rounded-full border border-[#AFF45D]/25 bg-surface px-4 py-2 text-[11px] font-semibold text-muted shadow-sm"
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-[#AAFF00] shadow-[0_0_8px_#AAFF00]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#AFF45D] shadow-sm" />
               {badge}
             </span>
           ))}
@@ -116,14 +116,14 @@ export default function ContactPage() {
       {/* Mini CTA — the quiet exit for people who aren't ready for the form */}
       <section className="w-full px-4 sm:px-6 lg:px-12 pb-20 lg:pb-28">
         <Reveal className="max-w-3xl mx-auto">
-          <div className="rounded-2xl border border-[#222222] bg-[#0F0F0F] px-6 py-8 text-center transition-colors duration-300 hover:border-[#AAFF00]/40 sm:px-10">
-            <h2 className="text-xl sm:text-2xl font-serif text-white">
+          <div className="rounded-2xl border border-line bg-surface px-6 py-8 text-center transition-colors duration-300 hover:border-[#AFF45D]/40 sm:px-10">
+            <h2 className="text-xl sm:text-2xl font-sans text-ink">
               Still unsure? Just say hello.
             </h2>
             {/* TODO: Replace with real email address */}
             <a
               href="mailto:hello@codefrem.com"
-              className="mt-2 inline-block text-sm font-semibold text-[#AAFF00] hover:underline"
+              className="mt-2 inline-block text-sm font-semibold text-accent-ink hover:underline"
             >
               hello@codefrem.com
             </a>
@@ -133,3 +133,6 @@ export default function ContactPage() {
     </main>
   );
 }
+
+
+

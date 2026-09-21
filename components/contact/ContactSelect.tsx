@@ -96,21 +96,21 @@ export default function ContactSelect({
         onClick={() => (open ? setOpen(false) : openMenu())}
         onKeyDown={onKeyDown}
         className={clsx(
-          "flex w-full items-center justify-between gap-3 rounded-xl border bg-[#161616] px-4 py-3.5 text-left text-sm transition-all outline-none",
+          "flex w-full items-center justify-between gap-3 rounded-xl border bg-surface px-4 py-3.5 text-left text-sm transition-all outline-none",
           error
             ? "border-red-500/70"
             : open
-              ? "border-[#AAFF00] shadow-[0_0_18px_rgba(170,255,0,0.15)]"
-              : "border-[#2A2A2A] hover:border-[#3A3A3A]"
+              ? "border-[#AFF45D] shadow-sm"
+              : "border-line hover:border-line"
         )}
       >
-        <span className={selected ? "text-white" : "text-gray-500"}>
+        <span className={selected ? "text-ink" : "text-muted"}>
           {selected ? selected.label : placeholder}
         </span>
         <ChevronDown
           className={clsx(
-            "h-4 w-4 shrink-0 text-gray-500 transition-transform duration-200",
-            open && "rotate-180 text-[#AAFF00]"
+            "h-4 w-4 shrink-0 text-muted transition-transform duration-200",
+            open && "rotate-180 text-accent-ink"
           )}
           aria-hidden="true"
         />
@@ -133,7 +133,7 @@ export default function ContactSelect({
           ref={listRef}
           id={listboxId}
           role="listbox"
-          className="absolute z-30 mt-2 max-h-60 w-full overflow-auto rounded-xl border border-[#2A2A2A] bg-[#141414] p-1.5 shadow-[0_18px_50px_rgba(0,0,0,0.6)]"
+          className="absolute z-30 mt-2 max-h-60 w-full overflow-auto rounded-xl border border-line bg-surface p-1.5 shadow-[0_18px_50px_rgba(0,0,0,0.6)]"
         >
           {options.map((option, index) => {
             const isSelected = option.value === value;
@@ -146,9 +146,9 @@ export default function ContactSelect({
                 onClick={() => select(option)}
                 className={clsx(
                   "flex cursor-pointer items-center justify-between rounded-lg px-3.5 py-2.5 text-sm transition-colors",
-                  index === highlighted && "bg-[#AAFF00]/10 text-[#AAFF00]",
-                  isSelected && "font-semibold text-[#AAFF00]",
-                  index !== highlighted && !isSelected && "text-gray-300"
+                  index === highlighted && "bg-[#AFF45D]/10 text-accent-ink",
+                  isSelected && "font-semibold text-accent-ink",
+                  index !== highlighted && !isSelected && "text-muted"
                 )}
               >
                 {option.label}
@@ -167,3 +167,5 @@ export default function ContactSelect({
     </div>
   );
 }
+
+

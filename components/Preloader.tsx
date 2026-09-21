@@ -424,99 +424,101 @@ export default function Preloader() {
     <div
       ref={rootRef}
       id="codefrem-preloader"
-      className="fixed inset-0 z-[9999] overflow-hidden bg-[#0A0A0A]"
+      className="fixed inset-0 z-[9999] overflow-hidden bg-canvas"
       role="status"
       aria-label="Loading Codefrem"
     >
       {/* Solid black backdrop ensuring zero bleed-through while loading */}
-      <div className="boot-backdrop absolute inset-0 bg-[#0A0A0A] z-0 pointer-events-none" aria-hidden="true" />
+      <div className="boot-backdrop absolute inset-0 bg-canvas z-0 pointer-events-none" aria-hidden="true" />
 
       {/* Black shutter columns — the curtain that opens at the end */}
       <div className="absolute inset-0 flex z-[1]" aria-hidden="true">
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="boot-col relative h-full flex-1 origin-top bg-[#0A0A0A] will-change-transform -mr-[1px] last:mr-0 [box-shadow:0_0_0_1px_#0A0A0A]"
+            className="boot-col relative h-full flex-1 origin-top bg-canvas will-change-transform -mr-[1px] last:mr-0 [box-shadow:0_0_0_1px_#0A0A0A]"
           >
-            <div className="boot-edge absolute bottom-0 -left-[1px] -right-[1px] h-[2px] bg-[#AAFF00] opacity-0" />
+            <div className="boot-edge absolute bottom-0 -left-[1px] -right-[1px] h-[2px] bg-[#AFF45D] opacity-0" />
           </div>
         ))}
       </div>
 
       {/* Terminal boot log */}
       <div className="boot-content absolute inset-0 z-10 flex flex-col items-center justify-center px-6 opacity-0">
-        <div className="boot-rise w-full max-w-md overflow-hidden rounded-xl border border-white/10 bg-black/60 shadow-[0_0_80px_rgba(170,255,0,0.07)] backdrop-blur-sm">
+        <div className="boot-rise w-full max-w-md overflow-hidden rounded-xl border border-line bg-black/60 shadow-sm backdrop-blur-sm">
           {/* Title bar */}
-          <div className="flex items-center gap-1.5 border-b border-white/10 px-4 py-2.5">
+          <div className="flex items-center gap-1.5 border-b border-line px-4 py-2.5">
             <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
             <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-            <span className="h-2.5 w-2.5 rounded-full bg-[#AAFF00]/60" />
-            <span className="ml-3 font-mono text-[10px] tracking-widest text-white/40">
+            <span className="h-2.5 w-2.5 rounded-full bg-[#AFF45D]/60" />
+            <span className="ml-3 font-mono text-[10px] tracking-widest text-ink/40">
               ~/codefrem — zsh
             </span>
           </div>
           {/* Body */}
           <div className="space-y-1.5 px-4 py-4 font-mono text-[11px] leading-relaxed sm:text-xs">
             <div>
-              <span className="text-[#AAFF00]">λ</span>{" "}
-              <span className="boot-cmd text-white/80" />
+              <span className="text-accent-ink">λ</span>{" "}
+              <span className="boot-cmd text-ink/80" />
             </div>
             {BOOT_LINES.map((label) => (
               <div key={label} className="flex items-center justify-between gap-4">
                 <span className="truncate">
-                  <span className="text-[#AAFF00]">&gt;</span>{" "}
-                  <span className="boot-line-text text-white/55" />
+                  <span className="text-accent-ink">&gt;</span>{" "}
+                  <span className="boot-line-text text-ink/55" />
                 </span>
-                <span className="boot-ok shrink-0 font-mono text-[10px] text-[#AAFF00] opacity-0">
+                <span className="boot-ok shrink-0 font-mono text-[10px] text-accent-ink opacity-0">
                   [OK]
                 </span>
               </div>
             ))}
             <div className="flex items-center justify-between gap-4 pt-1">
               <span>
-                <span className="text-[#AAFF00]">&gt;</span>{" "}
-                <span className="boot-status text-white/80" />
-                <span className="boot-cursor ml-0.5 text-[#AAFF00]" aria-hidden="true">
+                <span className="text-accent-ink">&gt;</span>{" "}
+                <span className="boot-status text-ink/80" />
+                <span className="boot-cursor ml-0.5 text-accent-ink" aria-hidden="true">
                   ▌
                 </span>
               </span>
-              <span className="boot-ok-live shrink-0 font-mono text-[10px] text-[#AAFF00] opacity-0">
+              <span className="boot-ok-live shrink-0 font-mono text-[10px] text-accent-ink opacity-0">
                 [LIVE]
               </span>
             </div>
           </div>
         </div>
 
-        <p className="boot-rise mt-6 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-white/35">
+        <p className="boot-rise mt-6 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-ink/35">
           Empowering brands through creative solutions
         </p>
       </div>
 
       {/* Giant progress counter */}
       <div className="boot-counter absolute bottom-6 left-6 z-10 select-none font-mono sm:bottom-10 sm:left-10">
-        <div className="mb-1 text-[10px] uppercase tracking-[0.35em] text-white/35">
+        <div className="mb-1 text-[10px] uppercase tracking-[0.35em] text-ink/35">
           Loading
         </div>
-        <div className="text-6xl font-black leading-none tabular-nums text-white sm:text-8xl">
+        <div className="text-6xl font-black leading-none tabular-nums text-ink sm:text-8xl">
           <span className="boot-num">0</span>
-          <span className="text-[#AAFF00]">%</span>
+          <span className="text-accent-ink">%</span>
         </div>
       </div>
 
       {/* Brand mark */}
       <div className="boot-brand absolute bottom-6 right-6 z-10 select-none text-right font-mono sm:bottom-10 sm:right-10">
-        <div className="text-[10px] uppercase tracking-[0.35em] text-white/35">
+        <div className="text-[10px] uppercase tracking-[0.35em] text-ink/35">
           Codefrem®
         </div>
-        <div className="mt-1 text-[10px] uppercase tracking-[0.35em] text-white/20">
+        <div className="mt-1 text-[10px] uppercase tracking-[0.35em] text-ink/20">
           Digital Studio — 2026
         </div>
       </div>
 
       {/* Hairline progress bar */}
       <div className="boot-bar absolute bottom-0 left-0 right-0 z-10 h-[2px] bg-white/5" aria-hidden="true">
-        <div className="boot-bar-fill h-full w-full origin-left scale-x-0 bg-[#AAFF00]" />
+        <div className="boot-bar-fill h-full w-full origin-left scale-x-0 bg-[#AFF45D]" />
       </div>
     </div>
   );
 }
+
+

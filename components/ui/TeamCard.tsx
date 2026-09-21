@@ -24,32 +24,32 @@ export default function TeamCard({ member }: { member: TeamMember }) {
           <img
             src={member.avatar}
             alt={member.name}
-            className="w-16 h-16 rounded-2xl object-cover border border-[#333333]"
+            className="w-16 h-16 rounded-2xl object-cover border border-line"
           />
         ) : (
-          <div className="w-16 h-16 rounded-2xl bg-[#1a1a1a] border border-[#333333] flex items-center justify-center text-[#AAFF00] text-xl font-black tracking-tight">
+          <div className="w-16 h-16 rounded-2xl bg-surface border border-line flex items-center justify-center text-accent-ink text-xl font-black tracking-tight">
             {initials || "✦"}
           </div>
         )}
         <div>
-          <h3 className="text-xl font-serif text-white">{member.name}</h3>
-          <p className="text-xs font-bold uppercase tracking-widest text-[#AAFF00] mt-1">
+          <h3 className="text-xl font-sans text-ink">{member.name}</h3>
+          <p className="text-xs font-bold uppercase tracking-widest text-accent-ink mt-1">
             {member.role}
           </p>
         </div>
       </div>
 
-      <p className="mt-5 text-gray-400 text-sm leading-relaxed">{member.bio}</p>
+      <p className="mt-5 text-muted text-sm leading-relaxed">{member.bio}</p>
 
       {member.links && member.links.length > 0 && (
-        <div className="mt-auto pt-6 flex items-center gap-4 border-t border-white/5">
+        <div className="mt-auto pt-6 flex items-center gap-4 border-t border-line">
           {member.links.map((link) => (
             <a
               key={link.label}
               href={link.href}
               target="_blank"
               rel="noreferrer"
-              className="text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-[#AAFF00] transition-colors"
+              className="text-[10px] font-bold uppercase tracking-widest text-muted hover:text-accent-ink transition-colors"
             >
               {link.label}
             </a>
@@ -59,3 +59,5 @@ export default function TeamCard({ member }: { member: TeamMember }) {
     </GlowCard>
   );
 }
+
+

@@ -27,13 +27,15 @@ export default function CopyEmailButton({ email }: { email: string }) {
       onClick={copy}
       aria-label="Copy email address"
       title="Copy email address"
-      className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/10 text-gray-400 transition-all duration-300 hover:border-[#AAFF00] hover:text-[#AAFF00]"
+      className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-line text-muted transition-all duration-300 hover:border-[#AFF45D] hover:text-accent-ink"
     >
       {copied ? (
-        <Check className="h-3.5 w-3.5 text-[#AAFF00]" aria-hidden="true" />
+        <Check className="h-3.5 w-3.5 text-accent-ink" aria-hidden="true" />
       ) : (
         <Copy className="h-3.5 w-3.5" aria-hidden="true" />
       )}
     </button>
   );
 }
+
+

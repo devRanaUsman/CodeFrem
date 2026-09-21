@@ -14,3 +14,5 @@ export default function DataVisualizationPage() {
   if (!service) notFound();
   return <SubServiceTemplate service={service} category={dataScience} />;
 }
+
+

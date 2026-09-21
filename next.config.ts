@@ -25,23 +25,9 @@ const nextConfig: NextConfig = {
 
   compiler: {
     // Strip console noise from the production client bundle, but keep the
-    // warnings/errors the WebGL layer relies on for diagnostics.
+    // warnings/errors the site relies on for diagnostics.
     removeConsole:
       process.env.NODE_ENV === "production" ? { exclude: ["error", "warn"] } : false,
-  },
-
-  async headers() {
-    return [
-      {
-        // The 3D scene only changes on deploy, so a returning visitor should
-        // never re-download it. Next serves /public with a short TTL by
-        // default.
-        source: "/scene.splinecode",
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
-        ],
-      },
-    ];
   },
 };
 

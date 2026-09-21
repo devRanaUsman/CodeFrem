@@ -17,36 +17,36 @@ export default function PricingPlans({ plans }: { plans: Plan[] }) {
         <Reveal key={plan.name} delay={index * 80} className="h-full">
           <div
             className={clsx(
-              "relative h-full rounded-3xl border p-7 sm:p-8 flex flex-col transition-all duration-300",
+              "relative h-full rounded-xl border p-7 sm:p-8 flex flex-col transition-all duration-300",
               plan.featured
-                ? "border-[#AAFF00]/60 bg-[#111111] shadow-[0_0_40px_rgba(170,255,0,0.12)]"
-                : "border-[#222222] bg-[#111111] hover:border-white/25"
+                ? "border-[#AFF45D]/60 bg-surface shadow-sm"
+                : "border-line bg-surface hover:border-white/25"
             )}
           >
             {plan.featured && (
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#AAFF00] px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest text-black">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#AFF45D] px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest text-black">
                 Most Popular
               </span>
             )}
 
-            <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#AAFF00]">
+            <span className="text-xs font-mono font-bold uppercase tracking-widest text-accent-ink">
               {plan.name}
             </span>
-            <p className="mt-3 text-4xl font-serif font-bold text-white">
+            <p className="mt-3 text-4xl font-sans font-bold text-ink">
               {plan.price}
             </p>
-            <p className="mt-2 text-sm text-gray-400 leading-relaxed">
+            <p className="mt-2 text-sm text-muted leading-relaxed">
               {plan.blurb}
             </p>
 
-            <ul className="mt-6 space-y-3 border-t border-white/5 pt-6 flex-1">
+            <ul className="mt-6 space-y-3 border-t border-line pt-6 flex-1">
               {plan.features.map((feature) => (
                 <li
                   key={feature}
-                  className="flex items-start gap-2.5 text-sm text-gray-300"
+                  className="flex items-start gap-2.5 text-sm text-muted"
                 >
                   <Check
-                    className="mt-0.5 h-4 w-4 shrink-0 text-[#AAFF00]"
+                    className="mt-0.5 h-4 w-4 shrink-0 text-accent-ink"
                     aria-hidden="true"
                   />
                   {feature}
@@ -69,3 +69,5 @@ export default function PricingPlans({ plans }: { plans: Plan[] }) {
     </div>
   );
 }
+
+

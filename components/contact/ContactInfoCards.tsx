@@ -23,25 +23,25 @@ export default function ContactInfoCards() {
     <div className="space-y-5">
       {/* A — Direct contact */}
       <GlowCard className="p-6 sm:p-7">
-        <h3 className="text-xl font-serif text-white">
+        <h3 className="text-xl font-sans text-ink">
           Prefer to reach out directly?
         </h3>
-        <div className="mt-4 flex items-center gap-3 rounded-xl border border-white/5 bg-[#161616] px-4 py-3">
+        <div className="mt-4 flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3">
           <a
             href={`mailto:${CONTACT_EMAIL}`}
-            className="flex-1 truncate text-sm font-semibold text-[#AAFF00] hover:underline"
+            className="flex-1 truncate text-sm font-semibold text-accent-ink hover:underline"
           >
             {CONTACT_EMAIL}
           </a>
           <CopyEmailButton email={CONTACT_EMAIL} />
         </div>
-        <ul className="mt-4 space-y-2.5 text-sm text-gray-400">
+        <ul className="mt-4 space-y-2.5 text-sm text-muted">
           <li className="flex items-center gap-2.5">
-            <MapPin className="h-4 w-4 shrink-0 text-[#AAFF00]" aria-hidden="true" />
+            <MapPin className="h-4 w-4 shrink-0 text-accent-ink" aria-hidden="true" />
             Lahore, Pakistan · GMT+5
           </li>
           <li className="flex items-center gap-2.5">
-            <Clock className="h-4 w-4 shrink-0 text-[#AAFF00]" aria-hidden="true" />
+            <Clock className="h-4 w-4 shrink-0 text-accent-ink" aria-hidden="true" />
             Mon–Fri, 10am–7pm PKT
           </li>
         </ul>
@@ -49,26 +49,26 @@ export default function ContactInfoCards() {
 
       {/* B — Book a call */}
       <GlowCard className="p-6 sm:p-7">
-        <h3 className="text-xl font-serif text-white">Prefer to talk first?</h3>
-        <p className="mt-2 text-sm leading-relaxed text-gray-400">
+        <h3 className="text-xl font-sans text-ink">Prefer to talk first?</h3>
+        <p className="mt-2 text-sm leading-relaxed text-muted">
           Book a free 30-minute discovery call with one of the founders.
         </p>
         <a
           // TODO: Replace # with Calendly or Cal.com link when set up
           href="#"
-          className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 text-xs font-bold uppercase tracking-wider text-white transition-all duration-300 hover:border-[#AAFF00] hover:text-[#AAFF00]"
+          className="mt-5 inline-flex items-center gap-2 rounded-full border border-line px-6 py-3 text-xs font-bold uppercase tracking-wider text-ink transition-all duration-300 hover:border-[#AFF45D] hover:text-accent-ink"
         >
           <Calendar className="h-4 w-4" aria-hidden="true" />
           Book a Call
         </a>
-        <p className="mt-3 text-xs text-gray-500">
+        <p className="mt-3 text-xs text-muted">
           No commitment. Just a conversation.
         </p>
       </GlowCard>
 
       {/* C — Socials */}
       <GlowCard className="p-6 sm:p-7">
-        <h3 className="text-xl font-serif text-white">Find us online</h3>
+        <h3 className="text-xl font-sans text-ink">Find us online</h3>
         <ul className="mt-4 space-y-2.5">
           {SOCIALS.map(({ label, handle, href, icon: Icon }) => (
             <li key={label}>
@@ -76,16 +76,16 @@ export default function ContactInfoCards() {
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center gap-3 rounded-xl border border-white/5 bg-[#161616] px-4 py-3 transition-colors hover:border-[#AAFF00]/40"
+                className="group flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3 transition-colors hover:border-[#AFF45D]/40"
               >
                 <Icon
-                  className="h-4 w-4 shrink-0 text-gray-400 transition-colors group-hover:text-[#AAFF00]"
+                  className="h-4 w-4 shrink-0 text-muted transition-colors group-hover:text-accent-ink"
                   aria-hidden="true"
                 />
-                <span className="flex-1 text-sm font-semibold text-white">
+                <span className="flex-1 text-sm font-semibold text-ink">
                   {label}
                 </span>
-                <span className="text-xs text-gray-500 group-hover:text-gray-400">
+                <span className="text-xs text-muted group-hover:text-muted">
                   {handle}
                 </span>
               </a>
@@ -96,3 +96,5 @@ export default function ContactInfoCards() {
     </div>
   );
 }
+
+

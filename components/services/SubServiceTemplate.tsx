@@ -33,46 +33,46 @@ export default function SubServiceTemplate({
   category: Category;
 }) {
   return (
-    <main className="bg-[#0A0A0A] text-white">
+    <main className="bg-canvas text-ink">
       {/* 1 — HERO */}
-      <section className="w-full pt-32 lg:pt-40 pb-14 lg:pb-20 px-4 sm:px-6 lg:px-12 bg-[#0A0A0A] relative overflow-hidden">
+      <section className="w-full pt-16 lg:pt-24 pb-14 lg:pb-20 px-4 sm:px-6 lg:px-12 bg-canvas relative overflow-hidden">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[720px] h-[420px] rounded-full bg-[#AAFF00]/[0.07] blur-[120px]"
+          className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[720px] h-[420px] rounded-full bg-[#AFF45D]/[0.07] blur-[120px]"
         />
         <div className="max-w-7xl mx-auto relative">
           <Reveal>
             <nav
               aria-label="Breadcrumb"
-              className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-gray-500"
+              className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted"
             >
               <Link
                 href="/services"
-                className="hover:text-[#AAFF00] transition-colors"
+                className="hover:text-accent-ink transition-colors"
               >
                 Services
               </Link>
               <span aria-hidden="true">/</span>
               <Link
                 href={`/services#${category.id}`}
-                className="hover:text-[#AAFF00] transition-colors"
+                className="hover:text-accent-ink transition-colors"
               >
                 {category.title}
               </Link>
             </nav>
           </Reveal>
           <Reveal delay={80}>
-            <h1 className="mt-5 text-4xl sm:text-6xl lg:text-7xl font-serif italic tracking-tight leading-[1.08] text-white max-w-4xl">
+            <h1 className="mt-5 text-4xl sm:text-6xl lg:text-7xl font-sans tracking-tight leading-[1.08] text-ink max-w-4xl">
               {service.title}
             </h1>
           </Reveal>
           <Reveal delay={140}>
-            <p className="mt-3 text-base sm:text-lg text-[#AAFF00] font-medium">
+            <p className="mt-3 text-base sm:text-lg text-accent-ink font-medium">
               {service.tagline}
             </p>
           </Reveal>
           <Reveal delay={200}>
-            <p className="mt-5 text-gray-400 text-sm sm:text-base leading-relaxed max-w-xl">
+            <p className="mt-5 text-muted text-sm sm:text-base leading-relaxed max-w-xl">
               {service.description}
             </p>
           </Reveal>
@@ -104,13 +104,13 @@ export default function SubServiceTemplate({
                 <Reveal key={feature.title} delay={index * 60}>
                   <GlowCard className="h-full p-6 sm:p-7">
                     <Icon
-                      className="w-6 h-6 text-[#AAFF00]"
+                      className="w-6 h-6 text-accent-ink"
                       aria-hidden="true"
                     />
-                    <h3 className="mt-4 text-base sm:text-lg font-bold text-white">
+                    <h3 className="mt-4 text-base sm:text-lg font-bold text-ink">
                       {feature.title}
                     </h3>
-                    <p className="mt-2 text-sm text-gray-400 leading-relaxed">
+                    <p className="mt-2 text-sm text-muted leading-relaxed">
                       {feature.body}
                     </p>
                 </GlowCard>
@@ -165,26 +165,26 @@ export default function SubServiceTemplate({
       <section className="w-full py-14 lg:py-20 px-4 sm:px-6 lg:px-12">
         <div className="max-w-4xl mx-auto">
           <Reveal>
-            <div className="rounded-3xl border border-[#AAFF00]/25 bg-gradient-to-b from-[#AAFF00]/[0.06] to-transparent p-8 sm:p-10 text-center shadow-[0_0_45px_rgba(170,255,0,0.07)]">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-6 sm:divide-x divide-[#222222]">
+            <div className="rounded-xl border border-[#AFF45D]/25 bg-gradient-to-b from-[#AFF45D]/[0.06] to-transparent p-8 sm:p-10 text-center shadow-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-6 sm:divide-x divide-line">
                 <div className="sm:pr-6">
-                  <span className="text-xs font-semibold uppercase tracking-widest text-gray-500">
+                  <span className="text-xs font-semibold uppercase tracking-widest text-muted">
                     Starting from
                   </span>
-                  <p className="mt-2 text-4xl sm:text-5xl font-serif font-bold text-white">
+                  <p className="mt-2 text-4xl sm:text-5xl font-sans font-bold text-ink">
                     {service.price}
                   </p>
                 </div>
                 <div className="sm:pl-6">
-                  <span className="text-xs font-semibold uppercase tracking-widest text-gray-500">
+                  <span className="text-xs font-semibold uppercase tracking-widest text-muted">
                     Typical timeline
                   </span>
-                  <p className="mt-2 text-4xl sm:text-5xl font-serif font-bold text-white">
+                  <p className="mt-2 text-4xl sm:text-5xl font-sans font-bold text-ink">
                     {service.timeline}
                   </p>
                 </div>
               </div>
-              <p className="mt-6 text-sm text-gray-400 max-w-md mx-auto leading-relaxed">
+              <p className="mt-6 text-sm text-muted max-w-md mx-auto leading-relaxed">
                 Final quote depends on scope — you always get a fixed price before
                 we start, so there are no surprises.
               </p>
@@ -214,3 +214,5 @@ export default function SubServiceTemplate({
     </main>
   );
 }
+
+

@@ -14,3 +14,5 @@ export default function AnalyticsBiPage() {
   if (!service) notFound();
   return <SubServiceTemplate service={service} category={dataScience} />;
 }
+
+

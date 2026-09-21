@@ -14,3 +14,5 @@ export default function EcommercePage() {
   if (!service) notFound();
   return <SubServiceTemplate service={service} category={webDevelopment} />;
 }
+
+

@@ -16,13 +16,13 @@ const tags = [
 
 export default function PortfolioTags() {
   return (
-    <section id="projects" className="w-full py-10 bg-[#0A0A0A] border-b border-[#222222] overflow-x-auto no-scrollbar">
+    <section id="projects" className="w-full py-10 bg-canvas border-b border-line overflow-x-auto no-scrollbar">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
         <div className="flex items-center gap-3 md:gap-4 flex-nowrap md:flex-wrap justify-start md:justify-center">
           {tags.map((tag, index) => (
             <button
               key={index}
-              className="whitespace-nowrap px-6 py-2.5 rounded-full border border-[#2A2A2A] bg-[#111111] text-gray-300 hover:text-black hover:bg-[#AAFF00] hover:border-[#AAFF00] text-xs sm:text-sm font-semibold transition-all duration-200 hover:scale-105 shadow-sm"
+              className="whitespace-nowrap px-6 py-2.5 rounded-full border border-line bg-surface text-muted hover:text-black hover:bg-[#AFF45D] hover:border-[#AFF45D] text-xs sm:text-sm font-semibold transition-all duration-200 hover:scale-105 shadow-sm"
             >
               {tag}
             </button>
@@ -32,3 +32,5 @@ export default function PortfolioTags() {
     </section>
   );
 }
+
+

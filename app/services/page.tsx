@@ -43,12 +43,12 @@ const process = [
 
 export default function ServicesPage() {
   return (
-    <main className="bg-[#0A0A0A] text-white">
+    <main className="bg-canvas text-ink">
       <PageHero
         eyebrow="What We Do"
-        line1="Design, engineering and 3D —"
-        highlight="end-to-end"
-        lead="Two deep service lanes — Web Development and Data Science — plus the design craft that ties them together. Every service below is delivered by the founders themselves."
+        line1="Websites built around"
+        highlight="your business"
+        lead="Custom websites, online stores and ongoing support. Explore our web development services, with data and integration expertise when your project needs it."
       />
 
       {/* Category cards — each expands into its sub-services */}
@@ -66,38 +66,38 @@ export default function ServicesPage() {
                     id={category.id}
                     className="scroll-mt-28 flex items-center gap-4"
                   >
-                    <span className="grid place-items-center w-12 h-12 rounded-2xl bg-[#AAFF00]/10 border border-[#AAFF00]/25 text-[#AAFF00]">
+                    <span className="grid place-items-center w-12 h-12 rounded-2xl bg-[#AFF45D]/10 border border-[#AFF45D]/25 text-accent-ink">
                       <Icon className="w-6 h-6" aria-hidden="true" />
                     </span>
-                    <h2 className="text-2xl sm:text-3xl font-serif text-white">
+                    <h2 className="text-2xl sm:text-3xl font-sans text-ink">
                       {category.title}
                     </h2>
                   </div>
-                  <p className="mt-4 text-gray-400 text-sm leading-relaxed max-w-md">
+                  <p className="mt-4 text-muted text-sm leading-relaxed max-w-md">
                     {category.description}
                   </p>
 
-                  <div className="mt-8 border-t border-white/5">
+                  <div className="mt-8 border-t border-line">
                     {category.services.map((service) => (
                       <Link
                         key={service.slug}
                         href={`/services/${service.slug}`}
-                        className="group flex items-center justify-between gap-4 border-b border-white/5 py-4 sm:py-5 transition-colors hover:bg-white/[0.02] -mx-2 px-2 rounded-lg"
+                        className="group flex items-center justify-between gap-4 border-b border-line py-4 sm:py-5 transition-colors hover:bg-white/[0.02] -mx-2 px-2 rounded-lg"
                       >
                         <span>
-                          <span className="block text-base sm:text-lg font-semibold text-white group-hover:text-[#AAFF00] transition-colors">
+                          <span className="block text-base sm:text-lg font-semibold text-ink group-hover:text-accent-ink transition-colors">
                             {service.title}
                           </span>
-                          <span className="block mt-0.5 text-xs text-gray-500">
+                          <span className="block mt-0.5 text-xs text-muted">
                             {service.tagline}
                           </span>
                         </span>
                         <span className="flex items-center gap-3 shrink-0">
-                          <span className="hidden sm:block text-[10px] font-mono uppercase tracking-widest text-gray-500">
+                          <span className="hidden sm:block text-[10px] font-mono uppercase tracking-widest text-muted">
                             from {service.price}
                           </span>
                           <ArrowUpRight
-                            className="w-4 h-4 text-gray-600 transition-all duration-300 group-hover:text-[#AAFF00] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                            className="w-4 h-4 text-muted transition-all duration-300 group-hover:text-accent-ink group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                             aria-hidden="true"
                           />
                         </span>
@@ -115,8 +115,8 @@ export default function ServicesPage() {
       <section className="w-full py-6 lg:py-10 px-4 sm:px-6 lg:px-12">
         <div className="max-w-7xl mx-auto">
           <Reveal>
-            <div className="rounded-3xl border border-[#222222] bg-[#0F0F0F] px-6 sm:px-8 py-6">
-              <span className="text-xs font-semibold uppercase tracking-widest text-gray-500">
+            <div className="rounded-xl border border-line bg-surface px-6 sm:px-8 py-6">
+              <span className="text-xs font-semibold uppercase tracking-widest text-muted">
                 Also part of the studio
               </span>
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -124,18 +124,18 @@ export default function ServicesPage() {
                   <Link
                     key={item.title}
                     href="/#services"
-                    className="group flex items-center justify-between gap-3 rounded-2xl border border-white/5 bg-[#111111] px-4 py-3.5 transition-colors hover:border-[#AAFF00]/40"
+                    className="group flex items-center justify-between gap-3 rounded-2xl border border-line bg-surface px-4 py-3.5 transition-colors hover:border-[#AFF45D]/40"
                   >
                     <span>
-                      <span className="block text-sm font-semibold text-white group-hover:text-[#AAFF00] transition-colors">
+                      <span className="block text-sm font-semibold text-ink group-hover:text-accent-ink transition-colors">
                         {item.title}
                       </span>
-                      <span className="block text-xs text-gray-500 mt-0.5">
+                      <span className="block text-xs text-muted mt-0.5">
                         {item.note}
                       </span>
                     </span>
                     <ArrowUpRight
-                      className="w-4 h-4 shrink-0 text-gray-600 group-hover:text-[#AAFF00] transition-colors"
+                      className="w-4 h-4 shrink-0 text-muted group-hover:text-accent-ink transition-colors"
                       aria-hidden="true"
                     />
                   </Link>
@@ -167,3 +167,6 @@ export default function ServicesPage() {
     </main>
   );
 }
+
+
+

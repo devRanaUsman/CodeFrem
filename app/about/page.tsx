@@ -47,12 +47,12 @@ const stats: Stat[] = [
 
 export default function AboutPage() {
   return (
-    <main className="bg-[#0A0A0A] text-white">
+    <main className="bg-canvas text-ink">
       <PageHero
         eyebrow="Who We Are"
-        line1="A two-person studio turning ideas into"
-        highlight="masterpieces"
-        lead="We may be compact, but our creativity isn't. Codefrem blends deep engineering logic with avant-garde aesthetics to build digital products that move the numbers — and the people using them."
+        line1="A small studio that cares about"
+        highlight="your next chapter"
+        lead="We bring design and development together to help businesses show up clearly online. You work directly with the people building your website, from the first conversation to launch."
       />
 
       {/* Founder story */}
@@ -64,7 +64,7 @@ export default function AboutPage() {
               title="Built by two people who"
               highlight="care"
             />
-            <div className="space-y-4 text-gray-400 text-sm leading-relaxed -mt-4">
+            <div className="space-y-4 text-muted text-sm leading-relaxed -mt-4">
               <p>
                 Codefrem started the way most good things do: two friends, one
                 too-ambitious side project, and a stubborn belief that a
@@ -87,25 +87,25 @@ export default function AboutPage() {
           <Reveal delay={150} className="lg:col-span-7">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <GlowCard className="min-h-[220px] flex flex-col justify-between">
-                <span className="text-4xl font-serif italic text-[#AAFF00]">“</span>
+                <span className="text-4xl font-sans text-accent-ink">“</span>
                 <div>
-                  <p className="text-sm text-gray-300 leading-relaxed">
+                  <p className="text-sm text-muted leading-relaxed">
                     If it doesn&apos;t feel effortless to use, it doesn&apos;t
                     ship — no matter how good the Figma file looks.
                   </p>
-                  <p className="mt-4 text-xs uppercase tracking-widest text-gray-500 font-bold">
+                  <p className="mt-4 text-xs uppercase tracking-widest text-muted font-bold">
                     — The one who designs
                   </p>
                 </div>
               </GlowCard>
               <GlowCard className="min-h-[220px] flex flex-col justify-between">
-                <span className="text-4xl font-serif italic text-[#AAFF00]">“</span>
+                <span className="text-4xl font-sans text-accent-ink">“</span>
                 <div>
-                  <p className="text-sm text-gray-300 leading-relaxed">
+                  <p className="text-sm text-muted leading-relaxed">
                     Nobody notices a fast website. Everybody notices a slow
                     one. We build for the silence.
                   </p>
-                  <p className="mt-4 text-xs uppercase tracking-widest text-gray-500 font-bold">
+                  <p className="mt-4 text-xs uppercase tracking-widest text-muted font-bold">
                     — The one who ships
                   </p>
                 </div>
@@ -116,7 +116,7 @@ export default function AboutPage() {
       </section>
 
       {/* Our approach — GlowCard grid */}
-      <section className="w-full py-14 lg:py-20 px-4 sm:px-6 lg:px-12 bg-[#0A0A0A]">
+      <section className="w-full py-14 lg:py-20 px-4 sm:px-6 lg:px-12 bg-canvas">
         <div className="max-w-7xl mx-auto">
           <SectionHeading
             eyebrow="How We Work"
@@ -128,13 +128,13 @@ export default function AboutPage() {
             {approach.map((item, i) => (
               <Reveal key={item.title} delay={i * 100}>
                 <GlowCard className="h-full min-h-[230px] flex flex-col">
-                  <span className="w-11 h-11 rounded-2xl bg-[#1a1a1a] border border-[#333333] flex items-center justify-center text-[#AAFF00] text-lg">
+                  <span className="w-11 h-11 rounded-2xl bg-surface border border-line flex items-center justify-center text-accent-ink text-lg">
                     {item.icon}
                   </span>
-                  <h3 className="mt-5 text-lg font-serif text-white">
+                  <h3 className="mt-5 text-lg font-sans text-ink">
                     {item.title}
                   </h3>
-                  <p className="mt-2.5 text-gray-400 text-sm leading-relaxed">
+                  <p className="mt-2.5 text-muted text-sm leading-relaxed">
                     {item.body}
                   </p>
                 </GlowCard>
@@ -174,3 +174,6 @@ export default function AboutPage() {
     </main>
   );
 }
+
+
+

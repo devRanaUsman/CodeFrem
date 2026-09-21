@@ -6,17 +6,17 @@ import CtaStrip from "@/components/ui/CtaStrip";
 export const metadata: Metadata = {
   title: "Projects — Codefrem",
   description:
-    "Flagship projects by Codefrem — fintech dashboards, headless storefronts, WebGL configurators and brand systems, with real results.",
+    "Explore illustrative web design and development concept projects by Codefrem.",
 };
 
 export default function ProjectsPage() {
   return (
-    <main className="bg-[#0A0A0A] text-white">
+    <main className="bg-canvas text-ink">
       <PageHero
         eyebrow="Selected Work"
-        line1="Flagship projects,"
-        highlight="real results"
-        lead="A selection of what we've shipped end-to-end — strategy through design through production code. Every card opens a full case study."
+        line1="Design ideas,"
+        highlight="made tangible"
+        lead="Explore concept projects across web design and development. These illustrative case studies show possible approaches; client names, metrics and testimonials are placeholders."
       />
 
       <section className="w-full px-4 sm:px-6 lg:px-12 pb-16 lg:pb-24">
@@ -27,7 +27,7 @@ export default function ProjectsPage() {
               (stat) => (
                 <span
                   key={stat}
-                  className="rounded-full border border-[#AAFF00]/25 bg-[#111111] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-300 shadow-[0_0_18px_rgba(170,255,0,0.07)]"
+                  className="rounded-full border border-[#AFF45D]/25 bg-surface px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-muted shadow-sm"
                 >
                   {stat}
                 </span>
@@ -50,3 +50,6 @@ export default function ProjectsPage() {
     </main>
   );
 }
+
+
+

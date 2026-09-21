@@ -94,8 +94,7 @@ export default function SmoothScrollProvider({
     // settled so pin distances stay accurate. Each refresh re-measures every
     // trigger (a full layout pass on a page this tall), so we keep them to a
     // minimum: `load`, then the moment fonts/late layout are definitively
-    // done, plus one safety net. The preloader also refreshes once when it
-    // hands the page over.
+    // done, plus one safety net.
     const refresh = () => {
       try {
         st?.refresh();
@@ -147,3 +146,5 @@ export default function SmoothScrollProvider({
 
   return <>{children}</>;
 }
+
+

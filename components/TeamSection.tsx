@@ -38,14 +38,14 @@ const teamMembers = [
 
 export default function TeamSection() {
   return (
-    <section id="reviews" className="w-full py-20 lg:py-28 px-4 sm:px-6 lg:px-12 bg-[#0A0A0A] text-white">
+    <section id="reviews" className="w-full py-20 lg:py-28 px-4 sm:px-6 lg:px-12 bg-canvas text-ink">
       <div className="max-w-7xl mx-auto">
         {/* Section Header matching Creatix design */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12">
           <div>
-            <h2 className="text-3xl sm:text-5xl font-serif text-white tracking-tight flex items-center gap-3">
+            <h2 className="text-3xl sm:text-5xl font-sans text-ink tracking-tight flex items-center gap-3">
               <span>Meet</span>
-              <span className="bg-[#AAFF00] text-black px-4 py-1 rounded-full font-sans font-bold text-2xl sm:text-4xl not-italic">
+              <span className="bg-[#AFF45D] text-black px-4 py-1 rounded-full font-sans font-bold text-2xl sm:text-4xl not-italic">
                 Our Team
               </span>
             </h2>
@@ -53,7 +53,7 @@ export default function TeamSection() {
 
           <a
             href="#contact"
-            className="self-start sm:self-auto inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#161616] hover:bg-[#AAFF00] text-gray-300 hover:text-black border border-[#2A2A2A] hover:border-[#AAFF00] text-xs font-bold uppercase tracking-wider transition-all"
+            className="self-start sm:self-auto inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-surface hover:bg-[#AFF45D] text-muted hover:text-black border border-line hover:border-[#AFF45D] text-xs font-bold uppercase tracking-wider transition-all"
           >
             <span>Join Our Team</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -65,15 +65,15 @@ export default function TeamSection() {
           {teamMembers.map((member, index) => (
             <div
               key={index}
-              className="group relative rounded-3xl bg-white text-black p-6 sm:p-7 shadow-xl hover:shadow-[0_15px_35px_rgba(170,255,0,0.2)] transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between min-h-[220px]"
+              className="group relative rounded-xl bg-white text-black p-6 sm:p-7 shadow-xl hover:shadow-[0_15px_35px_rgba(170,255,0,0.2)] transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between min-h-[220px]"
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
                   {/* Lime Green Avatar Icon */}
-                  <div className="w-10 h-10 rounded-full bg-[#AAFF00] text-black flex items-center justify-center font-mono font-bold text-xs shadow-sm">
+                  <div className="w-10 h-10 rounded-full bg-[#AFF45D] text-black flex items-center justify-center font-mono font-bold text-xs shadow-sm">
                     {member.name.split(" ").map((n) => n[0]).join("")}
                   </div>
-                  <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 group-hover:bg-black group-hover:text-white transition-colors">
+                  <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 group-hover:bg-black group-hover:text-ink transition-colors">
                     <ArrowUpRight className="w-3.5 h-3.5" />
                   </div>
                 </div>
@@ -81,15 +81,15 @@ export default function TeamSection() {
                 <h3 className="text-xl font-bold text-black group-hover:text-black transition-colors">
                   {member.name}
                 </h3>
-                <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mt-0.5">
+                <p className="text-[11px] font-semibold text-muted uppercase tracking-wider mt-0.5">
                   {member.role}
                 </p>
-                <p className="text-gray-600 text-xs sm:text-sm mt-3 leading-relaxed">
+                <p className="text-muted text-xs sm:text-sm mt-3 leading-relaxed">
                   {member.desc}
                 </p>
               </div>
 
-              <div className="mt-5 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-400">
+              <div className="mt-5 pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-muted">
                 <span>Codefrem Studio</span>
                 <span className="text-black font-semibold">Available</span>
               </div>
@@ -100,3 +100,5 @@ export default function TeamSection() {
     </section>
   );
 }
+
+
