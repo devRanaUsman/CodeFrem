@@ -9,7 +9,7 @@
 export interface TeamMember {
   name: string;
   role: string;
-  /** One human line — not a corporate bio. */
+  /** One human line (not a corporate bio). */
   bio: string;
   /** Path to a photo in /public, or undefined for the monogram fallback. */
   avatar?: string;
@@ -20,8 +20,8 @@ export interface TeamMember {
 export const team: TeamMember[] = [
   {
     name: "Rana Muhammad Usman",
-    role: "Founder & Creative Director",
-    bio: "Designs the things you see — and the reasons you stay. Believes a brand is a promise delivered one scroll at a time.",
+    role: "Founder & Lead Engineer",
+    bio: "Designs the things you see, and the reasons you stay. Believes a brand is a promise delivered one scroll at a time.",
     links: [
       { label: "Twitter/X", href: "https://twitter.com" },
       { label: "Dribbble", href: "https://dribbble.com" },
@@ -29,7 +29,7 @@ export const team: TeamMember[] = [
   },
   {
     name: "Talha Shahid",
-    role: "Co-Founder & Lead Engineer",
+    role: "Co-Founder & Creative Director",
     bio: "Builds the things that must never break. Treats 60fps as a feature and 'it works on my machine' as a bug report.",
     links: [
       { label: "Twitter/X", href: "https://twitter.com" },

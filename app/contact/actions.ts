@@ -46,10 +46,10 @@ export async function submitContact(
   // For now, log to console and show success state.
   console.log("[contact] New inquiry:", {
     from: `${input.name} <${input.email}>`,
-    company: input.company || "—",
+    company: input.company || "(none)",
     service: input.service,
     budget: input.budget,
-    source: input.source || "—",
+    source: input.source || "(none)",
     description: input.description,
   });
 

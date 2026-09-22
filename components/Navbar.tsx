@@ -5,29 +5,140 @@ import { usePathname } from "next/navigation";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-const links = [{ href: "/services", label: "Services" }, { href: "/projects", label: "Work" }, { href: "/about", label: "About" }];
+import Image from "next/image";
+
 export default function Navbar() {
   const pathname = usePathname();
-  const [openPath, setOpenPath] = useState<string | null>(null);
-  const isOpen = openPath === pathname;
+  const [isOpen, setIsOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const menuButton = useRef<HTMLButtonElement>(null);
+  const lastScrollY = useRef(0);
+
+  // Scroll listener: hide navbar on scroll down, reveal on scroll up
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Always show near the top of the page
+      if (currentScrollY <= 40) {
+        setIsVisible(true);
+        lastScrollY.current = currentScrollY;
+        return;
+      }
+
+      // Scrolling down -> hide navbar & close mobile menu
+      if (currentScrollY > lastScrollY.current + 8) {
+        setIsVisible(false);
+        setIsOpen(false);
+      }
+      // Scrolling up -> show navbar
+      else if (currentScrollY < lastScrollY.current - 8) {
+        setIsVisible(true);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   useEffect(() => {
     if (!isOpen) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") { setOpenPath(null); menuButton.current?.focus(); }
+      if (event.key === "Escape") {
+        setIsOpen(false);
+        menuButton.current?.focus();
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [isOpen]);
-  return <header className="studio-header">
-    <nav className="studio-container studio-nav" aria-label="Main navigation">
-      <Link href="/" className="studio-logo" onClick={() => setOpenPath(null)} aria-label="Codefrem home"><svg className="brand-mark" viewBox="0 0 40 48" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><path d="M4 5 20 20 36 5v38L20 28 4 43V5Z"/><path d="m9 15 22 23V15L9 38V15Z"/></svg><span className="brand-word">Codefrem / Web Design & Development</span></Link>
-      <div className="desktop-links">{links.map(link => <Link key={link.href} href={link.href} aria-current={pathname.startsWith(link.href) ? "page" : undefined}>{link.label}</Link>)}</div>
-      <Link href="/contact" className="nav-contact">Let’s talk <ArrowUpRight size={16} /></Link>
-      <span className="header-edition">2026 PORTFOLIO <i /></span><button ref={menuButton} className="mobile-toggle" onClick={() => setOpenPath(isOpen ? null : pathname)} aria-expanded={isOpen} aria-controls="mobile-navigation" aria-label={isOpen ? "Close navigation" : "Open navigation"}>{isOpen ? <X /> : <Menu />}</button>
-    </nav>
-    {isOpen && <div id="mobile-navigation" className="mobile-navigation">{[...links, { href: "/contact", label: "Contact" }].map(link => <Link key={link.href} href={link.href} onClick={() => setOpenPath(null)}>{link.label}<ArrowUpRight size={16} /></Link>)}</div>}
-  </header>;
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
+  return (
+    <header className={`studio-header ${isVisible ? "header-visible" : "header-hidden"}`}>
+      <nav className="studio-nav" aria-label="Main navigation">
+        {/* Left Links */}
+        <div className="nav-group nav-group-left">
+          <Link
+            href="/about"
+            className={pathname === "/about" ? "active-link" : ""}
+            aria-current={pathname === "/about" ? "page" : undefined}
+          >
+            About Us
+          </Link>
+          <Link
+            href="/services"
+            className={pathname.startsWith("/services") ? "active-link" : ""}
+            aria-current={pathname.startsWith("/services") ? "page" : undefined}
+          >
+            Services
+          </Link>
+        </div>
+
+        {/* Center Brand */}
+        <Link href="/" className="studio-brand" onClick={() => setIsOpen(false)} aria-label="Codefrem home">
+          <Image src="/images/codefrem_LOGO.png" alt="" width={150} height={150} />
+        </Link>
+
+        {/* Right Links */}
+        <div className="nav-group nav-group-right">
+          <Link
+            href="/projects"
+            className={pathname.startsWith("/projects") ? "active-link" : ""}
+            aria-current={pathname.startsWith("/projects") ? "page" : undefined}
+          >
+            Work
+          </Link>
+          <Link
+            href="/contact"
+            className={pathname === "/contact" ? "active-link" : ""}
+            aria-current={pathname === "/contact" ? "page" : undefined}
+          >
+            Contact
+          </Link>
+        </div>
+
+        {/* Mobile toggle button */}
+        <button
+          ref={menuButton}
+          className="mobile-toggle"
+          onClick={() => setIsOpen(!isOpen)}
+          aria-expanded={isOpen}
+          aria-controls="mobile-navigation"
+          aria-label={isOpen ? "Close navigation" : "Open navigation"}
+        >
+          {isOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </nav>
+
+      {/* Mobile dropdown */}
+      {isOpen && (
+        <div id="mobile-navigation" className="mobile-navigation">
+          <Link href="/about" onClick={() => setIsOpen(false)}>
+            <span>About Us</span>
+            <ArrowUpRight size={16} />
+          </Link>
+          <Link href="/services" onClick={() => setIsOpen(false)}>
+            <span>Services</span>
+            <ArrowUpRight size={16} />
+          </Link>
+          <Link href="/projects" onClick={() => setIsOpen(false)}>
+            <span>Work</span>
+            <ArrowUpRight size={16} />
+          </Link>
+          <Link href="/contact" onClick={() => setIsOpen(false)}>
+            <span>Contact</span>
+            <ArrowUpRight size={16} />
+          </Link>
+        </div>
+      )}
+    </header>
+  );
 }
 
 

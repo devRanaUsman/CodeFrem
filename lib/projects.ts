@@ -1,7 +1,7 @@
 /**
  * Compatibility layer over data/projects.ts (the real single source of
  * truth). The homepage horizontal showcase renders cards keyed by
- * `project.id` with tailwind `gradient` classes — those legacy fields are
+ * `project.id` with tailwind `gradient` classes; those legacy fields are
  * derived here so the homepage needs no changes.
  *
  * Everything else (grid, case studies) should import from data/projects.

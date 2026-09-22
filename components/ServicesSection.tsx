@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { ArrowUpRight, Monitor, ShoppingBag, Smartphone, Settings2 } from "lucide-react";
+import { ArrowUpRight, Monitor, ShoppingBag, Server, BrainCircuit } from "lucide-react";
 
 const services = [
-  { title: "WEB DESIGN", text: "Distinctive, intuitive websites shaped around your business.", icon: Monitor, href: "/services/web-development/custom-website" },
-  { title: "WEB DEVELOPMENT", text: "Fast, responsive experiences that work beautifully.", icon: Smartphone, href: "/services/web-development/backend-api" },
-  { title: "E-COMMERCE", text: "Thoughtful online stores that make shopping effortless.", icon: ShoppingBag, href: "/services/web-development/ecommerce" },
-  { title: "WEBSITE CARE", text: "Ongoing improvements and support, long after launch.", icon: Settings2, href: "/services/web-development/maintenance-support" },
+  { title: "WEBSITES AND WEB APPS", text: "Websites and web apps shaped around your business, not a template.", icon: Monitor, href: "/services/web-development/custom-website" },
+  { title: "E-COMMERCE DEVELOPMENT", text: "Product, checkout, and inventory systems built around your operations.", icon: ShoppingBag, href: "/services/web-development/backend-api" },
+  { title: "BACKEND SYSTEMS AND APIS", text: "Reliable backend systems and APIs that power your applications.", icon: Server, href: "/services/web-development/ecommerce" },
+  { title: "DATA ANALYTICS AND AI SYSTEMS", text: "Data and AI systems that turn your data into insight and automation.", icon: BrainCircuit, href: "/services/web-development/maintenance-support" },
 ];
 export default function ServicesSection() {
   return <section id="services" className="home-section">

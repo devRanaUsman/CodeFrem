@@ -4,9 +4,9 @@ import SubServiceTemplate from "@/components/services/SubServiceTemplate";
 import { getSubServiceBySlug, webDevelopment } from "@/lib/subServices";
 
 export const metadata: Metadata = {
-  title: "Backend & API Development — Codefrem",
+  title: "Backend & API Development | Codefrem",
   description:
-    "Clean APIs, reliable PostgreSQL schemas and integrations that don't break — fully documented and handed over. Starting from $600, delivered in 1–2 weeks.",
+    "Clean APIs, reliable PostgreSQL schemas and integrations that don't break, fully documented and handed over. Starting from $600, delivered in 1-2 weeks.",
 };
 
 export default function BackendApiPage() {

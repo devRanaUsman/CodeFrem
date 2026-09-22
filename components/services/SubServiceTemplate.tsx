@@ -22,7 +22,7 @@ import type { Category, SubService } from "@/lib/subServices";
  *   6. FAQ (native details accordion)
  *   7. Narrow line-type CTA → /contact
  *
- * All copy comes from lib/subServices.ts — page files only pick the
+ * All copy comes from lib/subServices.ts; page files only pick the
  * service and pass it here.
  */
 export default function SubServiceTemplate({
@@ -34,7 +34,7 @@ export default function SubServiceTemplate({
 }) {
   return (
     <main className="bg-canvas text-ink">
-      {/* 1 — HERO */}
+      {/* 1 - HERO */}
       <section className="w-full pt-16 lg:pt-24 pb-14 lg:pb-20 px-4 sm:px-6 lg:px-12 bg-canvas relative overflow-hidden">
         <div
           aria-hidden="true"
@@ -88,7 +88,7 @@ export default function SubServiceTemplate({
         <span id={category.id} className="absolute top-0" aria-hidden="true" />
       </section>
 
-      {/* 2 — WHAT YOU GET */}
+      {/* 2 - WHAT YOU GET */}
       <section className="w-full py-14 lg:py-20 px-4 sm:px-6 lg:px-12">
         <div className="max-w-7xl mx-auto">
           <SectionHeading
@@ -121,7 +121,7 @@ export default function SubServiceTemplate({
         </div>
       </section>
 
-      {/* 3 — OUR PROCESS */}
+      {/* 3 - OUR PROCESS */}
       <section className="w-full py-14 lg:py-20 px-4 sm:px-6 lg:px-12">
         <div className="max-w-6xl mx-auto">
           <SectionHeading
@@ -134,7 +134,7 @@ export default function SubServiceTemplate({
         </div>
       </section>
 
-      {/* 4 — TOOLS & TECH */}
+      {/* 4 - TOOLS & TECH */}
       <section className="w-full py-14 lg:py-20 px-4 sm:px-6 lg:px-12">
         <div className="max-w-4xl mx-auto text-center">
           <SectionHeading eyebrow="Tools & Tech" title="Our" highlight="stack" align="center" />
@@ -147,21 +147,21 @@ export default function SubServiceTemplate({
           </Reveal>
         </div>
       </section>
-      {/* 5 — PRICING PLANS */}
+      {/* 5 - PRICING PLANS */}
       <section className="w-full py-14 lg:py-20 px-4 sm:px-6 lg:px-12">
         <div className="max-w-6xl mx-auto">
           <SectionHeading
             eyebrow="Pricing"
             title="Pick a"
             highlight="plan"
-            description="Clear scopes, fixed prices. Every plan can be tailored — the quote you approve is the invoice you pay."
+            description="Clear scopes, fixed prices. Every plan can be tailored: the quote you approve is the invoice you pay."
             align="center"
           />
           <PricingPlans plans={service.plans} />
         </div>
       </section>
 
-      {/* 6 — STARTING PRICE + TIMELINE */}
+      {/* 6 - STARTING PRICE + TIMELINE */}
       <section className="w-full py-14 lg:py-20 px-4 sm:px-6 lg:px-12">
         <div className="max-w-4xl mx-auto">
           <Reveal>
@@ -185,7 +185,7 @@ export default function SubServiceTemplate({
                 </div>
               </div>
               <p className="mt-6 text-sm text-muted max-w-md mx-auto leading-relaxed">
-                Final quote depends on scope — you always get a fixed price before
+                Final quote depends on scope: you always get a fixed price before
                 we start, so there are no surprises.
               </p>
             </div>
@@ -193,7 +193,7 @@ export default function SubServiceTemplate({
         </div>
       </section>
 
-      {/* 7 — FAQ */}
+      {/* 7 - FAQ */}
       <section className="w-full py-14 lg:py-20 px-4 sm:px-6 lg:px-12">
         <div className="max-w-4xl mx-auto">
           <SectionHeading
@@ -206,10 +206,10 @@ export default function SubServiceTemplate({
         </div>
       </section>
 
-      {/* 8 — CTA STRIP */}
+      {/* 8 - CTA STRIP */}
       <CtaStrip
         title="Ready to get started?"
-        subtext={`Tell us about your ${service.title.toLowerCase()} project — we reply within a day.`}
+        subtext={`Tell us about your ${service.title.toLowerCase()} project; we reply within a day.`}
       />
     </main>
   );

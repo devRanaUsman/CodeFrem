@@ -4,7 +4,7 @@ import type { Faq } from "@/lib/subServices";
 import Reveal from "@/components/ui/Reveal";
 
 /**
- * FAQ accordion built on native <details>/<summary> — zero JavaScript,
+ * FAQ accordion built on native <details>/<summary>: zero JavaScript,
  * keyboard and screen-reader accessible for free, instant on low-end
  * phones. Chevron state swaps via the CSS :open pseudo-class.
  *

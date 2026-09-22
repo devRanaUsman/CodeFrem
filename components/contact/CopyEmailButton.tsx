@@ -16,7 +16,7 @@ export default function CopyEmailButton({ email }: { email: string }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 1600);
     } catch {
-      // Clipboard blocked (permissions/insecure context) — silently ignore;
+      // Clipboard blocked (permissions/insecure context); silently ignore;
       // the mailto link right next to it still works.
     }
   };

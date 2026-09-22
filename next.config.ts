@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
 
   // Dev-only: allow the ngrok tunnel to reach the dev server. This used to be
   // assigned via a stray `module.exports = {...}` block, which Next ignores in
-  // an ESM TypeScript config — so the option silently never applied.
+  // an ESM TypeScript config, so the option silently never applied.
   allowedDevOrigins: ["tearless-untragically-kaye.ngrok-free.dev", '192.168.1.7'],
 
   images: {

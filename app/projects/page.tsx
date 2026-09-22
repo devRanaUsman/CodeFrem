@@ -4,7 +4,7 @@ import ProjectGallery from "@/components/projects/ProjectGallery";
 import CtaStrip from "@/components/ui/CtaStrip";
 
 export const metadata: Metadata = {
-  title: "Projects — Codefrem",
+  title: "Projects | Codefrem",
   description:
     "Explore illustrative web design and development concept projects by Codefrem.",
 };
@@ -21,7 +21,7 @@ export default function ProjectsPage() {
 
       <section className="w-full px-4 sm:px-6 lg:px-12 pb-16 lg:pb-24">
         <div className="max-w-6xl mx-auto">
-          {/* Stat strip — same glow-border pill language as the cards */}
+          {/* Stat strip: same glow-border pill language as the cards */}
           <div className="flex flex-wrap items-center justify-center gap-3">
             {["5 Projects", "4 Disciplines", "End-to-End Delivery"].map(
               (stat) => (
@@ -44,7 +44,7 @@ export default function ProjectsPage() {
 
       <CtaStrip
         title="Want your project in this grid?"
-        subtext="We take on 2–3 new projects per quarter. Tell us what you're building."
+        subtext="We take on 2-3 new projects per quarter. Tell us what you're building."
         label="Start a Conversation"
       />
     </main>

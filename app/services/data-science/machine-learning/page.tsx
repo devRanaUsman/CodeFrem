@@ -4,9 +4,9 @@ import SubServiceTemplate from "@/components/services/SubServiceTemplate";
 import { dataScience, getSubServiceBySlug } from "@/lib/subServices";
 
 export const metadata: Metadata = {
-  title: "Machine Learning Solutions — Codefrem",
+  title: "Machine Learning Solutions | Codefrem",
   description:
-    "Forecasting, scoring and anomaly detection measured by business impact — feasibility first, hype never. Starting from $1500, delivered in 4–6 weeks.",
+    "Forecasting, scoring and anomaly detection measured by business impact: feasibility first, hype never. Starting from $1500, delivered in 4-6 weeks.",
 };
 
 export default function MachineLearningPage() {

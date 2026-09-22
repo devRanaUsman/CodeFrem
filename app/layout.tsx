@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Codefrem — Web Design & Development",
+  title: "Codefrem | Web Design & Development",
   description: "Thoughtful web design and reliable development for your business. Codefrem builds custom websites, online stores and web applications, with support beyond launch.",
   keywords: ["Codefrem", "web development", "web design", "business websites", "ecommerce"],
   icons: { icon: "/favicon.ico" },

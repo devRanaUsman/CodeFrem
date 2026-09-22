@@ -4,9 +4,9 @@ import SubServiceTemplate from "@/components/services/SubServiceTemplate";
 import { dataScience, getSubServiceBySlug } from "@/lib/subServices";
 
 export const metadata: Metadata = {
-  title: "Analytics & Business Intelligence — Codefrem",
+  title: "Analytics & Business Intelligence | Codefrem",
   description:
-    "Unified data, dashboards people actually open, and automated reporting. Starting from $700, delivered in 2–3 weeks.",
+    "Unified data, dashboards people actually open, and automated reporting. Starting from $700, delivered in 2-3 weeks.",
 };
 
 export default function AnalyticsBiPage() {

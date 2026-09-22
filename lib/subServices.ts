@@ -39,7 +39,7 @@ export interface Faq {
 export interface Plan {
   name: string;
   price: string;
-  /** One line — who this plan is for. */
+  /** One line: who this plan is for. */
   blurb: string;
   features: string[];
   /** The middle (Standard) plan gets the lime highlight treatment. */
@@ -55,9 +55,9 @@ export interface SubService {
   tagline: string;
   /** Two-sentence hero description. */
   description: string;
-  /** 4–6 "what you get" cards, written from the client's perspective. */
+  /** 4-6 "what you get" cards, written from the client's perspective. */
   features: Feature[];
-  /** 4–5 process steps specific to this service. */
+  /** 4-5 process steps specific to this service. */
   process: ProcessStep[];
   tools: string[];
   price: string;
@@ -77,7 +77,7 @@ export interface Category {
 }
 
 /* ------------------------------------------------------------------ */
-/* Category 1 — Web Development                                        */
+/* Category 1 - Web Development                                        */
 /* ------------------------------------------------------------------ */
 
 export const webDevelopment: Category = {
@@ -85,19 +85,19 @@ export const webDevelopment: Category = {
   title: "Web Development",
   icon: Code2,
   description:
-    "Fast, typed, reliable web products — from marketing sites to full platforms.",
+    "Fast, typed, reliable web products: from marketing sites to full platforms.",
   services: [
     {
       slug: "web-development/custom-website",
       title: "Custom Website",
       tagline: "Built like a product, not a template.",
       description:
-        "We design and build your website from scratch around your business goals — not a theme with your logo on it. You get a fast, responsive site that loads instantly, ranks well, and turns visitors into inquiries.",
+        "We design and build your website from scratch around your business goals, not a theme with your logo on it. You get a fast, responsive site that loads instantly, ranks well, and turns visitors into inquiries.",
       features: [
         {
           icon: Layout,
           title: "Loads before they leave",
-          body: "Built static-first on Next.js, so pages render in under a second. Speed is also a Google ranking factor — this is the cheapest SEO you can buy.",
+          body: "Built static-first on Next.js, so pages render in under a second. Speed is also a Google ranking factor; this is the cheapest SEO you can buy.",
         },
         {
           icon: LineChart,
@@ -112,7 +112,7 @@ export const webDevelopment: Category = {
         {
           icon: ShoppingCart,
           title: "Perfect on every phone",
-          body: "Mobile-first layouts tested on real devices. Most of your visitors browse on a phone — the site is designed for thumbs, not cursors.",
+          body: "Mobile-first layouts tested on real devices. Most of your visitors browse on a phone; the site is designed for thumbs, not cursors.",
         },
         {
           icon: Wrench,
@@ -122,13 +122,13 @@ export const webDevelopment: Category = {
         {
           icon: Brain,
           title: "Ready to grow",
-          body: "Start with a marketing site now, add a store, portal or booking system later — without rebuilding from zero.",
+          body: "Start with a marketing site now, add a store, portal or booking system later, without rebuilding from zero.",
         },
       ],
       process: [
         {
           title: "Discover",
-          body: "A 30-minute call to map your pages, content and goals — and define what 'working' means in numbers.",
+          body: "A 30-minute call to map your pages, content and goals, and define what 'working' means in numbers.",
         },
         {
           title: "Design",
@@ -136,7 +136,7 @@ export const webDevelopment: Category = {
         },
         {
           title: "Build",
-          body: "Typed, componentized Next.js with weekly preview links — you watch the site come alive, not a big-bang reveal.",
+          body: "Typed, componentized Next.js with weekly preview links; you watch the site come alive, not a big-bang reveal.",
         },
         {
           title: "Launch",
@@ -163,9 +163,9 @@ export const webDevelopment: Category = {
           featured: true,
           features: [
             "Up to 8 pages, custom-designed",
-            "CMS — edit content yourself",
+            "CMS: edit content yourself",
             "1 month of post-launch fixes",
-            "Delivered in 2–3 weeks",
+            "Delivered in 2-3 weeks",
           ],
         },
         {
@@ -181,11 +181,11 @@ export const webDevelopment: Category = {
         },
       ],
       price: "$800",
-      timeline: "2–3 weeks",
+      timeline: "2-3 weeks",
       faqs: [
         {
           q: "Will I be able to update the site myself?",
-          a: "Yes, if you want to. We can wire the site to a headless CMS like Sanity so you edit content without touching code — or keep it fully static if you'd rather never think about it.",
+          a: "Yes, if you want to. We can wire the site to a headless CMS like Sanity so you edit content without touching code, or keep it fully static if you'd rather never think about it.",
         },
         {
           q: "Do you write the content?",
@@ -197,7 +197,7 @@ export const webDevelopment: Category = {
         },
         {
           q: "Why $800 and not $300?",
-          a: "Because it's hand-built code, not a bought theme. You get a site that loads fast, ranks, and doesn't fall apart the first time you need it changed — the cheap version usually costs more in the end.",
+          a: "Because it's hand-built code, not a bought theme. You get a site that loads fast, ranks, and doesn't fall apart the first time you need it changed; the cheap version usually costs more in the end.",
         },
       ],
     },
@@ -206,7 +206,7 @@ export const webDevelopment: Category = {
       title: "Backend & API",
       tagline: "The engine room, built right.",
       description:
-        "We build the server side your app deserves — clean APIs, reliable databases, and integrations that don't break at 2 a.m. You get documentation, typed contracts, and a system any future developer can pick up.",
+        "We build the server side your app deserves: clean APIs, reliable databases, and integrations that don't break at 2 a.m. You get documentation, typed contracts, and a system any future developer can pick up.",
       features: [
         {
           icon: Code2,
@@ -221,12 +221,12 @@ export const webDevelopment: Category = {
         {
           icon: Bot,
           title: "Everything connected",
-          body: "Stripe, email, auth, third-party tools — wired and tested, with retries for when networks misbehave.",
+          body: "Stripe, email, auth, third-party tools, wired and tested, with retries for when networks misbehave.",
         },
         {
           icon: Wrench,
           title: "Secure by default",
-          body: "Input validation, rate limiting, and sane secrets handling — the checklist most projects skip until it's too late.",
+          body: "Input validation, rate limiting, and sane secrets handling: the checklist most projects skip until it's too late.",
         },
         {
           icon: Layout,
@@ -242,7 +242,7 @@ export const webDevelopment: Category = {
       process: [
         {
           title: "Scope",
-          body: "We map every endpoint, data entity and integration your product needs — in plain language you can review.",
+          body: "We map every endpoint, data entity and integration your product needs, in plain language you can review.",
         },
         {
           title: "Architect",
@@ -277,9 +277,9 @@ export const webDevelopment: Category = {
           featured: true,
           features: [
             "Up to 15 endpoints + auth",
-            "2–3 integrations, tested",
+            "2-3 integrations, tested",
             "Staging deployment included",
-            "Delivered in 1–2 weeks",
+            "Delivered in 1-2 weeks",
           ],
         },
         {
@@ -295,15 +295,15 @@ export const webDevelopment: Category = {
         },
       ],
       price: "$600",
-      timeline: "1–2 weeks",
+      timeline: "1-2 weeks",
       faqs: [
         {
           q: "Can you work with our existing codebase?",
-          a: "Usually, yes. We start with a short audit of what's there, tell you honestly what can be kept versus rebuilt, and quote based on that reality — not a guess.",
+          a: "Usually, yes. We start with a short audit of what's there, tell you honestly what can be kept versus rebuilt, and quote based on that reality, not a guess.",
         },
         {
           q: "REST or GraphQL?",
-          a: "REST for most products — it's simpler, cacheable, and every developer knows it. If you have a genuine multi-client query-heavy product, we'll discuss GraphQL with the tradeoffs on the table.",
+          a: "REST for most products; it's simpler, cacheable, and every developer knows it. If you have a genuine multi-client query-heavy product, we'll discuss GraphQL with the tradeoffs on the table.",
         },
         {
           q: "Do you handle deployment too?",
@@ -311,7 +311,7 @@ export const webDevelopment: Category = {
         },
         {
           q: "What about authentication?",
-          a: "Covered. Session or token-based auth, OAuth providers, roles and permissions — we'll recommend the simplest option that meets your security needs.",
+          a: "Covered. Session or token-based auth, OAuth providers, roles and permissions; we'll recommend the simplest option that meets your security needs.",
         },
       ],
     },
@@ -335,7 +335,7 @@ export const webDevelopment: Category = {
         {
           icon: LineChart,
           title: "Speed that sells",
-          body: "Product pages render in under a second. Every 100ms of delay measurably costs conversions — we don't accept slow stores.",
+          body: "Product pages render in under a second. Every 100ms of delay measurably costs conversions; we don't accept slow stores.",
         },
         {
           icon: Brain,
@@ -345,7 +345,7 @@ export const webDevelopment: Category = {
         {
           icon: Database,
           title: "Found on Google",
-          body: "Structured data so your products appear in search with prices and availability — free traffic for life.",
+          body: "Structured data so your products appear in search with prices and availability: free traffic for life.",
         },
         {
           icon: Bot,
@@ -356,7 +356,7 @@ export const webDevelopment: Category = {
       process: [
         {
           title: "Catalog setup",
-          body: "Products, variants, shipping rules and taxes configured — the unglamorous 20% that makes or breaks a store.",
+          body: "Products, variants, shipping rules and taxes configured: the unglamorous 20% that makes or breaks a store.",
         },
         {
           title: "Design storefront",
@@ -393,7 +393,7 @@ export const webDevelopment: Category = {
             "Unlimited products, CMS-managed",
             "Inventory sync + variants",
             "Google-rich product SEO",
-            "Delivered in 3–4 weeks",
+            "Delivered in 3-4 weeks",
           ],
         },
         {
@@ -409,7 +409,7 @@ export const webDevelopment: Category = {
         },
       ],
       price: "$1200",
-      timeline: "3–4 weeks",
+      timeline: "3-4 weeks",
       faqs: [
         {
           q: "I already have a store on Shopify/WooCommerce. Can you migrate it?",
@@ -417,7 +417,7 @@ export const webDevelopment: Category = {
         },
         {
           q: "What accounts do I need to provide?",
-          a: "A Stripe account for payments and your domain. We'll walk you through creating them if you don't have them yet — it takes about 15 minutes.",
+          a: "A Stripe account for payments and your domain. We'll walk you through creating them if you don't have them yet; it takes about 15 minutes.",
         },
         {
           q: "Is there a product limit?",
@@ -425,7 +425,7 @@ export const webDevelopment: Category = {
         },
         {
           q: "What are the ongoing costs?",
-          a: "Hosting (from $0–20/mo on Vercel), your domain, and Stripe's standard 2.9% + 30¢ per transaction. No license fees to us, ever.",
+          a: "Hosting (from $0-20/mo on Vercel), your domain, and Stripe's standard 2.9% + 30¢ per transaction. No license fees to us, ever.",
         },
       ],
     },
@@ -449,7 +449,7 @@ export const webDevelopment: Category = {
         {
           icon: Layout,
           title: "Content changes included",
-          body: "Small edits — text, images, new sections from your existing design — handled each month as part of the plan.",
+          body: "Small edits (text, images, new sections from your existing design) handled each month as part of the plan.",
         },
         {
           icon: Bot,
@@ -474,7 +474,7 @@ export const webDevelopment: Category = {
         },
         {
           title: "Stabilize",
-          body: "We fix whatever the audit surfaced — the backlog of small issues every site accumulates.",
+          body: "We fix whatever the audit surfaced: the backlog of small issues every site accumulates.",
         },
         {
           title: "Maintain",
@@ -482,7 +482,7 @@ export const webDevelopment: Category = {
         },
         {
           title: "Report",
-          body: "A one-page summary each month — plus honest advice on what's worth improving next.",
+          body: "A one-page summary each month, plus honest advice on what's worth improving next.",
         },
       ],
       tools: ["Vercel", "Next.js", "GitHub", "Sentry", "Google Analytics"],
@@ -490,7 +490,7 @@ export const webDevelopment: Category = {
         {
           name: "Starter",
           price: "$150/mo",
-          blurb: "Covered — nothing breaks silently.",
+          blurb: "Covered: nothing breaks silently.",
           features: [
             "Uptime & error monitoring",
             "Security updates applied",
@@ -527,7 +527,7 @@ export const webDevelopment: Category = {
       faqs: [
         {
           q: "Can I cancel anytime?",
-          a: "Yes, month to month. No notice period, no cancellation fee. We hand over everything — repo access, docs, monitoring — so you're never hostage.",
+          a: "Yes, month to month. No notice period, no cancellation fee. We hand over everything (repo access, docs, monitoring) so you're never hostage.",
         },
         {
           q: "What counts as a 'small change'?",
@@ -539,7 +539,7 @@ export const webDevelopment: Category = {
         },
         {
           q: "What if something urgent breaks at night?",
-          a: "Monitoring alerts us first, and critical outages get fixed same day — including weekends. That's the difference between a plan and a hope.",
+          a: "Monitoring alerts us first, and critical outages get fixed same day, including weekends. That's the difference between a plan and a hope.",
         },
       ],
     },
@@ -547,7 +547,7 @@ export const webDevelopment: Category = {
 };
 
 /* ------------------------------------------------------------------ */
-/* Category 2 — Data Science                                           */
+/* Category 2 - Data Science                                           */
 /* ------------------------------------------------------------------ */
 
 export const dataScience: Category = {
@@ -562,7 +562,7 @@ export const dataScience: Category = {
       title: "Analytics & BI",
       tagline: "See your numbers clearly, finally.",
       description:
-        "We turn scattered spreadsheets and disconnected tools into one clear picture of your business. You get reports people actually open — and decisions you can defend with data.",
+        "We turn scattered spreadsheets and disconnected tools into one clear picture of your business. You get reports people actually open, and decisions you can defend with data.",
       features: [
         {
           icon: Database,
@@ -582,12 +582,12 @@ export const dataScience: Category = {
         {
           icon: Brain,
           title: "Answers, not just charts",
-          body: "We explain what the numbers mean for your business — the 'so what' is included, not extra.",
+          body: "We explain what the numbers mean for your business; the 'so what' is included, not extra.",
         },
         {
           icon: Layout,
           title: "Works with what you have",
-          body: "We connect to your existing stack — Excel, Google Sheets, your CRM, your database. No forced migrations.",
+          body: "We connect to your existing stack: Excel, Google Sheets, your CRM, your database. No forced migrations.",
         },
         {
           icon: Wrench,
@@ -606,7 +606,7 @@ export const dataScience: Category = {
         },
         {
           title: "Build dashboards",
-          body: "Role-based views — owner, sales, operations — with automated refresh and mobile-friendly layouts.",
+          body: "Role-based views (owner, sales, operations) with automated refresh and mobile-friendly layouts.",
         },
         {
           title: "Handover & training",
@@ -651,7 +651,7 @@ export const dataScience: Category = {
         },
       ],
       price: "$700",
-      timeline: "2–3 weeks",
+      timeline: "2-3 weeks",
       faqs: [
         {
           q: "How is our data kept safe?",
@@ -659,7 +659,7 @@ export const dataScience: Category = {
         },
         {
           q: "Do we need to change our systems?",
-          a: "No. We build on top of what you already use — spreadsheets, CRMs, databases. The only change is that everything finally flows into one place.",
+          a: "No. We build on top of what you already use: spreadsheets, CRMs, databases. The only change is that everything finally flows into one place.",
         },
         {
           q: "Can this connect to our CRM or billing tool?",
@@ -667,7 +667,7 @@ export const dataScience: Category = {
         },
         {
           q: "What if our data is a mess?",
-          a: "That's the normal starting point — cleaning it is half the job and fully included. We'll show you exactly what we fixed so the same mess doesn't regrow.",
+          a: "That's the normal starting point; cleaning it is half the job and fully included. We'll show you exactly what we fixed so the same mess doesn't regrow.",
         },
       ],
     },
@@ -676,7 +676,7 @@ export const dataScience: Category = {
       title: "Machine Learning",
       tagline: "Predictions that pay for themselves.",
       description:
-        "We build machine learning models that solve real business problems — forecasting demand, scoring leads, spotting anomalies. No research papers, no hype: working systems measured by the money or time they save.",
+        "We build machine learning models that solve real business problems: forecasting demand, scoring leads, spotting anomalies. No research papers, no hype: working systems measured by the money or time they save.",
       features: [
         {
           icon: Brain,
@@ -686,7 +686,7 @@ export const dataScience: Category = {
         {
           icon: Database,
           title: "Your data, working harder",
-          body: "The history you already have — sales, tickets, logs — becomes forecasts, scores and early warnings.",
+          body: "The history you already have (sales, tickets, logs) becomes forecasts, scores and early warnings.",
         },
         {
           icon: LineChart,
@@ -696,7 +696,7 @@ export const dataScience: Category = {
         {
           icon: Bot,
           title: "Integrated, not a demo",
-          body: "Predictions land inside the tools your team already uses — dashboards, your app, email alerts.",
+          body: "Predictions land inside the tools your team already uses: dashboards, your app, email alerts.",
         },
         {
           icon: Layout,
@@ -716,7 +716,7 @@ export const dataScience: Category = {
         },
         {
           title: "Data preparation",
-          body: "Historical data cleaned, labeled and structured — typically half the project, always the part that decides quality.",
+          body: "Historical data cleaned, labeled and structured: typically half the project, always the part that decides quality.",
         },
         {
           title: "Model & validate",
@@ -732,7 +732,7 @@ export const dataScience: Category = {
         {
           name: "Starter",
           price: "$1,500",
-          blurb: "Feasibility first — know before you build.",
+          blurb: "Feasibility first: know before you build.",
           features: [
             "Signal study on your data",
             "Working prototype",
@@ -765,7 +765,7 @@ export const dataScience: Category = {
         },
       ],
       price: "$1500",
-      timeline: "4–6 weeks",
+      timeline: "4-6 weeks",
       faqs: [
         {
           q: "How much data do we need?",
@@ -773,7 +773,7 @@ export const dataScience: Category = {
         },
         {
           q: "What if it doesn't work?",
-          a: "That's what the feasibility phase is for — we check signal quality before the big spend. If there's no signal, we tell you early and you've spent a fraction of the budget learning it.",
+          a: "That's what the feasibility phase is for; we check signal quality before the big spend. If there's no signal, we tell you early and you've spent a fraction of the budget learning it.",
         },
         {
           q: "Where do the models run?",
@@ -790,7 +790,7 @@ export const dataScience: Category = {
       title: "Data Engineering",
       tagline: "Pipelines that never drop your data.",
       description:
-        "We build the plumbing that moves your data from wherever it lives to wherever it's needed — automatically, reliably, on time. Clean pipelines today are what make cheap analytics and AI possible tomorrow.",
+        "We build the plumbing that moves your data from wherever it lives to wherever it's needed, automatically, reliably, on time. Clean pipelines today are what make cheap analytics and AI possible tomorrow.",
       features: [
         {
           icon: Database,
@@ -810,7 +810,7 @@ export const dataScience: Category = {
         {
           icon: LineChart,
           title: "Cheap to run",
-          body: "Right-sized infrastructure with no surprise cloud bills. We've seen what over-engineered pipelines cost — it's not pretty.",
+          body: "Right-sized infrastructure with no surprise cloud bills. We've seen what over-engineered pipelines cost: it's not pretty.",
         },
         {
           icon: Layout,
@@ -826,7 +826,7 @@ export const dataScience: Category = {
       process: [
         {
           title: "Source inventory",
-          body: "Every system, export and API your data lives in — mapped, with volumes and update frequencies.",
+          body: "Every system, export and API your data lives in: mapped, with volumes and update frequencies.",
         },
         {
           title: "Design",
@@ -848,7 +848,7 @@ export const dataScience: Category = {
           price: "$1,000",
           blurb: "One reliable pipeline, end to end.",
           features: [
-            "2–3 sources → one warehouse",
+            "2-3 sources → one warehouse",
             "Daily scheduled loads",
             "Validation + failure alerts",
             "Lineage documentation",
@@ -879,11 +879,11 @@ export const dataScience: Category = {
         },
       ],
       price: "$1000",
-      timeline: "3–5 weeks",
+      timeline: "3-5 weeks",
       faqs: [
         {
           q: "Who pays for the cloud infrastructure?",
-          a: "You do, directly to the provider — we keep it in your account with cost alerts configured. For most small businesses this runs between $10 and $50 a month.",
+          a: "You do, directly to the provider; we keep it in your account with cost alerts configured. For most small businesses this runs between $10 and $50 a month.",
         },
         {
           q: "Can you work with our existing warehouse?",
@@ -891,7 +891,7 @@ export const dataScience: Category = {
         },
         {
           q: "What data sources can you connect?",
-          a: "Anything with an API, a database connection, or even recurring file exports — CRMs, billing systems, ad platforms, e-commerce, sensors, spreadsheets.",
+          a: "Anything with an API, a database connection, or even recurring file exports: CRMs, billing systems, ad platforms, e-commerce, sensors, spreadsheets.",
         },
         {
           q: "What about compliance and privacy?",
@@ -904,7 +904,7 @@ export const dataScience: Category = {
       title: "AI Integration",
       tagline: "AI features your users actually use.",
       description:
-        "We add practical AI to your product — chat assistants, document search, content generation — without turning it into a science project. Shipped in weeks, cost-controlled, and useful from day one.",
+        "We add practical AI to your product (chat assistants, document search, content generation) without turning it into a science project. Shipped in weeks, cost-controlled, and useful from day one.",
       features: [
         {
           icon: Bot,
@@ -924,7 +924,7 @@ export const dataScience: Category = {
         {
           icon: Database,
           title: "Private where it matters",
-          body: "Your data handled according to your policy — API providers don't train on it, and sensitive cases get self-hosted options.",
+          body: "Your data handled according to your policy: API providers don't train on it, and sensitive cases get self-hosted options.",
         },
         {
           icon: Wrench,
@@ -944,7 +944,7 @@ export const dataScience: Category = {
         },
         {
           title: "Prototype",
-          body: "A working prototype on your real data within the first week — so you can judge usefulness, not slides.",
+          body: "A working prototype on your real data within the first week, so you can judge usefulness, not slides.",
         },
         {
           title: "Build & ground",
@@ -993,11 +993,11 @@ export const dataScience: Category = {
         },
       ],
       price: "$1200",
-      timeline: "3–4 weeks",
+      timeline: "3-4 weeks",
       faqs: [
         {
           q: "Which AI models do you use?",
-          a: "Whatever serves the job best — OpenAI, Anthropic or open-weight models, often mixed: a cheap model for simple tasks, a strong one where it matters. We're vendor-neutral and it's easy to swap later.",
+          a: "Whatever serves the job best: OpenAI, Anthropic or open-weight models, often mixed. A cheap model for simple tasks, a strong one where it matters. We're vendor-neutral and it's easy to swap later.",
         },
         {
           q: "Will our data be used to train models?",
@@ -1005,11 +1005,11 @@ export const dataScience: Category = {
         },
         {
           q: "What will the AI feature cost per month to run?",
-          a: "We estimate it before building and design for a budget — caching and model choice make a huge difference. Most small-business features run $10–100/month at realistic usage.",
+          a: "We estimate it before building and design for a budget; caching and model choice make a huge difference. Most small-business features run $10-100/month at realistic usage.",
         },
         {
           q: "Can this be added to our existing website or app?",
-          a: "Yes — as an embedded UI, an API your team consumes, or a standalone internal tool. We integrate with what you have rather than replacing it.",
+          a: "Yes, as an embedded UI, an API your team consumes, or a standalone internal tool. We integrate with what you have rather than replacing it.",
         },
       ],
     },
@@ -1018,7 +1018,7 @@ export const dataScience: Category = {
       title: "Data Visualization",
       tagline: "Charts that change minds.",
       description:
-        "We design interactive charts, dashboards and infographics that make complex data obvious in seconds. For your team or your investors — your numbers finally look as sharp as they are.",
+        "We design interactive charts, dashboards and infographics that make complex data obvious in seconds. For your team or your investors: your numbers finally look as sharp as they are.",
       features: [
         {
           icon: LineChart,
@@ -1033,7 +1033,7 @@ export const dataScience: Category = {
         {
           icon: Brain,
           title: "On brand, presentation-ready",
-          body: "Your colors, your fonts, export-ready for decks and screens. It looks like your company made it — because you did.",
+          body: "Your colors, your fonts, export-ready for decks and screens. It looks like your company made it, because you did.",
         },
         {
           icon: Database,
@@ -1054,7 +1054,7 @@ export const dataScience: Category = {
       process: [
         {
           title: "Data review",
-          body: "We dig into your data and find the story worth telling — or the question the visualization must answer.",
+          body: "We dig into your data and find the story worth telling, or the question the visualization must answer.",
         },
         {
           title: "Story & sketch",
@@ -1107,11 +1107,11 @@ export const dataScience: Category = {
         },
       ],
       price: "$600",
-      timeline: "1–2 weeks",
+      timeline: "1-2 weeks",
       faqs: [
         {
           q: "Can you work from an Excel file?",
-          a: "Yes — most projects start from exactly that. Send us whatever you have; organizing it is part of the job, and we'll flag anything the data genuinely can't support.",
+          a: "Yes, most projects start from exactly that. Send us whatever you have; organizing it is part of the job, and we'll flag anything the data genuinely can't support.",
         },
         {
           q: "Our data is confidential. How do you handle it?",
@@ -1119,11 +1119,11 @@ export const dataScience: Category = {
         },
         {
           q: "Can the charts be embedded on our website?",
-          a: "Yes — interactive charts ship as embeddable web components that inherit your site's fonts and colors, so they look native wherever they land.",
+          a: "Yes, interactive charts ship as embeddable web components that inherit your site's fonts and colors, so they look native wherever they land.",
         },
         {
           q: "How many revision rounds are included?",
-          a: "Two structured rounds are built into every quote — after the story sketch and after the first build. Small tweaks after that are usually just absorbed; we're not counting pixels.",
+          a: "Two structured rounds are built into every quote (after the story sketch and after the first build). Small tweaks after that are usually just absorbed; we're not counting pixels.",
         },
       ],
     },

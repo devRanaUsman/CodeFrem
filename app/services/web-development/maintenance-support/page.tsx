@@ -4,7 +4,7 @@ import SubServiceTemplate from "@/components/services/SubServiceTemplate";
 import { getSubServiceBySlug, webDevelopment } from "@/lib/subServices";
 
 export const metadata: Metadata = {
-  title: "Website Maintenance & Support — Codefrem",
+  title: "Website Maintenance & Support | Codefrem",
   description:
     "Monthly updates, monitoring, security patches and quick fixes from the founders who build like they maintain. Plans from $150/mo, cancel anytime.",
 };

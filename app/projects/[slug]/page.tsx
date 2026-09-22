@@ -28,9 +28,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const project = getProjectBySlug(slug);
-  if (!project) return { title: "Project not found — Codefrem" };
+  if (!project) return { title: "Project not found | Codefrem" };
   return {
-    title: `${project.title} — Codefrem Case Study`,
+    title: `${project.title} | Codefrem Case Study`,
     description: project.caseStudy.summary,
   };
 }
@@ -145,14 +145,14 @@ export default async function CaseStudyPage({
         </div>
       </section>
 
-      {/* Visuals — populated once real screenshots are added to /public */}
+      {/* Visuals: populated once real screenshots are added to /public */}
       {caseStudy.visuals.length > 0 && (
         <section className="w-full pb-14 px-4 sm:px-6 lg:px-12">
           <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
             {caseStudy.visuals.map((visual) => (
               <Reveal key={visual.src}>
                 <div className="rounded-xl overflow-hidden border border-line bg-surface">
-                  {/* Plain <img> for now — switch to next/image when real
+                  {/* Plain <img> for now; switch to next/image when real
                       media lands (see TODO in lib/projects.ts). */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -168,7 +168,7 @@ export default async function CaseStudyPage({
         </section>
       )}
 
-      {/* Results — stats-strip styling */}
+      {/* Results: stats-strip styling */}
       <section className="w-full pb-20 lg:pb-28 px-4 sm:px-6 lg:px-12">
         <Reveal className="max-w-6xl mx-auto">
           <span className="text-xs font-bold uppercase tracking-widest text-muted">

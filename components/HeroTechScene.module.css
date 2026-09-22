@@ -1,0 +1,35 @@
+.scene {
+  position: absolute;
+  right: -42px;
+  top: -48px;
+  width: 610px;
+  height: 570px;
+  z-index: 2;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.artwork { object-fit: contain; }
+
+@media (min-width: 768px) and (max-width: 1366px) {
+  .scene {
+    width: min(46vw, 520px);
+    height: min(46vw, 480px);
+    right: -12px;
+    top: -22px;
+  }
+}
+
+@media (max-width: 767px) {
+  .scene {
+    top: 315px;
+    right: 50%;
+    transform: translateX(50%);
+    width: min(520px, 112%);
+    height: 430px;
+  }
+}
+
+@media (max-width: 420px) {
+  .scene { top: 300px; height: 360px; }
+}

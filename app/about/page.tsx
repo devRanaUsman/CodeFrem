@@ -10,7 +10,7 @@ import CtaFooter from "@/components/ui/CtaFooter";
 import { team } from "@/lib/team";
 
 export const metadata: Metadata = {
-  title: "About — Codefrem",
+  title: "About | Codefrem",
   description:
     "Codefrem is a two-person studio blending deep engineering logic with avant-garde aesthetics. Meet the founders and the way we work.",
 };
@@ -19,12 +19,12 @@ const approach = [
   {
     icon: "✦",
     title: "Design that answers to data",
-    body: "Every pixel earns its place. We prototype, measure, and keep what moves the numbers — aesthetics follow evidence, not trends.",
+    body: "Every pixel earns its place. We prototype, measure, and keep what moves the numbers; aesthetics follow evidence, not trends.",
   },
   {
     icon: "⚡",
     title: "Performance is a feature",
-    body: "60fps isn't a luxury; it's the baseline. Render budgets, DPR caps and lazy everything — beauty that never taxes the battery.",
+    body: "60fps isn't a luxury; it's the baseline. Render budgets, DPR caps and lazy everything: beauty that never taxes the battery.",
   },
   {
     icon: "◆",
@@ -73,7 +73,7 @@ export default function AboutPage() {
               <p>
                 Three years and thirty-something projects later, we&apos;re
                 still deliberately small. Every client works directly with the
-                founders — the person who designs your product is the person
+                founders: the person who designs your product is the person
                 who answers your messages.
               </p>
               <p>
@@ -91,10 +91,10 @@ export default function AboutPage() {
                 <div>
                   <p className="text-sm text-muted leading-relaxed">
                     If it doesn&apos;t feel effortless to use, it doesn&apos;t
-                    ship — no matter how good the Figma file looks.
+                    ship, no matter how good the Figma file looks.
                   </p>
                   <p className="mt-4 text-xs uppercase tracking-widest text-muted font-bold">
-                    — The one who designs
+                    - The one who designs
                   </p>
                 </div>
               </GlowCard>
@@ -106,7 +106,7 @@ export default function AboutPage() {
                     one. We build for the silence.
                   </p>
                   <p className="mt-4 text-xs uppercase tracking-widest text-muted font-bold">
-                    — The one who ships
+                    - The one who ships
                   </p>
                 </div>
               </GlowCard>
@@ -115,7 +115,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Our approach — GlowCard grid */}
+      {/* Our approach: GlowCard grid */}
       <section className="w-full py-14 lg:py-20 px-4 sm:px-6 lg:px-12 bg-canvas">
         <div className="max-w-7xl mx-auto">
           <SectionHeading

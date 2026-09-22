@@ -10,7 +10,7 @@ interface Option {
 }
 
 /**
- * Custom dark dropdown for the contact form — a styled button + listbox,
+ * Custom dark dropdown for the contact form: a styled button + listbox,
  * NOT the browser's native <select> UI. Supports click, Escape, arrow-key
  * navigation and outside-click close. The chosen value rides into the
  * server action via a hidden input, so the surrounding form stays a plain

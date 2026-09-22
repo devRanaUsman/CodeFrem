@@ -10,12 +10,12 @@ import ProcessTimeline from "@/components/services/ProcessTimeline";
 import { allCategories } from "@/lib/subServices";
 
 export const metadata: Metadata = {
-  title: "Services — Codefrem",
+  title: "Services | Codefrem",
   description:
-    "Web development and data science, delivered end-to-end by a two-person studio — custom websites, e-commerce, analytics, machine learning, AI integration and more.",
+    "Web development and data science, delivered end-to-end by a two-person studio: custom websites, e-commerce, analytics, machine learning, AI integration and more.",
 };
 
-/** The studio's other disciplines — detailed on the homepage. */
+/** The studio's other disciplines, detailed on the homepage. */
 const alsoOffered = [
   { title: "UI/UX Design", note: "Flows, design systems, prototypes" },
   { title: "3D Designs", note: "Spline scenes that run at 60fps" },
@@ -25,7 +25,7 @@ const alsoOffered = [
 const process = [
   {
     title: "Discover",
-    body: "Goals, users, constraints. We map the problem before touching a pixel — and define what 'working' means in numbers.",
+    body: "Goals, users, constraints. We map the problem before touching a pixel, and define what 'working' means in numbers.",
   },
   {
     title: "Design",
@@ -37,7 +37,7 @@ const process = [
   },
   {
     title: "Launch",
-    body: "Analytics, SEO, monitoring, handover docs. Then we stay around — iteration after launch is where products actually grow.",
+    body: "Analytics, SEO, monitoring, handover docs. Then we stay around; iteration after launch is where products actually grow.",
   },
 ];
 
@@ -51,7 +51,7 @@ export default function ServicesPage() {
         lead="Custom websites, online stores and ongoing support. Explore our web development services, with data and integration expertise when your project needs it."
       />
 
-      {/* Category cards — each expands into its sub-services */}
+      {/* Category cards: each expands into its sub-services */}
       <section className="w-full py-10 lg:py-16 px-4 sm:px-6 lg:px-12">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
           {allCategories.map((category, index) => {
@@ -111,7 +111,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Also offered — the homepage disciplines */}
+      {/* Also offered: the homepage disciplines */}
       <section className="w-full py-6 lg:py-10 px-4 sm:px-6 lg:px-12">
         <div className="max-w-7xl mx-auto">
           <Reveal>
@@ -161,7 +161,7 @@ export default function ServicesPage() {
 
       <CtaStrip
         title="Not sure which lane fits?"
-        subtext="Describe the problem in two sentences — we'll tell you which service (if any) you actually need."
+        subtext="Describe the problem in two sentences, and we'll tell you which service (if any) you actually need."
         label="Talk to Us"
       />
     </main>

@@ -15,13 +15,13 @@ const SOCIALS = [
 
 /**
  * Right column of the /contact page: direct contact details, the booking
- * card and social links. Server component — only the copy button is a
+ * card and social links. Server component: only the copy button is a
  * client island.
  */
 export default function ContactInfoCards() {
   return (
     <div className="space-y-5">
-      {/* A — Direct contact */}
+      {/* A - Direct contact */}
       <GlowCard className="p-6 sm:p-7">
         <h3 className="text-xl font-sans text-ink">
           Prefer to reach out directly?
@@ -42,12 +42,12 @@ export default function ContactInfoCards() {
           </li>
           <li className="flex items-center gap-2.5">
             <Clock className="h-4 w-4 shrink-0 text-accent-ink" aria-hidden="true" />
-            Mon–Fri, 10am–7pm PKT
+            Mon-Fri, 10am-7pm PKT
           </li>
         </ul>
       </GlowCard>
 
-      {/* B — Book a call */}
+      {/* B - Book a call */}
       <GlowCard className="p-6 sm:p-7">
         <h3 className="text-xl font-sans text-ink">Prefer to talk first?</h3>
         <p className="mt-2 text-sm leading-relaxed text-muted">
@@ -66,7 +66,7 @@ export default function ContactInfoCards() {
         </p>
       </GlowCard>
 
-      {/* C — Socials */}
+      {/* C - Socials */}
       <GlowCard className="p-6 sm:p-7">
         <h3 className="text-xl font-sans text-ink">Find us online</h3>
         <ul className="mt-4 space-y-2.5">

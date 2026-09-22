@@ -4,9 +4,9 @@ import SubServiceTemplate from "@/components/services/SubServiceTemplate";
 import { getSubServiceBySlug, webDevelopment } from "@/lib/subServices";
 
 export const metadata: Metadata = {
-  title: "E-commerce Development — Codefrem",
+  title: "E-commerce Development | Codefrem",
   description:
-    "Fast online stores with friction-free Stripe checkout, CMS-managed products and rich SEO. Starting from $1200, delivered in 3–4 weeks.",
+    "Fast online stores with friction-free Stripe checkout, CMS-managed products and rich SEO. Starting from $1200, delivered in 3-4 weeks.",
 };
 
 export default function EcommercePage() {

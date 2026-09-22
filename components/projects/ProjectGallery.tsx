@@ -10,7 +10,7 @@ import type { ProjectCategory } from "@/data/projects";
 /**
  * The /projects listing: filter tabs (All | Web Dev | UI/UX | 3D & Motion |
  * Brand) above the project grid. Filtering is client-side; cards fade in
- * via a CSS key re-trigger (no layout shift — the grid keeps its shape and
+ * via a CSS key re-trigger (no layout shift: the grid keeps its shape and
  * cards animate opacity/transform only). The "Your project here" slot and
  * the confidentiality note live below the grid.
  */
@@ -50,7 +50,7 @@ export default function ProjectGallery() {
         })}
       </div>
 
-      {/* Grid — keyed by filter so cards re-fade on switch */}
+      {/* Grid: keyed by filter so cards re-fade on switch */}
       <div
         key={active}
         className="mt-10 lg:mt-14 grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8"
@@ -65,7 +65,7 @@ export default function ProjectGallery() {
           </div>
         ))}
 
-        {/* Your project here — the open slot */}
+        {/* Your project here: the open slot */}
         <div
           className="project-grid-item flex"
           style={{ animationDelay: `${visible.length * 70}ms` }}
@@ -84,7 +84,7 @@ export default function ProjectGallery() {
               Next slot open
             </span>
             <p className="mt-2 text-sm text-muted">
-              We take on 2–3 new projects per quarter.
+              We take on 2-3 new projects per quarter.
             </p>
             <a
               href="/contact"

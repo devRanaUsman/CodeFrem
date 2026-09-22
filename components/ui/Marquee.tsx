@@ -2,7 +2,7 @@ import React from "react";
 import clsx from "clsx";
 
 /**
- * Infinite scrolling text marquee — "Innovate ✦ Inspire ✦ Create ✦".
+ * Infinite scrolling text marquee: "Innovate ✦ Inspire ✦ Create ✦".
  *
  * Pure CSS: content is rendered twice and the track translates -50% on a
  * loop, so the seam is invisible. Transform-only animation (compositor,

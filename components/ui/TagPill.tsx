@@ -2,7 +2,7 @@ import React from "react";
 import clsx from "clsx";
 
 /**
- * Micro tag pill: hairline border, uppercase micro type — the exact tag
+ * Micro tag pill: hairline border, uppercase micro type (the exact tag
  * treatment of the homepage project cards. Server component.
  */
 export default function TagPill({

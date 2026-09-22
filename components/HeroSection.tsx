@@ -1,12 +1,10 @@
-import Image from "next/image";
+import HeroTechScene from "./HeroTechScene";
 import Link from "next/link";
 import { ArrowUpRight, Globe2, Navigation } from "lucide-react";
 
 export default function HeroSection() {
   return <section id="hero-section" className="reference-hero">
-    <div className="hero-orbits" aria-hidden="true"><i /><i /><i /></div>
-    <div className="hero-cross" aria-hidden="true">+</div>
-    <div className="hero-portrait"><Image src="/images/editorial-portrait.webp" alt="" fill sizes="(max-width: 640px) 85vw, 60vw" preload /></div>
+    <HeroTechScene />
     <div className="hero-copy">
       <p className="hero-kicker">CODEFREM / INDEPENDENT DIGITAL STUDIO</p>
       <h1>DESIGN.<br /><span>DEVELOP.</span></h1>
@@ -15,7 +13,6 @@ export default function HeroSection() {
     </div>
     <div className="hero-location"><div><Globe2 size={28} strokeWidth={1} /><p>BASED IN<strong>PAKISTAN</strong></p></div><div><Navigation size={27} strokeWidth={1} /><p>WORKING<strong>WORLDWIDE</strong></p></div></div>
     <Link href="/contact" className="availability-card"><span>LET’S WORK TOGETHER</span><strong>YOUR NEXT</strong><span>WEB PROJECT <i /></span></Link>
-    <span className="hero-watermark" aria-hidden="true">CF</span>
   </section>;
 }
 

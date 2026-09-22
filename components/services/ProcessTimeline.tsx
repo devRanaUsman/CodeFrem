@@ -11,7 +11,7 @@ const columnClass: Record<number, string> = {
 };
 
 /**
- * Numbered process timeline — horizontal with dividing hairlines on
+ * Numbered process timeline: horizontal with dividing hairlines on
  * desktop, vertical stack on mobile. Shared by the sub-service pages,
  * the main /services process section and the /contact "what happens
  * next" steps.

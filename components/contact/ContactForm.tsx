@@ -47,11 +47,11 @@ export default function ContactForm() {
   const [budget, setBudget] = useState("");
   const [showErrors, setShowErrors] = useState(false);
   // The success panel is owned by the action state, but the user can
-  // dismiss it ("Send another message") — otherwise the form never
+  // dismiss it ("Send another message"); otherwise the form never
   // comes back, since a successful action state doesn't reset itself.
   const [successDismissed, setSuccessDismissed] = useState(false);
 
-  // Live client validation only after a failed submit — before that, the
+  // Live client validation only after a failed submit; before that, the
   // form stays quiet so nobody is yelled at while typing.
   const liveErrors = useMemo(
     () =>
@@ -84,7 +84,7 @@ export default function ContactForm() {
         </h2>
         <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">
           We&apos;ll get back to you within 24 hours on weekdays. Check your
-          inbox — we&apos;ll reach out from hello@codefrem.com
+          inbox; we&apos;ll reach out from hello@codefrem.com
         </p>
         <button
           type="button"

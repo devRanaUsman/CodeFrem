@@ -5,23 +5,16 @@
 - Canvas: cool silver-gray `#E9EAEE`.
 - Ink: near-black `#16181B`.
 - Display accent: acid lime `#AFF45D`.
-- Small-text accent: `#527A24`, a darker companion for readability.
+- Small-text accent: `#A0E34F`, a darker companion for readability.
 - Muted copy: `#64676F`.
 - Panels: translucent white, fine white borders, restrained shadows.
 - Large uppercase display type, widely spaced micro-labels, compact service cards and illustrated project previews.
 
-The shared palette, cards, typography, buttons, forms and page introductions cover Home, About, Services, Projects, Contact, nine service-detail routes and five project-detail routes. The homepage uses the reference composition with Codefrem content. Its numbered strip describes the process, and its quotation is the studio's own statement rather than an invented customer testimonial. Existing contact delivery remains deferred, as requested.
+The shared palette, cards, typography, buttons, forms and page introductions cover Home, About, Services, Projects, Contact, nine service-detail routes and five project-detail routes. The homepage uses the reference composition with Codefrem content. Its hero artwork lives at `public/images/hero-tech-reference.webp`. Existing contact delivery remains deferred, as requested.
 
-## Hero image
+## Hero artwork generation prompt
 
-- Tool: built-in image generation, using the supplied screenshot as a visual reference.
-- Source: `public/images/editorial-portrait.png`.
-- Optimized website asset: `public/images/editorial-portrait.webp` (960 pixels wide, approximately 50 KB).
-- Decorative editorial image; it does not represent a named team member. It has empty alternative text on the page.
-
-### Generation prompt
-
-Create a photorealistic editorial portrait asset for a website matching the supplied reference's hero photo. Use the reference only for composition and visual style. Generate ONLY the photograph, no website, no typography, no graphics, no rings, no logos. A young adult woman in left-facing side profile, dark hair in a loose bun, a sculptural white high-collar technical jacket, upper torso visible, elegant monochrome black and white photograph. Figure positioned in right two thirds, looking into empty space to the left, head near top, torso cropped along bottom. Soft high-key studio lighting with crisp detailed dark hair and delicate facial profile. Seamless very pale cool gray background #E9EAED blending into soft gray around figure, no hard horizon. Fashion editorial mood, realistic anatomy. Portrait 1024x1280 image. This is decorative campaign imagery, not a real team member.
+The hero artwork was generated with the supplied screenshot as a strict visual reference, recreating only the technical collage on the right half of the reference: large tilted desktop dashboard upper right with dark sidebar and pale analytics panels; narrow white mobile screen upper left; dark mobile screen center foreground; angled dark rectangular dashboard lower left; small pale and dark interface cards scattered lower right. All planes share the reference's receding isometric perspective, tilted about 23 degrees clockwise, with delicate triangulated lime wireframe network interconnects, tiny luminous lime nodes, and a subtle lime elliptical orbit along the lower edge. Palette: pale cool silver `#E9EAEE` backdrop, charcoal `#16181B` screens, pale off-white and lime `#AFF45D` highlights, soft diffuse shadows, refined reference look; square 1024x1024 asset with the collage filling the central 90%, fading seamlessly to `#E9EAEE` at all edges. No headline, nav bar, outside labels, human, watermark, outer frame, or contact card.
 
 ## Preview
 
