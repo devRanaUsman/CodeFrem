@@ -3,43 +3,15 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import Reveal from "@/components/ui/Reveal";
 import PageHero from "@/components/ui/PageHero";
-import SectionHeading from "@/components/ui/SectionHeading";
 import GlowCard from "@/components/ui/GlowCard";
 import CtaStrip from "@/components/ui/CtaStrip";
-import ProcessTimeline from "@/components/services/ProcessTimeline";
-import { allCategories } from "@/lib/subServices";
+import { allCategories, studioDisciplines } from "@/lib/subServices";
 
 export const metadata: Metadata = {
   title: "Services | Codefrem",
   description:
     "Web development and data science, delivered end-to-end by a two-person studio: custom websites, e-commerce, analytics, machine learning, AI integration and more.",
 };
-
-/** The studio's other disciplines, detailed on the homepage. */
-const alsoOffered = [
-  { title: "UI/UX Design", note: "Flows, design systems, prototypes" },
-  { title: "3D Designs", note: "Spline scenes that run at 60fps" },
-  { title: "Motion Graphics", note: "Motion with intent, never decoration" },
-];
-
-const process = [
-  {
-    title: "Discover",
-    body: "Goals, users, constraints. We map the problem before touching a pixel, and define what 'working' means in numbers.",
-  },
-  {
-    title: "Design",
-    body: "Flows, prototypes, visual language. You see clickable work early and often; feedback shapes the build, not a post-mortem.",
-  },
-  {
-    title: "Build",
-    body: "Typed, tested, componentized code with performance budgets enforced from commit one. Weekly demos, no surprises.",
-  },
-  {
-    title: "Launch",
-    body: "Analytics, SEO, monitoring, handover docs. Then we stay around; iteration after launch is where products actually grow.",
-  },
-];
 
 export default function ServicesPage() {
   return (
@@ -112,7 +84,7 @@ export default function ServicesPage() {
       </section>
 
       {/* Also offered: the homepage disciplines */}
-      <section className="w-full py-6 lg:py-10 px-4 sm:px-6 lg:px-12">
+      <section id="studio-disciplines" className="w-full py-6 lg:py-10 px-4 sm:px-6 lg:px-12">
         <div className="max-w-7xl mx-auto">
           <Reveal>
             <div className="rounded-xl border border-line bg-surface px-6 sm:px-8 py-6">
@@ -120,10 +92,10 @@ export default function ServicesPage() {
                 Also part of the studio
               </span>
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {alsoOffered.map((item) => (
+                {studioDisciplines.services.map((item) => (
                   <Link
                     key={item.title}
-                    href="/#services"
+                    href={`/services/${item.slug}`}
                     className="group flex items-center justify-between gap-3 rounded-2xl border border-line bg-surface px-4 py-3.5 transition-colors hover:border-[#AFF45D]/40"
                   >
                     <span>
@@ -131,7 +103,7 @@ export default function ServicesPage() {
                         {item.title}
                       </span>
                       <span className="block text-xs text-muted mt-0.5">
-                        {item.note}
+                        {item.tagline}
                       </span>
                     </span>
                     <ArrowUpRight
@@ -143,19 +115,6 @@ export default function ServicesPage() {
               </div>
             </div>
           </Reveal>
-        </div>
-      </section>
-
-      {/* Process timeline */}
-      <section className="w-full py-14 lg:py-20 px-4 sm:px-6 lg:px-12">
-        <div className="max-w-6xl mx-auto">
-          <SectionHeading
-            eyebrow="How It Works"
-            title="The"
-            highlight="Process"
-            align="center"
-          />
-          <ProcessTimeline steps={process} />
         </div>
       </section>
 

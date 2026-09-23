@@ -4,13 +4,12 @@
  * The homepage horizontal showcase, the /projects grid, and every
  * /projects/[slug] case study all read from this one array.
  *
- * PLACEHOLDER CONTENT: all five projects are fictionalized case studies.
- * Client names are changed for confidentiality. Every placeholder field
- * is marked with a TODO: replace copy, images and testimonials with real
- * material as projects are cleared for publication.
+ * Preview assets come from public/images. Existing illustrative case-study
+ * copy remains until approved project details are supplied. The RAG project
+ * uses the supplied brief and capabilities rather than measured results.
  */
 
-export type ProjectCategory = "Web Dev" | "UI/UX" | "3D & Motion" | "Brand";
+export type ProjectCategory = "Web Dev" | "UI/UX" | "3D & Motion" | "Brand" | "Data Science";
 
 export interface ProjectResult {
   value: string;
@@ -70,8 +69,9 @@ export interface Project {
   liveUrl?: string;
   /** Hex accent used for the card's glow + placeholder overlays. */
   accentColor: string;
-  /** Optional hero image (public/…). Gradient placeholder is used if absent. */
-  heroImage?: string;
+  /** Supplied project asset, served from public/. */
+  heroImage: string;
+  imageAlt: string;
   gallery: ProjectGalleryItem[];
   problem: {
     body: string;
@@ -97,14 +97,17 @@ export const categoryGradients: Record<ProjectCategory, string> = {
   "UI/UX": "linear-gradient(135deg, #831843, #7c3aed)",
   "3D & Motion": "linear-gradient(135deg, #065f46, #0891b2)",
   Brand: "linear-gradient(135deg, #92400e, #b45309)",
+  "Data Science": "linear-gradient(135deg, #065f46, #0891b2)",
 };
 
 export const projects: Project[] = [
   {
-    slug: "nebula-finance",
+    slug: "style-hub",
+    heroImage: "/images/style_hub.png",
+    imageAlt: "Style Hub fashion storefront with clothing and accessories",
     number: "01",
-    title: "Nebula Finance",
-    client: "Nebula Labs",
+    title: "Style Hub",
+    client: "Style Hub",
     year: "2025",
     category: "UI/UX",
     tagline: "From spreadsheet chaos to a dashboard traders open on purpose.",
@@ -126,7 +129,7 @@ export const projects: Project[] = [
       { caption: "Onboarding flow, step 1 of 3" },
     ],
     problem: {
-      body: "Nebula's beta users loved the idea but abandoned the product. The dashboard buried critical numbers three clicks deep, and every feature shipped by a different contractor looked like it belonged to a different app. Support tickets were dominated by 'where do I find…' questions, and onboarding completion had stalled at 34%. The founding team knew the product was competitive; the experience wasn't.",
+      body: "Style Hub's beta users loved the idea but abandoned the product. The dashboard buried critical numbers three clicks deep, and every feature shipped by a different contractor looked like it belonged to a different app. Support tickets were dominated by 'where do I find…' questions, and onboarding completion had stalled at 34%. The founding team knew the product was competitive; the experience wasn't.",
       challenges: [
         "Critical portfolio numbers buried three navigation levels deep",
         "Five contractor-built features with five conflicting visual languages",
@@ -213,15 +216,17 @@ export const projects: Project[] = [
         "Codefrem didn't just redesign the dashboard; they understood our traders better than we did. Support tickets about 'where do I find things' dropped to nearly zero within a month.",
       name: "Founder & CEO",
       role: "Founder & CEO",
-      company: "Nebula Labs",
+      company: "Style Hub",
     },
-    relatedSlugs: ["lumen-health", "orbit-commerce", "vertex-studio"],
+    relatedSlugs: ["trueman", "harrington-property-group", "zaiqa"],
   },
   {
-    slug: "orbit-commerce",
+    slug: "harrington-property-group",
+    heroImage: "/images/Harington_house.png",
+    imageAlt: "Harrington Property Group real estate website with a modern home",
     number: "02",
-    title: "Orbit Commerce",
-    client: "Orbit Retail Group",
+    title: "Harrington Property Group",
+    client: "Harrington Property Group",
     year: "2025",
     category: "Web Dev",
     tagline: "A headless storefront that loads before customers can blink.",
@@ -244,7 +249,7 @@ export const projects: Project[] = [
       { caption: "Mobile checkout flow, two taps to pay" },
     ],
     problem: {
-      body: "Orbit's legacy theme took over six seconds to render on a phone, and most of their traffic was phones. Every marketing experiment was locked behind a developer ticket, so campaigns died waiting for the backlog. Cart abandonment had climbed past 78% on mobile, and the previous agency's answer was 'buy a faster plan'. The business needed a storefront the marketing team could run, not just a faster version of the same cage.",
+      body: "Harrington Property Group's legacy theme took over six seconds to render on a phone, and most of their traffic was phones. Every marketing experiment was locked behind a developer ticket, so campaigns died waiting for the backlog. Cart abandonment had climbed past 78% on mobile, and the previous agency's answer was 'buy a faster plan'. The business needed a storefront the marketing team could run, not just a faster version of the same cage.",
       challenges: [
         "6+ second mobile loads on the platform that paid the bills",
         "Every content change blocked behind a developer ticket",
@@ -252,7 +257,7 @@ export const projects: Project[] = [
       ],
     },
     solution: {
-      body: "We rebuilt Orbit as a headless Next.js storefront, rendering product pages at the edge so first paint lands in under a second on 4G. A component library with locked-down design tokens means the marketing team composes landing pages and campaign blocks themselves; no developer, no ticket, no drift. Product pages got Spline-powered 3D previews so shoppers can spin flagship items before buying, with a performance tier system that keeps them optional on weak connections. Checkout was rebuilt around Stripe with guest-first flow, address autocomplete and honest error states. Granular caching plus ISR keeps the catalog fresh without sacrificing speed.",
+      body: "We rebuilt Harrington Property Group as a headless Next.js storefront, rendering product pages at the edge so first paint lands in under a second on 4G. A component library with locked-down design tokens means the marketing team composes landing pages and campaign blocks themselves; no developer, no ticket, no drift. Product pages got Spline-powered 3D previews so shoppers can spin flagship items before buying, with a performance tier system that keeps them optional on weak connections. Checkout was rebuilt around Stripe with guest-first flow, address autocomplete and honest error states. Granular caching plus ISR keeps the catalog fresh without sacrificing speed.",
       deliverables: [
         {
           icon: "zap",
@@ -333,132 +338,17 @@ export const projects: Project[] = [
         "Working with Codefrem transformed our online store. The speed improvement alone paid for the project in the first month, and our marketing team hasn't filed a dev ticket since launch.",
       name: "Head of Digital",
       role: "Head of Digital",
-      company: "Orbit Retail Group",
+      company: "Harrington Property Group",
     },
-    relatedSlugs: ["vertex-studio", "aether-motors", "nebula-finance"],
+    relatedSlugs: ["zaiqa", "rag-video-chatbot", "style-hub"],
   },
   {
-    slug: "aether-motors",
-    number: "03",
-    title: "Aether Motors",
-    client: "Aether Motors",
-    year: "2024",
-    category: "3D & Motion",
-    tagline: "A hypercar you can spin, color and configure, in the browser.",
-    description:
-      "Interactive WebGL configurator for an electric hypercar launch site.",
-    tags: ["WebGL", "Spline 3D"],
-    stack: {
-      frontend: ["Next.js", "TypeScript", "Spline", "GSAP"],
-      design: ["Blender", "Figma", "After Effects"],
-      infrastructure: ["Vercel"],
-    },
-    duration: "8 weeks",
-    // TODO: add the live URL once the launch NDA expires.
-    accentColor: "#0891b2",
-    gallery: [
-      // TODO: Replace gradient placeholders with actual project screenshots
-      { caption: "Configurator: paint and wheel swap in real time" },
-      { caption: "Scroll-driven cinematic intro sequence" },
-      { caption: "Low-power fallback mode on mid-range mobile" },
-    ],
-    problem: {
-      body: "Aether's launch depended entirely on press renders. Every paint and trim combination they wanted to show meant another photography day, and the photography budget was already spent. Meanwhile the pre-launch site held visitors for barely forty seconds; a spec sheet and a countdown don't make people fall in love with a car. They needed a way to let every visitor configure their dream build without a single new render.",
-      challenges: [
-        "Every config variant required a photo shoot the budget couldn't cover",
-        "40-second average visit, no emotional connection to the car",
-        "Launch site had to impress on press laptops and mid-range phones alike",
-      ],
-    },
-    solution: {
-      body: "We built the launch around a Spline-powered configurator: real-time paint, wheel and trim swaps on a photoreal-grade model, framed by a cinematic scroll-driven intro that hands you the keys. Every interaction was engineered to a strict performance budget (render-on-demand, DPR caps and a 30fps idle mode), so the scene holds 60fps on mid-range phones instead of melting them. A tiered fallback system swaps WebGL for a static gallery on weak devices, so nobody hits a black rectangle. Pre-orders flow straight from the configurator state: your exact build, submitted with your deposit.",
-      deliverables: [
-        {
-          icon: "box",
-          title: "Real-time configurator",
-          description: "Paint, wheels and trim, swapped live in WebGL.",
-        },
-        {
-          icon: "film",
-          title: "Scroll-driven intro",
-          description: "A cinematic sequence that ends at the configurator.",
-        },
-        {
-          icon: "gauge",
-          title: "Performance tiers",
-          description: "60fps on mid-range phones, graceful fallbacks below.",
-        },
-        {
-          icon: "trending-up",
-          title: "Build-to-order flow",
-          description: "The exact configured car attaches to the pre-order.",
-        },
-      ],
-    },
-    process: [
-      {
-        step: "01",
-        title: "Concept",
-        description:
-          "Mapped the emotional arc: reveal, explore, configure, commit, and what each beat must make the visitor feel.",
-      },
-      {
-        step: "02",
-        title: "Model",
-        description:
-          "Prepared the Blender-sourced hypercar for real-time: retopology, baked lighting, LODs tuned for mobile GPUs.",
-      },
-      {
-        step: "03",
-        title: "Interact",
-        description:
-          "Built the Spline scene (material swapping, camera choreography and scroll sync) against the performance budget.",
-      },
-      {
-        step: "04",
-        title: "Optimise",
-        description:
-          "Render-on-demand, DPR caps, texture budgets and a device-tier system verified on real low-end hardware.",
-      },
-      {
-        step: "05",
-        title: "Launch",
-        description:
-          "Load-tested under press-day traffic spikes and shipped with monitoring on every tier's real-world fps.",
-      },
-    ],
-    results: [
-      {
-        value: "3:40",
-        label: "Avg. time in configurator",
-        context: "against a 40-second site baseline",
-      },
-      {
-        value: "2,400",
-        label: "Pre-orders in week one",
-        context: "with configured builds attached",
-      },
-      {
-        value: "60fps",
-        label: "On mid-range mobile",
-        context: "with render-on-demand idle cost near zero",
-      },
-    ],
-    testimonial: {
-      // TODO: Replace with real client testimonial
-      quote:
-        "The configurator became the launch. Press covered the website itself, and our pre-order numbers beat the internal forecast by a factor we're still quoting in board meetings.",
-      name: "CMO",
-      role: "Chief Marketing Officer",
-      company: "Aether Motors",
-    },
-    relatedSlugs: ["orbit-commerce", "vertex-studio", "nebula-finance"],
-  },
-  {
-    slug: "lumen-health",
+    slug: "trueman",
+    heroImage: "/images/True_man_sailor.png",
+    imageAlt: "Trueman grooming website with a barber cutting hair",
     number: "04",
-    title: "Lumen Health",
-    client: "Lumen Health",
+    title: "Trueman",
+    client: "Trueman",
     year: "2024",
     category: "Brand",
     tagline: "One calm, trustworthy identity for twelve very different markets.",
@@ -480,7 +370,7 @@ export const projects: Project[] = [
       { caption: "WCAG AA color system across light and dark surfaces" },
     ],
     problem: {
-      body: "Lumen operated in 12 countries with 12 visual dialects: different logos, tones, color systems and booking flows, inherited from regional agencies. Patients didn't trust what they didn't recognize, and trust is the entire product when the service is healthcare. Internally, every new market launch re-litigated the same design decisions from zero. Compliance requirements varied per region, which had become the excuse for the inconsistency nobody wanted to fix.",
+      body: "Trueman operated in 12 countries with 12 visual dialects: different logos, tones, color systems and booking flows, inherited from regional agencies. Patients didn't trust what they didn't recognize, and trust is the entire product when the service is healthcare. Internally, every new market launch re-litigated the same design decisions from zero. Compliance requirements varied per region, which had become the excuse for the inconsistency nobody wanted to fix.",
       challenges: [
         "12 markets, 12 visual dialects, no recognizable parent brand",
         "Booking completion varied wildly by region with no shared pattern",
@@ -488,7 +378,7 @@ export const projects: Project[] = [
       ],
     },
     solution: {
-      body: "We unified Lumen around a single calm system: one accessible color architecture (WCAG AA verified on every surface combination), a warm typographic voice that translates without losing tone, and one booking flow pattern that localizes cleanly per market: language, imagery and compliance details are variables, never redesigns. Regional teams got a documented system with explicit local-variant slots, so launching market thirteen is a configuration task, not a committee. The identity shipped with a brand book, a Figma library and coded components so the system survives contact with future vendors.",
+      body: "We unified Trueman around a single calm system: one accessible color architecture (WCAG AA verified on every surface combination), a warm typographic voice that translates without losing tone, and one booking flow pattern that localizes cleanly per market: language, imagery and compliance details are variables, never redesigns. Regional teams got a documented system with explicit local-variant slots, so launching market thirteen is a configuration task, not a committee. The identity shipped with a brand book, a Figma library and coded components so the system survives contact with future vendors.",
       deliverables: [
         {
           icon: "palette",
@@ -567,15 +457,17 @@ export const projects: Project[] = [
         "For the first time, a patient in Berlin and a patient in Dubai know they're in the same hands. The system Codefrem built turns our thirteenth market launch into a checklist item.",
       name: "VP of Product",
       role: "VP of Product",
-      company: "Lumen Health",
+      company: "Trueman",
     },
-    relatedSlugs: ["nebula-finance", "orbit-commerce", "vertex-studio"],
+    relatedSlugs: ["style-hub", "harrington-property-group", "zaiqa"],
   },
   {
-    slug: "vertex-studio",
+    slug: "zaiqa",
+    heroImage: "/images/Zaiqa.png",
+    imageAlt: "Zaiqa restaurant website featuring chicken karahi",
     number: "05",
-    title: "Vertex Studio",
-    client: "Vertex VFX",
+    title: "Zaiqa",
+    client: "Zaiqa",
     year: "2023",
     category: "Web Dev",
     tagline: "A showreel site that feels like one of their own shots.",
@@ -598,7 +490,7 @@ export const projects: Project[] = [
       { caption: "Notion-powered case study pages" },
     ],
     problem: {
-      body: "Vertex's work is jaw-dropping; their website was a grid of compressed thumbnails. Studios that win awards were losing pitches to prettier PDFs, because the site flattened cinematic work into a contact sheet. Every project needed its full-resolution plates streamed to prove what the studio could do, and the old site streamed none of them. Worse, the team couldn't update anything without a developer, so new work sat unpublished for weeks.",
+      body: "Zaiqa's work is jaw-dropping; their website was a grid of compressed thumbnails. Studios that win awards were losing pitches to prettier PDFs, because the site flattened cinematic work into a contact sheet. Every project needed its full-resolution plates streamed to prove what the studio could do, and the old site streamed none of them. Worse, the team couldn't update anything without a developer, so new work sat unpublished for weeks.",
       challenges: [
         "Cinematic work flattened into a compressed thumbnail grid",
         "Losing pitches to agencies with better websites, not better work",
@@ -687,9 +579,45 @@ export const projects: Project[] = [
         "Our site finally competes with our reel. We've had clients quote the website back to us in first calls, and we publish new work ourselves in minutes.",
       name: "Founding Partner",
       role: "Founding Partner",
-      company: "Vertex VFX",
+      company: "Zaiqa",
     },
-    relatedSlugs: ["orbit-commerce", "aether-motors", "nebula-finance"],
+    relatedSlugs: ["harrington-property-group", "rag-video-chatbot", "style-hub"],
+  },
+   {
+    slug: "rag-video-chatbot",
+    number: "03",
+    title: "RAG Video Chatbot — Built with Python",
+    client: "Codefrem",
+    year: "2026",
+    category: "Data Science",
+    tagline: "Context-aware answers from your documents through interactive video conversation.",
+    description: "Python-powered video chatbot with RAG and a custom document knowledge base.",
+    tags: ["Python", "RAG", "Video Chat"],
+    stack: { backend: ["Python", "LangChain", "FAISS"], frontend: ["Streamlit", "WebRTC"] },
+    duration: "Project-based",
+    accentColor: "#0891b2",
+    heroImage: "/images/data_science.png",
+    imageAlt: "RAG Video Chatbot project overview showing document retrieval and video conversation",
+    gallery: [],
+    problem: {
+      body: "Finding specific information inside large documents and video content can be time-consuming. Traditional chatbots often lack access to private or project-specific knowledge, which can lead to generic or unreliable answers. Users need a faster way to interact with their own data through natural conversation.",
+      challenges: ["Information spread across large documents and video content", "Generic answers without project-specific context", "Slow manual searching through private knowledge"],
+    },
+    solution: {
+      body: "We built a Python-powered RAG Video Chatbot that combines Retrieval-Augmented Generation with an interactive video-based chat experience. Users can upload their own documents, retrieve relevant information from a knowledge base, and ask questions through a conversational interface. The system uses retrieved context to generate grounded, context-aware responses.",
+      deliverables: [
+        { icon: "layers", title: "Custom knowledge base", description: "Upload documents for contextual retrieval." },
+        { icon: "film", title: "Video conversation", description: "Interact with the assistant through a video-based chat experience." },
+        { icon: "layout", title: "RAG responses", description: "Generate answers using relevant retrieved context." },
+      ],
+    },
+    process: [],
+    results: [
+      { value: "RAG-powered", label: "Context-aware responses" },
+      { value: "Real-time", label: "Interactive video conversation" },
+      { value: "Custom Knowledge", label: "Answers from user documents" },
+    ],
+    relatedSlugs: ["style-hub", "harrington-property-group", "zaiqa"],
   },
 ];
 
@@ -707,6 +635,6 @@ export function getProjectsBySlugs(slugs: string[]): Project[] {
 export const projectCategories: ProjectCategory[] = [
   "Web Dev",
   "UI/UX",
-  "3D & Motion",
+  "Data Science",
   "Brand",
 ];

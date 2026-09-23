@@ -1,6 +1,3 @@
-"use client";
-
-import { useRef, useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 
@@ -38,34 +35,8 @@ const faqs: FaqItem[] = [
 ];
 
 export default function FaqSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  // Lightweight one-time scroll reveal using IntersectionObserver.
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("faq-in-view");
-            observer.unobserve(entry.target);
-          }
-        }
-      },
-      { threshold: 0.12 }
-    );
-    observer.observe(section);
-    return () => observer.disconnect();
-  }, []);
-
-  const toggle = (index: number) => {
-    setOpenIndex((current) => (current === index ? null : index));
-  };
-
   return (
-    <section id="faq" ref={sectionRef} className="home-section faq-section">
+    <section id="faq" className="home-section faq-section">
       <div className="section-label-row">
         <h2 className="section-label">FREQUENTLY ASKED QUESTIONS</h2>
         <span className="micro-note">ANSWERS BEFORE YOU ASK</span>
@@ -90,42 +61,16 @@ export default function FaqSection() {
 
         {/* Right column: accordion list */}
         <div className="faq-list">
-          {faqs.map((faq, index) => {
-            const isOpen = openIndex === index;
-            return (
-              <div
-                key={faq.question}
-                className={`faq-item glass-panel ${isOpen ? "faq-item-open" : ""}`}
-                style={{ "--faq-i": index } as React.CSSProperties}
-              >
-                <button
-                  type="button"
-                  className="faq-question"
-                  aria-expanded={isOpen}
-                  aria-controls={`faq-panel-${index}`}
-                  id={`faq-trigger-${index}`}
-                  onClick={() => toggle(index)}
-                >
-                  <span className="faq-question-text">{faq.question}</span>
-                  <span className="faq-icon" aria-hidden="true">
-                    <Plus size={16} strokeWidth={2} />
-                  </span>
-                </button>
-                <div
-                  id={`faq-panel-${index}`}
-                  role="region"
-                  aria-labelledby={`faq-trigger-${index}`}
-                  className="faq-answer"
-                  style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
-                >
-                  <div className="faq-answer-inner">
-                    <p>{faq.answer}</p>
-                  </div>
-                </div>
-                <span className="faq-item-line" aria-hidden="true" />
-              </div>
-            );
-          })}
+          {faqs.map((faq) => (
+            <details key={faq.question} name="home-faq" className="faq-item glass-panel">
+              <summary className="faq-question">
+                <span className="faq-question-text">{faq.question}</span>
+                <span className="faq-icon" aria-hidden="true"><Plus size={16} strokeWidth={2} /></span>
+              </summary>
+              <div className="faq-answer-inner"><p>{faq.answer}</p></div>
+              <span className="faq-item-line" aria-hidden="true" />
+            </details>
+          ))}
         </div>
       </div>
     </section>

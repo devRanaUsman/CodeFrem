@@ -3,6 +3,16 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
 
+  redirects() {
+    return [
+      { source: "/projects/nebula-finance", destination: "/projects/style-hub", permanent: true },
+      { source: "/projects/orbit-commerce", destination: "/projects/harrington-property-group", permanent: true },
+      { source: "/projects/aether-motors", destination: "/projects/rag-video-chatbot", permanent: true },
+      { source: "/projects/lumen-health", destination: "/projects/trueman", permanent: true },
+      { source: "/projects/vertex-studio", destination: "/projects/zaiqa", permanent: true },
+    ];
+  },
+
   // Dev-only: allow the ngrok tunnel to reach the dev server. This used to be
   // assigned via a stray `module.exports = {...}` block, which Next ignores in
   // an ESM TypeScript config, so the option silently never applied.

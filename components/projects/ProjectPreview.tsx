@@ -1,12 +1,23 @@
-import { ArrowUpRight, ArrowRight } from "lucide-react";
+import Image from "next/image";
+import { getProjectBySlug } from "@/data/projects";
 
 export default function ProjectPreview({ slug }: { slug: string }) {
-  const dashboard = slug === "nebula-finance";
-  const mobile = slug === "lumen-health";
-  return <div className={"project-preview " + (dashboard ? "preview-dashboard" : mobile ? "preview-mobile" : "preview-website")} aria-hidden="true">
-    {dashboard ? <div className="mini-dashboard"><aside><b>◈ nebula</b><span>Overview</span><span>Analytics</span><span>Transactions</span><span>Accounts</span><span>Settings</span></aside><div className="mini-dash-content"><header>Overview <span>↗</span></header><p>Welcome back. Here’s your overview.</p><div className="mini-metrics"><div><small>Total balance</small><strong>$24,580</strong></div><div><small>Income</small><strong>$8,450</strong></div><div><small>Savings</small><strong>$6,240</strong></div></div><div className="mini-chart"><span>Cash flow</span><svg viewBox="0 0 280 85"><path d="M0 68L20 57L40 62L60 33L80 40L100 47L120 19L140 28L160 14L180 25L200 9L220 20L240 4L260 12L280 0" fill="none" stroke="#9bdf48" strokeWidth="3" /></svg></div><div className="mini-table"><span>Recent transactions</span><i /><i /><i /></div></div></div>
-    : mobile ? <div className="mini-phones"><div className="mini-phone"><span className="phone-camera" /><small>Good morning, Alex</small><h4>Your health,<br />in your hands.</h4><div className="health-score">♡<strong>Feeling good</strong><small>Your daily overview</small></div><span className="phone-action">Book an appointment <ArrowRight size={10}/></span><div className="mini-bars"><i/><i/><i/><i/><i/><i/></div></div><div className="mini-phone second-phone"><span className="phone-camera"/><small>Your activity</small><h4>A little better.<br />Every day.</h4><svg viewBox="0 0 140 100"><path d="M0 85L20 70L35 79L55 40L70 50L90 20L110 33L140 3" fill="none" stroke="#a4e45b" strokeWidth="2"/></svg><div className="mini-metrics"><div><small>Sleep</small><strong>8h 12m</strong></div></div></div></div>
-    : <div className={"mini-website " + (slug === "orbit-commerce" ? "commerce-visual" : "")}><header><b>◈ {slug === "orbit-commerce" ? "orbit" : slug === "aether-motors" ? "aether" : "vertex"}</b><span>Work &nbsp; About &nbsp; Contact</span></header><div className="mini-web-copy"><h4>{slug === "orbit-commerce" ? <>Everyday objects.<br />Extraordinary <em>design.</em></> : <>Where ideas<br />become <em>reality.</em></>}</h4><p>Made with purpose. Built for what’s next.</p><span>Discover more <ArrowUpRight size={10}/></span></div><div className="mini-web-orb"/><footer>THOUGHTFULLY MADE / 2026</footer></div>}
-  </div>;
-}
+  const project = getProjectBySlug(slug);
+  if (!project) return null;
 
+  return (
+    <div className="project-preview">
+      <div className="absolute inset-0" style={{ padding: "inherit" }}>
+        <div className="relative h-[80%] border border-gray-300 rounded-sm overflow-hidden">
+          <Image
+            src={project.heroImage}
+            alt={project.imageAlt}
+            fill
+            sizes="(max-width: 767px) 100vw, (max-width: 1200px) 50vw, 600px"
+            className="object-cover object-center"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}

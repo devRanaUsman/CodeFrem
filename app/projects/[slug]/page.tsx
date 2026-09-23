@@ -88,7 +88,7 @@ export default async function CaseStudyPage({
         </div>
       </section>
 
-      <section className="px-6 pb-12"><div className="case-preview max-w-6xl mx-auto overflow-hidden rounded-xl border border-line"><ProjectPreview slug={project.slug}/></div><p className="max-w-6xl mx-auto mt-3 text-xs text-muted">Illustrative concept project. Names, metrics and project details are placeholders.</p></section>
+      <section className="px-6 pb-12"><div className="case-preview max-w-6xl mx-auto overflow-hidden rounded-xl border border-line"><ProjectPreview slug={project.slug}/></div><p className="max-w-6xl mx-auto mt-3 text-xs text-muted">{project.category === "Data Science" ? "Project capabilities are shown below; no measured performance results are claimed." : "Project asset supplied by the studio. Case-study narrative and metrics are illustrative."}</p></section>
       {/* Meta strip */}
       <section className="w-full px-4 sm:px-6 lg:px-12">
         <Reveal className="max-w-6xl mx-auto rounded-xl border border-line border-l-4 border-l-[#AFF45D] bg-surface p-6 sm:p-8 shadow-sm grid grid-cols-2 md:grid-cols-3 gap-6">

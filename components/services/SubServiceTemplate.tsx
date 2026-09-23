@@ -75,6 +75,11 @@ export default function SubServiceTemplate({
             <p className="mt-5 text-muted text-sm sm:text-base leading-relaxed max-w-xl">
               {service.description}
             </p>
+            {service.explanation.map((paragraph) => (
+              <p key={paragraph} className="mt-5 text-muted text-sm sm:text-base leading-relaxed max-w-xl">
+                {paragraph}
+              </p>
+            ))}
           </Reveal>
           <Reveal delay={260}>
             <div className="mt-8">

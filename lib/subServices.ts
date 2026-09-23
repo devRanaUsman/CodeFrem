@@ -8,6 +8,8 @@
  */
 
 import type { LucideIcon } from "lucide-react";
+import { landingPages, studioDisciplines } from "./studioServices";
+export { studioDisciplines } from "./studioServices";
 import {
   BarChart3,
   Bot,
@@ -55,6 +57,7 @@ export interface SubService {
   tagline: string;
   /** Two-sentence hero description. */
   description: string;
+  explanation: string[];
   /** 4-6 "what you get" cards, written from the client's perspective. */
   features: Feature[];
   /** 4-5 process steps specific to this service. */
@@ -87,8 +90,13 @@ export const webDevelopment: Category = {
   description:
     "Fast, typed, reliable web products: from marketing sites to full platforms.",
   services: [
+    landingPages,
     {
       slug: "web-development/custom-website",
+      explanation: [
+        "A custom website is useful when your content, customer journeys, or business workflows no longer fit a standard theme. We begin with your audience, page structure, and the actions visitors should take. The agreed scope identifies each page type, content responsibility, integration, and editing requirement before design starts.",
+        "You review wireframes and visual designs before development, then use a preview site to check the actual experience. Delivery includes responsive pages, accessible navigation, metadata, image optimization, and testing of agreed forms and integrations. We hand over the code and deployment guidance; hosting subscriptions, additional content, and ongoing maintenance are discussed separately."
+],
       title: "Custom Website",
       tagline: "Built like a product, not a template.",
       description:
@@ -203,6 +211,10 @@ export const webDevelopment: Category = {
     },
     {
       slug: "web-development/backend-api",
+      explanation: [
+        "The backend manages the rules and data behind your application: who can access a record, how information is validated, and how systems communicate. We map these requirements with your team, review existing services, and define the data model and API contracts before implementation. This makes responsibilities clear for frontend developers and integration partners.",
+        "The agreed implementation covers endpoints, authentication and authorization, validation, error responses, and relevant automated checks. Integrations include handling failed requests and safe retries where appropriate. Delivery includes API documentation, configuration guidance, and a handover; infrastructure costs, third-party limits, and ongoing operational support are confirmed in the scope."
+],
       title: "Backend & API",
       tagline: "The engine room, built right.",
       description:
@@ -317,6 +329,10 @@ export const webDevelopment: Category = {
     },
     {
       slug: "web-development/ecommerce",
+      explanation: [
+        "We map the complete buying journey, from discovering a product to receiving an order confirmation. Before selecting a platform or architecture, we review your catalog, variants, inventory sources, payment methods, shipping regions, and content needs. Existing stores can begin with a migration assessment so product data and established URLs are accounted for.",
+        "Implementation covers the agreed catalog, product pages, cart, checkout integration, and order notifications. We test payment success and failure, mobile shopping, and the operational handover with your team. Tax configuration, fulfillment rules, payment-provider fees, and recurring platform costs depend on your business and are agreed before launch; ongoing merchandising is scoped separately."
+],
       title: "E-commerce",
       tagline: "A store that sells while you sleep.",
       description:
@@ -431,6 +447,10 @@ export const webDevelopment: Category = {
     },
     {
       slug: "web-development/maintenance-support",
+      explanation: [
+        "Maintenance starts with understanding the application you already have. We review the codebase, deployment process, dependencies, access arrangements, and current issues, then agree which systems and environments the support plan covers. Existing projects may need an initial stabilization phase before recurring support begins.",
+        "The plan defines included updates, monitoring, small changes, and how you report an issue. We prioritize faults by impact, test changes before release, and document what was changed. Response windows, backup responsibilities, emergency coverage, and monthly capacity are stated in your agreement; larger features and third-party outages require their own scope or provider response."
+],
       title: "Maintenance & Support",
       tagline: "Your site, kept sharp every month.",
       description:
@@ -559,6 +579,10 @@ export const dataScience: Category = {
   services: [
     {
       slug: "data-science/analytics-bi",
+      explanation: [
+        "Analytics work begins with the decisions your team needs to make and the meaning of each business metric. We inventory your spreadsheets and systems, check data quality, and agree definitions for measures such as revenue, retention, or pipeline. A shared model reduces disagreements caused by reports using different filters or time periods.",
+        "We build the agreed dashboards with useful filters, drill-downs, refresh schedules, and role-appropriate access. Figures are reconciled against source data before handover, and your team receives guidance on interpreting and maintaining the reports. Data-source availability, licensing, historical backfills, and new reporting requests are included only where specified in the proposal."
+],
       title: "Analytics & BI",
       tagline: "See your numbers clearly, finally.",
       description:
@@ -673,6 +697,10 @@ export const dataScience: Category = {
     },
     {
       slug: "data-science/machine-learning",
+      explanation: [
+        "Machine learning is appropriate when a repeatable prediction or classification can improve a real workflow and suitable data is available. We first assess feasibility, label quality, data permissions, and a simpler baseline. Success criteria are agreed around business usefulness as well as model performance, before investing in a more complex approach.",
+        "Development includes preparation, training, and evaluation on held-out data, with checks for leakage and relevant error patterns. You receive a documented model or service, evaluation findings, limitations, and an integration plan. Production monitoring and retraining can be added to the scope. Accuracy is measured on the available data; we do not promise an arbitrary score or assume that a model is always the best solution."
+],
       title: "Machine Learning",
       tagline: "Predictions that pay for themselves.",
       description:
@@ -787,6 +815,10 @@ export const dataScience: Category = {
     },
     {
       slug: "data-science/data-engineering",
+      explanation: [
+        "Data engineering connects scattered sources into a dependable foundation for reporting or applications. We document each source, owner, format, update frequency, and access requirement, then agree a destination model and freshness needs. The design considers both current volume and expected growth so infrastructure remains understandable and proportionate.",
+        "Pipelines include agreed extraction and transformation steps, validation checks, scheduling, and failure reporting. We document lineage and recovery procedures so your team can trace a number to its source and respond when a feed changes. Historical migration, sensitive-data handling, retention rules, cloud costs, and ongoing operation are explicitly scoped before implementation."
+],
       title: "Data Engineering",
       tagline: "Pipelines that never drop your data.",
       description:
@@ -901,6 +933,10 @@ export const dataScience: Category = {
     },
     {
       slug: "data-science/ai-integration",
+      explanation: [
+        "AI integration starts with one useful workflow, such as answering questions from approved documents or assisting with repetitive text tasks. We map the input data, permissions, acceptable outputs, and situations that require human review. A small prototype helps test whether the approach adds value before it becomes part of a production application.",
+        "The build can include document retrieval, structured outputs, application integration, evaluation examples, and fallback behavior. We review latency, usage costs, and how the system behaves when relevant context is missing. Your team receives configuration and operating guidance. Provider subscriptions, data retention choices, ongoing evaluation, and updates to the knowledge base are agreed in the scope; generated answers still require appropriate verification."
+],
       title: "AI Integration",
       tagline: "AI features your users actually use.",
       description:
@@ -1015,6 +1051,10 @@ export const dataScience: Category = {
     },
     {
       slug: "data-science/data-visualization",
+      explanation: [
+        "A useful visualization starts with a question and a clear audience. We review the data, identify what it can support, and select charts that make the comparison or trend understandable. Definitions, units, time periods, uncertainty, and missing values are considered before choosing colors or adding interaction.",
+        "Delivery can include presentation-ready graphics or interactive web charts with agreed filters, labels, and tooltips. We check readability, color contrast, mobile behavior, and the underlying calculations, then provide exports and usage guidance. Live data connections, automated refreshes, additional formats, and future updates are defined separately so the finished visuals remain maintainable."
+],
       title: "Data Visualization",
       tagline: "Charts that change minds.",
       description:
@@ -1132,7 +1172,7 @@ export const dataScience: Category = {
 
 export const allCategories: Category[] = [webDevelopment, dataScience];
 
-export const allSubServices: SubService[] = allCategories.flatMap(
+export const allSubServices: SubService[] = [...allCategories, studioDisciplines].flatMap(
   (category) => category.services
 );
 

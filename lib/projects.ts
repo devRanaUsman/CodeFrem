@@ -14,11 +14,11 @@ export type { Project, ProjectResult } from "@/data/projects";
 
 /** Per-slug legacy gradient classes preserving the homepage's look. */
 const legacyGradients: Record<string, string> = {
-  "nebula-finance": "from-[#AAFF00]/25 via-[#0A0A0A] to-[#0A0A0A]",
-  "orbit-commerce": "from-white/15 via-[#0A0A0A] to-[#0A0A0A]",
-  "aether-motors": "from-[#AAFF00]/25 via-[#0A0A0A] to-[#0A0A0A]",
-  "lumen-health": "from-white/15 via-[#0A0A0A] to-[#0A0A0A]",
-  "vertex-studio": "from-[#AAFF00]/25 via-[#0A0A0A] to-[#0A0A0A]",
+  "style-hub": "from-[#AAFF00]/25 via-[#0A0A0A] to-[#0A0A0A]",
+  "harrington-property-group": "from-white/15 via-[#0A0A0A] to-[#0A0A0A]",
+  "rag-video-chatbot": "from-[#AAFF00]/25 via-[#0A0A0A] to-[#0A0A0A]",
+  "trueman": "from-white/15 via-[#0A0A0A] to-[#0A0A0A]",
+  "zaiqa": "from-[#AAFF00]/25 via-[#0A0A0A] to-[#0A0A0A]",
 };
 
 const fallbackGradient = "from-[#AAFF00]/25 via-[#0A0A0A] to-[#0A0A0A]";
