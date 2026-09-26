@@ -35,6 +35,8 @@ export type LegacyProject = Project & {
     solution: string;
     visuals: { src: string; alt: string }[];
     results: { value: string; label: string }[];
+    /** Real feature bullets shown in the Highlights section. */
+    highlights: string[];
     services: string[];
   };
 };
@@ -52,6 +54,7 @@ export const projects: LegacyProject[] = dataProjects.map((project) => ({
       .filter((item) => Boolean(item.src))
       .map((item) => ({ src: item.src as string, alt: item.caption })),
     results: project.results.map(({ value, label }) => ({ value, label })),
+    highlights: project.highlights,
     services: project.tags,
   },
 }));

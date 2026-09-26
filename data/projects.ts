@@ -4,9 +4,9 @@
  * The homepage horizontal showcase, the /projects grid, and every
  * /projects/[slug] case study all read from this one array.
  *
- * Preview assets come from public/images. Existing illustrative case-study
- * copy remains until approved project details are supplied. The RAG project
- * uses the supplied brief and capabilities rather than measured results.
+ * Preview assets come from public/images. The four self-initiated projects
+ * below use real case-study content; the RAG project uses the supplied brief
+ * and capabilities rather than measured results.
  */
 
 export type ProjectCategory = "Web Dev" | "UI/UX" | "3D & Motion" | "Brand" | "Data Science";
@@ -81,8 +81,11 @@ export interface Project {
     body: string;
     deliverables: ProjectDeliverable[];
   };
-  process: ProjectProcessStep[];
-  results: ProjectResult[];
+  process: ProjectProcessStep[]; results: ProjectResult[];
+
+  /** Real feature bullets shown in the case-study "Highlights" section. */
+  highlights: string[];
+
   testimonial?: ProjectTestimonial;
   /** Optional before/after strip for performance-focused projects. */
   beforeMetrics?: string[];
@@ -109,115 +112,88 @@ export const projects: Project[] = [
     title: "Style Hub",
     client: "Style Hub",
     year: "2025",
-    category: "UI/UX",
-    tagline: "From spreadsheet chaos to a dashboard traders open on purpose.",
+    category: "Web Dev",
+    tagline: "A fashion storefront with real product browsing and cart, not a demo shell.",
     description:
-      "A full dashboard redesign and design system for a next-gen fintech startup.",
-    tags: ["Design System", "Fintech"],
+      "A fashion storefront with real product browsing and cart, not a demo shell.",
+    tags: ["E-Commerce", "Fashion"],
     stack: {
-      design: ["Figma", "FigJam", "Maze"],
-      frontend: ["Next.js", "TypeScript", "Tailwind CSS"],
-      infrastructure: ["Vercel"],
+      // TODO: confirm the real stack — user will supply it.
+      frontend: ["React"],
     },
-    duration: "5 weeks",
-    // TODO: add the live URL once the client approves publication.
+    duration: "Self-initiated project",
     accentColor: "#a855f7",
     gallery: [
-      // TODO: Replace gradient placeholders with actual project screenshots
-      { caption: "Rebuilt trading dashboard, dark mode" },
-      { caption: "Design system component sheet" },
-      { caption: "Onboarding flow, step 1 of 3" },
+      { caption: "Product listings across clothing and accessories" },
+      { caption: "Product detail with add-to-cart" },
+      { caption: "Cart and checkout flow" },
     ],
     problem: {
-      body: "Style Hub's beta users loved the idea but abandoned the product. The dashboard buried critical numbers three clicks deep, and every feature shipped by a different contractor looked like it belonged to a different app. Support tickets were dominated by 'where do I find…' questions, and onboarding completion had stalled at 34%. The founding team knew the product was competitive; the experience wasn't.",
+      body: "Fashion brands need a storefront where browsing, product detail and checkout all feel as smooth as a hosted platform, without the recurring platform fees.",
       challenges: [
-        "Critical portfolio numbers buried three navigation levels deep",
-        "Five contractor-built features with five conflicting visual languages",
-        "Onboarding completion stuck at 34% with no diagnostics on why",
+        "Shoppers expect the browse → product → cart → checkout path to feel like a hosted platform",
+        "Hosted commerce platforms deliver that experience but charge recurring fees",
+        "The storefront had to be built from scratch as a real React application",
       ],
     },
     solution: {
-      body: "We started by shadowing seven traders through their morning routine and mapping every question the dashboard had to answer. The information architecture was rebuilt around three of them: what do I own, what changed, what do I do next. A token-driven design system (color, type, spacing, 40+ documented components) replaced the patchwork, so every future feature ships looking like it belongs. Finally, onboarding was cut from nine steps to three, each with a visible next win. The marketing site was redesigned in the same system so the promise and the product finally match.",
+      body: "Built as a clothing and accessories storefront with product listings, a cart, and a checkout flow, built as a React application from scratch.",
       deliverables: [
         {
           icon: "layout",
-          title: "Rebuilt dashboard IA",
-          description: "Three questions, three surfaces: zero hunting.",
+          title: "Product listings",
+          description: "Browsing across clothing and accessories.",
         },
         {
-          icon: "layers",
-          title: "Token-driven design system",
-          description: "40+ components documented in Figma and code.",
-        },
-        {
-          icon: "trending-up",
-          title: "3-step onboarding",
-          description: "Every step ends with a visible win.",
+          icon: "shopping-bag",
+          title: "Cart and checkout",
+          description: "A complete flow from add-to-cart to order.",
         },
         {
           icon: "globe",
-          title: "Marketing site refresh",
-          description: "Same system, same voice, new conversion paths.",
+          title: "Live storefront",
+          description: "Built and deployed end-to-end.",
         },
       ],
     },
     process: [
       {
         step: "01",
-        title: "Research",
+        title: "Plan",
         description:
-          "Shadowed seven traders, interviewed the support queue, and turned complaints into a ranked list of broken journeys.",
+          "Mapped the catalog and the pages a clothing storefront needs: listings, product detail, cart and checkout.",
       },
       {
         step: "02",
-        title: "Wireframe",
+        title: "Build",
         description:
-          "Rebuilt the information architecture around the three questions traders actually ask, reviewed with real accounts.",
+          "Built the React application from scratch: product data, listings and the cart state behind them.",
       },
       {
         step: "03",
-        title: "Design",
+        title: "Checkout",
         description:
-          "Token-driven design system first, then high-fidelity screens, so every new feature inherits the language for free.",
+          "Wired the cart into a checkout flow and walked the full path from product page to completed order.",
       },
       {
         step: "04",
-        title: "Test",
+        title: "Polish",
         description:
-          "Moderated sessions with five beta users on clickable prototypes; fixed the three biggest drop-off points before code.",
+          "Responsive passes and edge-case clean-up across the catalog, cart and checkout.",
       },
       {
         step: "05",
-        title: "Deliver",
+        title: "Deploy",
         description:
-          "Engineered in Next.js with the client's team, documented in Figma, and handed over with component-by-component notes.",
+          "Shipped the storefront live and verified the full purchase path.",
       },
     ],
-    results: [
-      {
-        value: "94%",
-        label: "Onboarding completion",
-        context: "up from 34% at project start",
-      },
-      {
-        value: "2.1×",
-        label: "Weekly active traders",
-        context: "measured 8 weeks post-launch",
-      },
-      {
-        value: "40+",
-        label: "Design system components",
-        context: "with Figma + code parity",
-      },
+    results: [],
+    highlights: [
+      "Full storefront and cart flow",
+      "Built and deployed end-to-end",
+      // TODO: swap in the confirmed stack bullet once the user supplies it.
     ],
-    testimonial: {
-      // TODO: Replace with real client testimonial
-      quote:
-        "Codefrem didn't just redesign the dashboard; they understood our traders better than we did. Support tickets about 'where do I find things' dropped to nearly zero within a month.",
-      name: "Founder & CEO",
-      role: "Founder & CEO",
-      company: "Style Hub",
-    },
     relatedSlugs: ["trueman", "harrington-property-group", "zaiqa"],
   },
   {
@@ -229,117 +205,87 @@ export const projects: Project[] = [
     client: "Harrington Property Group",
     year: "2025",
     category: "Web Dev",
-    tagline: "A headless storefront that loads before customers can blink.",
+    tagline: "A luxury property site built to work across four regions at once.",
     description:
-      "Headless storefront with sub-second page loads and 3D product previews.",
-    tags: ["Next.js", "E-commerce"],
+      "A luxury property site built to work across four regions at once.",
+    tags: ["Real Estate", "Multi-Region"],
     stack: {
+      // TODO: confirm the real stack — user will supply it.
       frontend: ["Next.js", "TypeScript", "Tailwind CSS"],
-      backend: ["Node.js", "PostgreSQL", "Stripe"],
-      infrastructure: ["Vercel", "Edge Network"],
-      design: ["Figma", "Spline"],
     },
-    duration: "6 weeks",
-    // TODO: add the live URL once the client approves publication.
+    duration: "Self-initiated project",
     accentColor: "#7c3aed",
     gallery: [
-      // TODO: Replace gradient placeholders with actual project screenshots
-      { caption: "Homepage hero with 3D product preview" },
-      { caption: "Product detail page: variant picker" },
-      { caption: "Mobile checkout flow, two taps to pay" },
+      { caption: "Property listings across four regions" },
+      { caption: "Listing detail presentation" },
+      { caption: "Homepage tuned for luxury buyers" },
     ],
     problem: {
-      body: "Harrington Property Group's legacy theme took over six seconds to render on a phone, and most of their traffic was phones. Every marketing experiment was locked behind a developer ticket, so campaigns died waiting for the backlog. Cart abandonment had climbed past 78% on mobile, and the previous agency's answer was 'buy a faster plan'. The business needed a storefront the marketing team could run, not just a faster version of the same cage.",
+      body: "Real estate agents working across multiple countries need one site that reads as credible to very different buyers (AU, US, UK, Gulf).",
       challenges: [
-        "6+ second mobile loads on the platform that paid the bills",
-        "Every content change blocked behind a developer ticket",
-        "78% cart abandonment on phones: the majority channel",
+        "Four very different buyer markets: AU, US, UK and the Gulf",
+        "Luxury buyers judge credibility within seconds of landing",
+        "One site has to read as credible in all four markets at once",
       ],
     },
     solution: {
-      body: "We rebuilt Harrington Property Group as a headless Next.js storefront, rendering product pages at the edge so first paint lands in under a second on 4G. A component library with locked-down design tokens means the marketing team composes landing pages and campaign blocks themselves; no developer, no ticket, no drift. Product pages got Spline-powered 3D previews so shoppers can spin flagship items before buying, with a performance tier system that keeps them optional on weak connections. Checkout was rebuilt around Stripe with guest-first flow, address autocomplete and honest error states. Granular caching plus ISR keeps the catalog fresh without sacrificing speed.",
+      body: "Built as a real-estate platform for a luxury/residential specialist, with property listings presented to read as credible across all four markets.",
       deliverables: [
         {
-          icon: "zap",
-          title: "Edge rendering",
-          description: "Product pages paint in under a second on 4G.",
-        },
-        {
-          icon: "box",
-          title: "3D product previews",
-          description: "Spline configurators with low-end fallbacks.",
-        },
-        {
           icon: "layout",
-          title: "Marketing component library",
-          description: "Campaign pages without developer tickets.",
+          title: "Property listings",
+          description: "Luxury and residential listings in one place.",
         },
         {
-          icon: "gauge",
-          title: "Performance budgets",
-          description: "Enforced in CI; regressions fail the build.",
+          icon: "globe",
+          title: "Four-region presentation",
+          description: "Reads as credible to AU, US, UK and Gulf buyers.",
+        },
+        {
+          icon: "zap",
+          title: "Built and deployed end-to-end",
+          description: "From empty repo to a live site.",
         },
       ],
     },
     process: [
       {
         step: "01",
-        title: "Audit",
+        title: "Plan",
         description:
-          "Profiled the legacy stack, traced the abandonment funnel, and set hard performance budgets before any redesign.",
+          "Planned the platform around four buyer regions (AU, US, UK, Gulf) and the property listing types they expect.",
       },
       {
         step: "02",
-        title: "Architecture",
+        title: "Build",
         description:
-          "Chose the headless split: edge-rendered catalog, Stripe checkout, ISR for freshness, documented as API contracts.",
+          "Built the real-estate platform: property listings and the detail presentation around them.",
       },
       {
         step: "03",
-        title: "Build",
+        title: "Regionalise",
         description:
-          "Storefront, component library and 3D previews built in weekly increments against real product data.",
+          "Tuned how listings are presented so the site reads as credible across all four markets.",
       },
       {
         step: "04",
-        title: "Optimise",
+        title: "Polish",
         description:
-          "Image pipeline, cache strategy and DPR-capped 3D tuned until every template passed the budget on a mid-range phone.",
+          "Responsive passes and clean-up across the listings and marketing pages.",
       },
       {
         step: "05",
-        title: "Handoff",
+        title: "Deploy",
         description:
-          "Marketing team trained on the component library; monitoring and a runbook left behind. We stay on call.",
+          "Shipped the site live and reviewed it against all four regions.",
       },
     ],
-    results: [
-      {
-        value: "0.8s",
-        label: "LCP on 4G mobile",
-        context: "down from 6.2s on the legacy theme",
-      },
-      {
-        value: "-31%",
-        label: "Cart abandonment",
-        context: "measured across 60 days post-launch",
-      },
-      {
-        value: "+18%",
-        label: "Conversion rate",
-        context: "like-for-like traffic comparison",
-      },
+    results: [],
+    highlights: [
+      "Multi-region property showcase",
+      "Built and deployed end-to-end",
+      // TODO: swap in the confirmed stack bullet once the user supplies it.
     ],
-    beforeMetrics: ["6.2s LCP on 4G", "78% cart abandonment", "100% changes via dev tickets"],
-    afterMetrics: ["0.8s LCP on 4G", "47% cart abandonment", "Campaign pages self-serve"],
-    testimonial: {
-      // TODO: Replace with real client testimonial
-      quote:
-        "Working with Codefrem transformed our online store. The speed improvement alone paid for the project in the first month, and our marketing team hasn't filed a dev ticket since launch.",
-      name: "Head of Digital",
-      role: "Head of Digital",
-      company: "Harrington Property Group",
-    },
     relatedSlugs: ["zaiqa", "rag-video-chatbot", "style-hub"],
   },
   {
@@ -348,117 +294,90 @@ export const projects: Project[] = [
     imageAlt: "Trueman grooming website with a barber cutting hair",
     number: "04",
     title: "Trueman",
-    client: "Trueman",
+    client: "Trueman Grooming Co.",
     year: "2024",
-    category: "Brand",
-    tagline: "One calm, trustworthy identity for twelve very different markets.",
+    category: "Web Dev",
+    tagline: "Online booking for a barbershop, so chairs fill without a phone call.",
     description:
-      "Patient-first platform design for a telehealth provider across 12 markets.",
-    tags: ["Brand Identity", "Healthcare"],
+      "Online booking for a barbershop, so chairs fill without a phone call.",
+    tags: ["Booking System", "Service Business"],
     stack: {
-      design: ["Figma", "FigJam"],
+      // TODO: confirm the real stack — user will supply it.
       frontend: ["Next.js", "Tailwind CSS"],
-      infrastructure: ["Vercel"],
     },
-    duration: "10 weeks",
-    // TODO: confirm publication approval with compliance before adding a URL.
+    duration: "Self-initiated project",
     accentColor: "#d97706",
     gallery: [
-      // TODO: Replace gradient placeholders with actual project screenshots
-      { caption: "Unified identity: one system, twelve markets" },
-      { caption: "Localized booking flow, Arabic and German locales" },
-      { caption: "WCAG AA color system across light and dark surfaces" },
+      { caption: "Service catalog: haircuts, hot towel shaves, beard work" },
+      { caption: "Live online scheduling flow" },
+      { caption: "Booking-first homepage" },
     ],
     problem: {
-      body: "Trueman operated in 12 countries with 12 visual dialects: different logos, tones, color systems and booking flows, inherited from regional agencies. Patients didn't trust what they didn't recognize, and trust is the entire product when the service is healthcare. Internally, every new market launch re-litigated the same design decisions from zero. Compliance requirements varied per region, which had become the excuse for the inconsistency nobody wanted to fix.",
+      body: "Appointment-based businesses lose bookings when customers can only reserve a slot by phone during business hours.",
       challenges: [
-        "12 markets, 12 visual dialects, no recognizable parent brand",
-        "Booking completion varied wildly by region with no shared pattern",
-        "Accessibility and compliance requirements fragmented per market",
+        "Bookings only by phone, during business hours",
+        "Every missed call is an empty chair later that week",
+        "The site had to lead with booking, not just barbershop information",
       ],
     },
     solution: {
-      body: "We unified Trueman around a single calm system: one accessible color architecture (WCAG AA verified on every surface combination), a warm typographic voice that translates without losing tone, and one booking flow pattern that localizes cleanly per market: language, imagery and compliance details are variables, never redesigns. Regional teams got a documented system with explicit local-variant slots, so launching market thirteen is a configuration task, not a committee. The identity shipped with a brand book, a Figma library and coded components so the system survives contact with future vendors.",
+      body: "Built as a booking-first site with a service catalog (haircuts, hot towel shaves, beard work) and a live online scheduling flow.",
       deliverables: [
         {
-          icon: "palette",
-          title: "Accessible color system",
-          description: "WCAG AA verified on every surface pair.",
+          icon: "layout",
+          title: "Service catalog",
+          description: "Haircuts, hot towel shaves, beard work.",
         },
         {
-          icon: "globe",
-          title: "Localized booking pattern",
-          description: "One flow, twelve markets, zero redesigns.",
-        },
-        {
-          icon: "layers",
-          title: "Brand + Figma library",
-          description: "Explicit local-variant slots per market.",
+          icon: "trending-up",
+          title: "Live scheduling",
+          description: "Customers reserve a slot online, any time.",
         },
         {
           icon: "shield",
-          title: "Compliance integration",
-          description: "Regional requirements built into the system, not bolted on.",
+          title: "Booking-first structure",
+          description: "Every page routes toward booking a chair.",
         },
       ],
     },
     process: [
       {
         step: "01",
-        title: "Research",
+        title: "Plan",
         description:
-          "Audited all twelve markets, interviewed regional teams, and mapped where inconsistency actually cost trust.",
+          "Defined the service catalog (haircuts, hot towel shaves, beard work) and the booking flow around it.",
       },
       {
         step: "02",
-        title: "Wireframe",
+        title: "Build",
         description:
-          "Designed the one booking pattern every market would inherit, stress-tested against each region's compliance rules.",
+          "Built the booking-first site: service pages that lead straight into scheduling.",
       },
       {
         step: "03",
-        title: "Design",
+        title: "Schedule",
         description:
-          "Built the unified identity (color, type, voice) with explicit slots for local variation instead of exceptions.",
+          "Wired the live scheduling flow so customers pick a service and reserve a slot online.",
       },
       {
         step: "04",
-        title: "Test",
+        title: "Polish",
         description:
-          "Usability and accessibility testing across four languages, including RTL, with real patients in three markets.",
+          "Responsive passes and clean-up across the catalog and booking flow.",
       },
       {
         step: "05",
-        title: "Deliver",
+        title: "Deploy",
         description:
-          "Brand book, Figma library and coded components, so market thirteen ships as configuration, not a new project.",
+          "Shipped the site live and verified the booking path end to end.",
       },
     ],
-    results: [
-      {
-        value: "12",
-        label: "Markets unified",
-        context: "one system, local variants by design",
-      },
-      {
-        value: "+44%",
-        label: "Booking completion",
-        context: "average lift across the three worst regions",
-      },
-      {
-        value: "AA+",
-        label: "Accessibility across flows",
-        context: "verified in four languages including RTL",
-      },
+    results: [],
+    highlights: [
+      "Live booking flow",
+      "Service catalog",
+      // TODO: swap in the confirmed stack bullet once the user supplies it.
     ],
-    testimonial: {
-      // TODO: Replace with real client testimonial
-      quote:
-        "For the first time, a patient in Berlin and a patient in Dubai know they're in the same hands. The system Codefrem built turns our thirteenth market launch into a checklist item.",
-      name: "VP of Product",
-      role: "VP of Product",
-      company: "Trueman",
-    },
     relatedSlugs: ["style-hub", "harrington-property-group", "zaiqa"],
   },
   {
@@ -470,120 +389,91 @@ export const projects: Project[] = [
     client: "Zaiqa",
     year: "2023",
     category: "Web Dev",
-    tagline: "A showreel site that feels like one of their own shots.",
+    tagline: "A local food ordering site built for how people actually order in Lahore.",
     description:
-      "Portfolio platform for a VFX studio with cinematic scroll storytelling.",
-    tags: ["GSAP", "Creative Dev"],
+      "A local food ordering site built for how people actually order in Lahore.",
+    tags: ["Full-Stack", "Food & Delivery"],
     stack: {
-      frontend: ["Next.js", "TypeScript", "GSAP", "Lenis"],
+      // TODO: confirm the real stack — user will supply it.
+      frontend: ["Next.js", "TypeScript"],
       backend: ["Node.js"],
-      infrastructure: ["Vercel"],
-      design: ["Figma", "After Effects"],
     },
-    duration: "7 weeks",
-    // TODO: add the live URL once the client approves publication.
+    duration: "Self-initiated project",
     accentColor: "#4f46e5",
     gallery: [
-      // TODO: Replace gradient placeholders with actual project screenshots
-      { caption: "Scroll-sequenced project showcase" },
-      { caption: "Lazy-loaded film plates with title-sequence intros" },
-      { caption: "Notion-powered case study pages" },
+      { caption: "Browsable menu: desi food, BBQ, fast food" },
+      { caption: "Cart and order flow" },
+      { caption: "Listings and order management backend" },
     ],
     problem: {
-      body: "Zaiqa's work is jaw-dropping; their website was a grid of compressed thumbnails. Studios that win awards were losing pitches to prettier PDFs, because the site flattened cinematic work into a contact sheet. Every project needed its full-resolution plates streamed to prove what the studio could do, and the old site streamed none of them. Worse, the team couldn't update anything without a developer, so new work sat unpublished for weeks.",
+      body: "Small local restaurants are stuck between expensive delivery apps and no online presence, losing direct orders to commission fees.",
       challenges: [
-        "Cinematic work flattened into a compressed thumbnail grid",
-        "Losing pitches to agencies with better websites, not better work",
-        "New projects unpublished for weeks: every update needed a developer",
+        "Delivery apps take a commission on every order they route",
+        "No online presence means direct orders go to whoever picks up the phone",
+        "Menu and orders needed to be manageable day to day",
       ],
     },
     solution: {
-      body: "We built a GSAP-driven, scroll-sequenced showcase where each project plays like a mini title sequence: plates lazy-load in cinematic order, the scroll scrubs the timeline, and every sequence ends by handing the visitor to a full case study. A Notion-backed publishing pipeline means the studio drops new work into a database and the site rebuilds itself: no developer, no wait. Under the cinematic surface it's a ruthlessly optimized static build: 100 Lighthouse performance, sub-second first loads, and reduced-motion fallbacks that keep everything readable for every visitor.",
+      body: "Built as a standalone ordering platform with a browsable menu (desi food, BBQ, fast food), a cart/order flow, and a backend to manage listings and orders.",
       deliverables: [
         {
-          icon: "film",
-          title: "Scroll-sequenced showcases",
-          description: "Every project plays like a title sequence.",
+          icon: "layout",
+          title: "Browsable menu",
+          description: "Desi food, BBQ and fast food, categorised for ordering.",
         },
         {
-          icon: "zap",
-          title: "Cinematic lazy loading",
-          description: "Full-res plates stream exactly when needed.",
+          icon: "shopping-bag",
+          title: "Cart and order flow",
+          description: "From menu to a placed order.",
         },
         {
-          icon: "pen-tool",
-          title: "Notion publishing",
-          description: "New work self-publishes: no developer needed.",
-        },
-        {
-          icon: "gauge",
-          title: "100 Lighthouse perf",
-          description: "Cinematic surface, static-build discipline underneath.",
+          icon: "layers",
+          title: "Listings and orders backend",
+          description: "Menu and orders managed from one place.",
         },
       ],
     },
     process: [
       {
         step: "01",
-        title: "Audit",
+        title: "Plan",
         description:
-          "Sit-down with the founders on what a pitch actually needs the site to prove, and where the old one lost deals.",
+          "Structured the menu into browsable categories — desi food, BBQ, fast food — around how people actually order.",
       },
       {
         step: "02",
-        title: "Architecture",
+        title: "Build",
         description:
-          "Static Next.js with a Notion-backed content pipeline and a plate-streaming budget per project page.",
+          "Built the standalone ordering platform: menu pages, cart and the order flow.",
       },
       {
         step: "03",
-        title: "Build",
+        title: "Backend",
         description:
-          "Scroll-sequenced showcases engineered against real film plates, with GSAP timelines synced to Lenis scroll.",
+          "Built the backend that manages listings and orders.",
       },
       {
         step: "04",
-        title: "Optimise",
+        title: "Polish",
         description:
-          "Plate preloading strategy, reduced-motion fallbacks and performance tuning until Lighthouse read 100.",
+          "Responsive passes and clean-up across the menu and ordering flow.",
       },
       {
         step: "05",
-        title: "Handoff",
+        title: "Deploy",
         description:
-          "The studio published their next two projects themselves, from Notion, without emailing us once.",
+          "Shipped the platform live and verified ordering end to end.",
       },
     ],
-    results: [
-      {
-        value: "4:12",
-        label: "Avg. session duration",
-        context: "visitors watch the sequences, not skim them",
-      },
-      {
-        value: "+60%",
-        label: "Inbound pitch requests",
-        context: "first quarter after launch",
-      },
-      {
-        value: "100",
-        label: "Lighthouse performance",
-        context: "with full-resolution film plates",
-      },
+    results: [],
+    highlights: [
+      "Full menu and ordering flow",
+      "Built and deployed end-to-end",
+      // TODO: swap in the confirmed stack bullet once the user supplies it.
     ],
-    beforeMetrics: ["Compressed thumbnail grid", "Weeks to publish new work", "No motion on the reel"],
-    afterMetrics: ["Scroll-sequenced full-plate showcase", "Self-serve Notion publishing", "Scroll-scrubbed film sequences"],
-    testimonial: {
-      // TODO: Replace with real client testimonial
-      quote:
-        "Our site finally competes with our reel. We've had clients quote the website back to us in first calls, and we publish new work ourselves in minutes.",
-      name: "Founding Partner",
-      role: "Founding Partner",
-      company: "Zaiqa",
-    },
     relatedSlugs: ["harrington-property-group", "rag-video-chatbot", "style-hub"],
   },
-   {
+  {
     slug: "rag-video-chatbot",
     number: "03",
     title: "RAG Video Chatbot — Built with Python",
@@ -596,7 +486,7 @@ export const projects: Project[] = [
     stack: { backend: ["Python", "LangChain", "FAISS"], frontend: ["Streamlit", "WebRTC"] },
     duration: "Project-based",
     accentColor: "#0891b2",
-    heroImage: "/images/data_science.png",
+    heroImage: "/images/rag-chatbot.png",
     imageAlt: "RAG Video Chatbot project overview showing document retrieval and video conversation",
     gallery: [],
     problem: {
@@ -612,10 +502,11 @@ export const projects: Project[] = [
       ],
     },
     process: [],
-    results: [
-      { value: "RAG-powered", label: "Context-aware responses" },
-      { value: "Real-time", label: "Interactive video conversation" },
-      { value: "Custom Knowledge", label: "Answers from user documents" },
+    results: [],
+    highlights: [
+      "RAG-powered, context-aware responses",
+      "Real-time interactive video conversation",
+      "Answers grounded in the user's own documents",
     ],
     relatedSlugs: ["style-hub", "harrington-property-group", "zaiqa"],
   },
@@ -634,7 +525,5 @@ export function getProjectsBySlugs(slugs: string[]): Project[] {
 /** All categories that actually have projects, in tab order. */
 export const projectCategories: ProjectCategory[] = [
   "Web Dev",
-  "UI/UX",
   "Data Science",
-  "Brand",
 ];

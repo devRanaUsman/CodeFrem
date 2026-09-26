@@ -8,7 +8,7 @@ export default function ProjectsSection() {
   return <section id="projects" className="home-section">
     <div className="section-label-row"><h2 className="section-label">SELECTED WORK</h2><Link href="/projects" className="section-more">EXPLORE MORE PROJECTS <ArrowRight size={17}/></Link></div>
     <div className="reference-project-grid">{selected.map(project => <ProjectCard key={project.slug} project={project}/>)}</div>
-    <p className="concept-note">Concept projects: a look at what we can create together.</p>
+    <p className="concept-note">Self-initiated projects: designed, built and shipped end-to-end.</p>
   </section>;
 }
 

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Check } from "lucide-react";
 import ProjectPreview from "@/components/projects/ProjectPreview";
 import TagPill from "@/components/ui/TagPill";
 import GlowCard from "@/components/ui/GlowCard";
@@ -88,7 +88,7 @@ export default async function CaseStudyPage({
         </div>
       </section>
 
-      <section className="px-6 pb-12"><div className="case-preview max-w-6xl mx-auto overflow-hidden rounded-xl border border-line"><ProjectPreview slug={project.slug}/></div><p className="max-w-6xl mx-auto mt-3 text-xs text-muted">{project.category === "Data Science" ? "Project capabilities are shown below; no measured performance results are claimed." : "Project asset supplied by the studio. Case-study narrative and metrics are illustrative."}</p></section>
+      <section className="px-6 pb-12"><div className="case-preview max-w-6xl mx-auto overflow-hidden rounded-xl border border-line"><ProjectPreview slug={project.slug}/></div><p className="max-w-6xl mx-auto mt-3 text-xs text-muted">{project.category === "Data Science" ? "Project capabilities are shown below; no measured performance results are claimed." : "Self-initiated project, built solo end-to-end."}</p></section>
       {/* Meta strip */}
       <section className="w-full px-4 sm:px-6 lg:px-12">
         <Reveal className="max-w-6xl mx-auto rounded-xl border border-line border-l-4 border-l-[#AFF45D] bg-surface p-6 sm:p-8 shadow-sm grid grid-cols-2 md:grid-cols-3 gap-6">
@@ -168,37 +168,39 @@ export default async function CaseStudyPage({
         </section>
       )}
 
-      {/* Results: stats-strip styling */}
-      <section className="w-full pb-20 lg:pb-28 px-4 sm:px-6 lg:px-12">
-        <Reveal className="max-w-6xl mx-auto">
-          <span className="text-xs font-bold uppercase tracking-widest text-muted">
-            Results
-          </span>
-          <div className="mt-4 rounded-xl border border-line border-l-4 border-l-[#AFF45D] bg-surface p-6 sm:p-10 shadow-sm">
-            <div
-              className={`grid grid-cols-1 ${
-                caseStudy.results.length === 3
-                  ? "md:grid-cols-3"
-                  : "md:grid-cols-2"
-              } gap-6 md:gap-8 divide-y md:divide-y-0 md:divide-x divide-line`}
-            >
-              {caseStudy.results.map((result, index) => (
-                <div
-                  key={result.label}
-                  className={`flex flex-col ${index !== 0 ? "pt-6 md:pt-0 md:pl-8" : ""}`}
-                >
-                  <span className="text-4xl sm:text-5xl font-extrabold tracking-tight text-accent-ink font-sans">
-                    {result.value}
-                  </span>
-                  <span className="mt-2 text-xs sm:text-sm font-medium text-muted tracking-wide uppercase">
-                    {result.label}
-                  </span>
-                </div>
-              ))}
+      {/* Highlights: real feature bullets in the same card language */}
+      {caseStudy.highlights.length > 0 && (
+        <section className="w-full pb-20 lg:pb-28 px-4 sm:px-6 lg:px-12">
+          <Reveal className="max-w-6xl mx-auto">
+            <span className="text-xs font-bold uppercase tracking-widest text-muted">
+              Highlights
+            </span>
+            <div className="mt-4 rounded-xl border border-line border-l-4 border-l-[#AFF45D] bg-surface p-6 sm:p-10 shadow-sm">
+              <div
+                className={`grid grid-cols-1 ${
+                  caseStudy.highlights.length === 3
+                    ? "md:grid-cols-3"
+                    : "md:grid-cols-2"
+                } gap-6 md:gap-8 divide-y md:divide-y-0 md:divide-x divide-line`}
+              >
+                {caseStudy.highlights.map((highlight, index) => (
+                  <div
+                    key={highlight}
+                    className={`flex items-start gap-3 ${index !== 0 ? "pt-6 md:pt-0 md:pl-8" : ""}`}
+                  >
+                    <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[#AFF45D]/15 text-accent-ink">
+                      <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                    </span>
+                    <span className="text-sm sm:text-base font-medium text-ink leading-relaxed">
+                      {highlight}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </Reveal>
-      </section>
+          </Reveal>
+        </section>
+      )}
 
       {/* More projects */}
       <section className="w-full pb-20 lg:pb-28 px-4 sm:px-6 lg:px-12">

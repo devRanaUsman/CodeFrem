@@ -1,12 +1,13 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { serviceHeroImages } from "@/lib/serviceHeroImages";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import GlowCard from "@/components/ui/GlowCard";
 import CTAButton from "@/components/ui/CTAButton";
 import TagPill from "@/components/ui/TagPill";
 import CtaStrip from "@/components/ui/CtaStrip";
-import ProcessTimeline from "@/components/services/ProcessTimeline";
 import FaqAccordion from "@/components/services/FaqAccordion";
 import PricingPlans from "@/components/services/PricingPlans";
 import type { Category, SubService } from "@/lib/subServices";
@@ -32,6 +33,8 @@ export default function SubServiceTemplate({
   service: SubService;
   category: Category;
 }) {
+  const heroImage = serviceHeroImages[service.slug];
+
   return (
     <main className="bg-canvas text-ink">
       {/* 1 - HERO */}
@@ -40,54 +43,68 @@ export default function SubServiceTemplate({
           aria-hidden="true"
           className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[720px] h-[420px] rounded-full bg-[#AFF45D]/[0.07] blur-[120px]"
         />
-        <div className="max-w-7xl mx-auto relative">
-          <Reveal>
-            <nav
-              aria-label="Breadcrumb"
-              className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted"
-            >
-              <Link
-                href="/services"
-                className="hover:text-accent-ink transition-colors"
+        <div className={heroImage ? "max-w-7xl mx-auto relative grid lg:grid-cols-2 lg:gap-x-6 xl:gap-x-12" : "max-w-7xl mx-auto relative"}>
+          <div className="min-w-0 lg:col-start-1 lg:row-start-1">
+            <Reveal>
+              <nav
+                aria-label="Breadcrumb"
+                className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted"
               >
-                Services
-              </Link>
-              <span aria-hidden="true">/</span>
-              <Link
-                href={`/services#${category.id}`}
-                className="hover:text-accent-ink transition-colors"
-              >
-                {category.title}
-              </Link>
-            </nav>
-          </Reveal>
-          <Reveal delay={80}>
-            <h1 className="mt-5 text-4xl sm:text-6xl lg:text-7xl font-sans tracking-tight leading-[1.08] text-ink max-w-4xl">
-              {service.title}
-            </h1>
-          </Reveal>
-          <Reveal delay={140}>
-            <p className="mt-3 text-base sm:text-lg text-accent-ink font-medium">
-              {service.tagline}
-            </p>
-          </Reveal>
-          <Reveal delay={200}>
-            <p className="mt-5 text-muted text-sm sm:text-base leading-relaxed max-w-xl">
-              {service.description}
-            </p>
-            {service.explanation.map((paragraph) => (
-              <p key={paragraph} className="mt-5 text-muted text-sm sm:text-base leading-relaxed max-w-xl">
-                {paragraph}
-              </p>
-            ))}
-          </Reveal>
-          <Reveal delay={260}>
-            <div className="mt-8">
-              <CTAButton href="/contact" variant="primary">
-                Get a Quote
-              </CTAButton>
+                <Link href="/services" className="hover:text-accent-ink transition-colors">
+                  Services
+                </Link>
+                <span aria-hidden="true">/</span>
+                <Link href={`/services#${category.id}`} className="hover:text-accent-ink transition-colors">
+                  {category.title}
+                </Link>
+              </nav>
+            </Reveal>
+            <Reveal delay={80}>
+              <h1 className={heroImage ? "mt-5 text-4xl sm:text-6xl lg:text-[clamp(2.5rem,4.5vw,4rem)] font-sans tracking-tight leading-[1.08] text-ink break-words" : "mt-5 text-4xl sm:text-6xl lg:text-7xl font-sans tracking-tight leading-[1.08] text-ink max-w-4xl"}>
+                {service.title}
+              </h1>
+            </Reveal>
+          </div>
+          {heroImage && (
+            <div className="relative isolate w-full min-w-0 max-w-2xl mx-auto mt-6 mb-3 lg:my-0 lg:max-w-none lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center" data-service-visual={service.slug}>
+              <div aria-hidden="true" className="pointer-events-none absolute inset-[14%] -z-10 rounded-full bg-accent/10 blur-3xl" />
+              <div className="relative aspect-[4/3] w-full">
+                <Image
+                  src={heroImage.src}
+                  alt={heroImage.alt}
+                  fill
+                  sizes="(min-width: 1376px) 616px, (min-width: 1024px) calc((100vw - 120px) / 2), (min-width: 720px) 672px, calc(100vw - 32px)"
+                  className="object-contain"
+                  loading="eager"
+                />
+              </div>
             </div>
-          </Reveal>
+          )}
+          <div className="min-w-0 lg:col-start-1 lg:row-start-2" data-service-content>
+            <Reveal delay={140}>
+              <p className="mt-3 text-base sm:text-lg text-accent-ink font-medium">
+                {service.tagline}
+              </p>
+            </Reveal>
+            <Reveal delay={200}>
+              <p className="mt-5 text-muted text-sm sm:text-base leading-relaxed max-w-xl">
+                {service.description}
+              </p>
+              {service.explanation.map((paragraph) => (
+                <p key={paragraph} className="mt-5 text-muted text-sm sm:text-base leading-relaxed max-w-xl">
+                  {paragraph}
+                </p>
+              ))}
+            </Reveal>
+            <Reveal delay={260}>
+              <div className="mt-8">
+                <CTAButton href="/contact" variant="primary">
+                  Get a Quote
+                </CTAButton>
+              </div>
+            </Reveal>
+          </div>
+
         </div>
         {/* Section anchor for the breadcrumb's category link */}
         <span id={category.id} className="absolute top-0" aria-hidden="true" />
@@ -118,7 +135,7 @@ export default function SubServiceTemplate({
                     <p className="mt-2 text-sm text-muted leading-relaxed">
                       {feature.body}
                     </p>
-                </GlowCard>
+                  </GlowCard>
                 </Reveal>
               );
             })}
@@ -126,18 +143,6 @@ export default function SubServiceTemplate({
         </div>
       </section>
 
-      {/* 3 - OUR PROCESS */}
-      <section className="w-full py-14 lg:py-20 px-4 sm:px-6 lg:px-12">
-        <div className="max-w-6xl mx-auto">
-          <SectionHeading
-            eyebrow="Our Process"
-            title="How this"
-            highlight="works"
-            align="center"
-          />
-          <ProcessTimeline steps={service.process} />
-        </div>
-      </section>
 
       {/* 4 - TOOLS & TECH */}
       <section className="w-full py-14 lg:py-20 px-4 sm:px-6 lg:px-12">

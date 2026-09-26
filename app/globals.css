@@ -432,7 +432,7 @@ summary {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
+  font-size: 1.125rem;
   line-height: 1.5;
   letter-spacing: .6px;
   font-weight: 500;
@@ -1001,7 +1001,7 @@ summary {
   height: 51px;
   border-radius: 50%;
   border: 1px solid #ffffffd9;
-  background: linear-gradient(135deg, #d7dfce, #f8f9f6);
+  background: rgb(255, 255, 255);
   display: grid;
   place-items: center;
   color: #64744e;
@@ -1173,6 +1173,7 @@ summary {
   border-bottom: 1px solid #ffffffb3;
 }
 
+/* 
 .page-intro::after {
   content: "";
   position: absolute;
@@ -1184,7 +1185,7 @@ summary {
   top: 0;
   z-index: -1;
   box-shadow: 15px 5px 0 -1px #e9eaee, 15px 5px 0 0 #ffffff88;
-}
+} */
 
 .studio-eyebrow {
   display: flex;
@@ -1410,8 +1411,13 @@ textarea::placeholder {
     margin: 80px 22px 0;
   }
 
-  .hero-copy { padding-top: 24px; }
-  .hero-kicker { margin-bottom: 18px; }
+  .hero-copy {
+    padding-top: 24px;
+  }
+
+  .hero-kicker {
+    margin-bottom: 18px;
+  }
 
   .hero-copy h1 {
     font-size: clamp(64px, 7.5vw, 100px);
@@ -1424,10 +1430,24 @@ textarea::placeholder {
     letter-spacing: 2.6px;
   }
 
-  .hero-project-link { margin-top: 18px; font-size: 8px; }
-  .hero-location { bottom: 24px; }
-  .hero-location>div { padding: 13px 23px 13px 12px; gap: 13px; }
-  .hero-location svg { width: 24px; height: 24px; }
+  .hero-project-link {
+    margin-top: 18px;
+    font-size: 8px;
+  }
+
+  .hero-location {
+    bottom: 24px;
+  }
+
+  .hero-location>div {
+    padding: 13px 23px 13px 12px;
+    gap: 13px;
+  }
+
+  .hero-location svg {
+    width: 24px;
+    height: 24px;
+  }
 
   .availability-card {
     right: 0;
@@ -1436,8 +1456,13 @@ textarea::placeholder {
     padding: 16px;
   }
 
-  .availability-card strong { font-size: 20px; }
-  .availability-card>span { font-size: 8px; }
+  .availability-card strong {
+    font-size: 20px;
+  }
+
+  .availability-card>span {
+    font-size: 8px;
+  }
 }
 
 @media (max-width:767px) {
@@ -2052,8 +2077,14 @@ textarea::placeholder {
 }
 
 /* Native disclosure keeps FAQs visible and usable before hydration. */
-.faq-question { list-style: none; cursor: pointer; }
-.faq-question::-webkit-details-marker { display: none; }
+.faq-question {
+  list-style: none;
+  cursor: pointer;
+}
+
+.faq-question::-webkit-details-marker {
+  display: none;
+}
 
 @media (max-width: 900px) {
   .faq-grid {

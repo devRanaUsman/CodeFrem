@@ -64,23 +64,6 @@ export default function ContactPage() {
         lead="Tell us about your project and we'll reply within 24 hours on weekdays with honest thoughts on how to get there."
       />
 
-      {/* Trust badges (replaces the old "Expert Online 24/7" badge) */}
-      <div className="w-full px-4 sm:px-6 lg:px-12">
-        <div className="mx-auto flex max-w-7xl flex-wrap gap-3">
-          {[
-            "Direct Partner Access: you talk to the founders, not an account manager",
-            "Reply within 24hrs on weekdays",
-          ].map((badge) => (
-            <span
-              key={badge}
-              className="inline-flex items-center gap-2 rounded-full border border-[#AFF45D]/25 bg-surface px-4 py-2 text-[11px] font-semibold text-muted shadow-sm"
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-[#AFF45D] shadow-sm" />
-              {badge}
-            </span>
-          ))}
-        </div>
-      </div>
 
       {/* Form + contact info */}
       <div className="pt-12 lg:pt-16">
@@ -131,6 +114,7 @@ export default function ContactPage() {
         </Reveal>
       </section>
     </main>
+    
   );
 }
 

@@ -47,24 +47,7 @@ export default function ContactInfoCards() {
         </ul>
       </GlowCard>
 
-      {/* B - Book a call */}
-      <GlowCard className="p-6 sm:p-7">
-        <h3 className="text-xl font-sans text-ink">Prefer to talk first?</h3>
-        <p className="mt-2 text-sm leading-relaxed text-muted">
-          Book a free 30-minute discovery call with one of the founders.
-        </p>
-        <a
-          // TODO: Replace # with Calendly or Cal.com link when set up
-          href="#"
-          className="mt-5 inline-flex items-center gap-2 rounded-full border border-line px-6 py-3 text-xs font-bold uppercase tracking-wider text-ink transition-all duration-300 hover:border-[#AFF45D] hover:text-accent-ink"
-        >
-          <Calendar className="h-4 w-4" aria-hidden="true" />
-          Book a Call
-        </a>
-        <p className="mt-3 text-xs text-muted">
-          No commitment. Just a conversation.
-        </p>
-      </GlowCard>
+
 
       {/* C - Socials */}
       <GlowCard className="p-6 sm:p-7">
